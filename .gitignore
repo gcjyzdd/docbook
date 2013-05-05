@@ -1,0 +1,40 @@
+#############
+## Latex
+#############
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.pdf
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+
+# Windows image file caches
+Thumbs.db
+
+# Windows folder config file
+Desktop.ini
+
+# Mac folder config file 
+.DS_Store
+
+# Windows batch files
+.bat
+.cmd

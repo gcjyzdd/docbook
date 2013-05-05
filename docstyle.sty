@@ -1,0 +1,84 @@
+\ProvidesPackage{jstyle}
+
+% BEGIN PACKAGE IMPORT
+% =============================================================================
+\usepackage{amsmath, amssymb} % Import American Society maths
+\usepackage{tikz} % Import PFG/TikZ
+\usetikzlibrary{trees, positioning, arrows, shadows} % Import tikz libraries
+\usepackage{mathptmx} % Import times lookalike font (New Century Schoolbook)
+\usepackage{calc}
+% =============================================================================
+
+% REMOVE PARAGRAPH INDENTS
+\setlength{\parindent}{0in}
+\setlength{\parskip}{6pt}
+
+
+% TIKZ STYLES
+% =============================================================================
+\tikzstyle{node_sty}=[rectangle, draw=black, thick, fill=black!5,
+text width=8em, text centered, drop shadow, anchor=north]
+% =============================================================================
+\tikzstyle{edge_sty}=[very thick, draw=black=!70]
+% =============================================================================
+\tikzstyle{fra_ans_sty}=[rectangle, draw=black, thick, fill=white, 
+align=center, minimum width=8em, text centered, anchor=north]
+% =============================================================================
+
+
+\newcommand{\frmrule}{\rule{\linewidth}{0.1mm}}
+
+%\newcommand{\framehrule}{
+%	\begin{tikzpicture} [every node/.style={fra_ans_sty}]
+%	\draw[line cap=rect] (0,0) -- (\linewidth-\pgflinewidth, 0);
+%	\end{tikzpicture}
+%}
+
+\newcommand{\framehrule}{
+}
+
+
+\newcommand{\highlightdef}[1] {
+	\par\begin{minipage}{\textwidth}
+	\frmrule ~\\[0cm]
+	\centering{#1} \\[-0.2cm]
+	\frmrule
+	\end{minipage} \par
+}
+
+
+% =============================================================================
+\newcommand{\frameans}[2]{
+	{\raggedleft \textit{#1}\\}
+	\begin{tikzpicture} [every node/.style={fra_ans_sty}]
+	\draw[line cap=rect] (0,0) -- (\linewidth-\pgflinewidth,0);
+	\node (g1) at (\linewidth/2, -0.2) {#2};
+	\end{tikzpicture}
+}
+
+
+
+% =============================================================================
+
+
+
+
+
+
+% =============================================================================
+\newlength{\remaining}
+\newcommand{\titleline}[1]{
+	\setlength{\remaining}{\textwidth-\widthof{\textit{#1}}}
+	\noindent\underline{\raggedright \textit{#1}\hspace*{\remaining}}\par
+}
+% =============================================================================
+
+% Example Environment
+% -------------------
+\newcounter{example_ctr}
+\setcounter{example_ctr}{0}
+\newenvironment{example} {
+	\refstepcounter{example_ctr}
+	\textbf{Example \arabic{example_ctr}}\\
+}
+
