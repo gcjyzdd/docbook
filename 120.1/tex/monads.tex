@@ -1,13 +1,133 @@
 
+
+\chapter{Data Structures}
+
+
+We careful and notice the difference between \lstinline{data} and \lstinline{type} declarations.
+A type declaration defines a new name for an existing data type.
+A data declaration defines a new data structure that consists of a collection of constructors for building that data type.
+
+
+
+\chapter{Typeclasses}
+
+We are familar with types. Types have been important for writing function 
+signatures helping both us and the compiler describe what a function needs and what it gives.
+Types are also useful in data structures where data declarations can build upon types. 	
+This section will introduce two new structures that build on our knowledge of types, 
+\textit{typeclasses} and \textit{typeinstances}. 
+
+\highlightdef{A \textbf{typeclass} is similar to an \textit{interface} in Java. }
+
+Be careful. Typeclasses are sometimes simply called \textit{classes}. 
+You should definetely not compare typeclasses with 
+classes from object-oriented programming. Instead, you should think of typeclasses 
+as being similar to an \textit{interface with a generic type}.
+
+A typeclass has the general structure:
+
+\begin{lstlisting}
+class T a where
+   f1 :: [type of f1]
+   f2 :: [type of f2]
+   f3 :: [type of f3]
+   ...
+   fn :: [type of fn]
+\end{lstlisting}
+
+To put it simply, a typeclass is a \textit{collection of function signatures}.
+First we begin the typeclass definition with the \lstinline{class} keyword
+We write \lstinline{class} rather than \lstinline{typeclass} because it's shorter and easier.
+Next, we declare that this typeclass is called \lstinline{T}. 
+Then inside, we have a collection of function signatures. 
+
+We are simply stating that \lstinline{f1}
+has a certain signature. We only give it's names and it's type. 
+There is \textit{no body} for \lstinline{f1}, it's \textit{just the signature}. 
+Similarly for \lstinline{f2}, \lstinline{f3}, \lstinline{...}, we have given just their name 
+and what their type is.
+
+Finally, notice there is an \lstinline{a} just after \lstinline{class T}. 
+This is the \textit{typeclass parameter}. The typeclass parameter may be used in any of the 
+type definitions for the functions. We will shortly see why this is useful. 
+
+Now that we have a typeclass \lstinline{T} defined, we can begin to define 
+\textit{typeinstances} of \lstinline{T}. 
+
+\highlightdef{An \textbf{typeinstance} is similar to a \textit{class} in Java.}
+
+So, when we say \lstinline{M} is a typeinstance of \lstinline{T} 
+we can compare this to how a class implements the methods of an interface. 
+Below shows a typeinstance \lstinline{M} of typeclass \lstinline{T}.
+
+\begin{lstlisting}
+instance T M where
+   f1 = [body of f1]
+   f2 = [body of f2]
+   f3 = [body of f3]
+   ...
+   fn = [body of fn]
+\end{lstlisting}
+
+As we can see, \lstinline{M} gives the body of the functions that are in. 
+It must do this. There cannot be any unimplemented function bodies.   
+
+
+
+Here is another example of a type class. 
+\begin{lstlisting}
+data Location = London | France | Tokyo
+data Food = Pizza | Chocolate | Salad
+data Drink = Water | Juice | Milk
+class Alive a :: where
+   walk :: Location -> String
+   run :: Location -> String
+   eat :: Food -> String
+   drink :: Drink -> String
+   count :: int -> String
+\end{lstlisting}
+
+
+
+\begin{itemize}	
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Definition} We first define a collection:
+\lstinline{class Cool a}
+(==)                  :: a -> a -> Bool
+\item \textbf{Implementation} We first define a collection:
+\lstinline{class Cool a}
+
+\end{itemize}
+
+
+
+
 \chapter{Monads}
 
 
 
-\section{Zero Divisors}
+\section{Pure and Impure Functions}
+
+Functional programming languages divides into two: \textit{Pure Functional} programming languages 
+and \textit{Impure Functional} programming languages. Haskell is an example of a \textit{pure} functional 
+programming language. Standard ML and Clojure are examples of \textit{impure} functional programming languages.
+
+Impure languages, such as Scheme and Standard ML, augment lambda calculus
+with a number of possible eects, such as assignment, exceptions, or continu-
+ations. Pure languages are easier to reason about and may benet from lazy
+evaluation, while impure languages oer eciency benets and sometimes make
+possible a more compact mode of expression.
 
 
-\highlightdef{A \textbf{pure function} always returns the same result for a given input}
+\highlightdef{A \textbf{pure function} always returns the same result for a given argument}
 
+All functions in Haskell are pure functions. There is no way to define an impure function.
+However we can model how an impure function behave using pure functions. 
+We think of an impure function as a function returning \textit{two values}. 
+It returns a pure part $p$ and an impure part $i$. A given argument $x$ maps to some $p$ and $i$.
+The pure part, $p$ is always the same value for the given $x$. However the $i$ can vary for a single $x$. 
 
-We can think of an impure function as having a pure part $p$ and an impure part $i$. 
-In other words 
+\begin{lstlisting}
+f :: x -> (p, i)
+f = ...
+\end{lstlisting}
