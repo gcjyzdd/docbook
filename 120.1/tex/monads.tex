@@ -15,16 +15,18 @@ We are familar with types. Types have been important for writing function
 signatures helping both us and the compiler describe what a function needs and what it gives.
 Types are also useful in data structures where data declarations can build upon types. 	
 This section will introduce two new structures that build on our knowledge of types, 
-\textit{typeclasses} and \textit{typeinstances}. 
+\textit{typeclasses} and \textit{typeinstance declarations}. 
 
 \highlightdef{A \textbf{typeclass} is similar to an \textit{interface} in Java. }
 
 Be careful. Typeclasses are sometimes simply called \textit{classes}. 
-You should definetely not compare typeclasses with 
+You should definitely not compare typeclasses with 
 classes from object-oriented programming. Instead, you should think of typeclasses 
-as being similar to an \textit{interface with a generic type}.
+as being similar to an \textit{interface with a generic type}. 
+Interfaces are a bit like a todo list where we purposely don't say how exactly 
+to do the things in the list - because they can be done in so many ways. 
 
-A typeclass has the general structure:
+A typical typeclass has the general structure:
 
 \begin{lstlisting}
 class T a where
@@ -35,11 +37,11 @@ class T a where
    fn :: [type of fn]
 \end{lstlisting}
 
-To put it simply, a typeclass is a \textit{collection of function signatures}.
+To put it simply, a typical typeclass is a \textit{collection of function signatures}.
 First we begin the typeclass definition with the \lstinline{class} keyword
 We write \lstinline{class} rather than \lstinline{typeclass} because it's shorter and easier.
 Next, we declare that this typeclass is called \lstinline{T}. 
-Then inside, we have a collection of function signatures. 
+For now, ignore the \lstinline{a} and look inside, we have the collection of function signatures. 
 
 We are simply stating that \lstinline{f1}
 has a certain signature. We only give it's names and it's type. 
@@ -47,18 +49,18 @@ There is \textit{no body} for \lstinline{f1}, it's \textit{just the signature}.
 Similarly for \lstinline{f2}, \lstinline{f3}, \lstinline{...}, we have given just their name 
 and what their type is.
 
-Finally, notice there is an \lstinline{a} just after \lstinline{class T}. 
+Finally, recall that there is an \lstinline{a} just after \lstinline{class T}. 
 This is the \textit{typeclass parameter}. The typeclass parameter may be used in any of the 
 type definitions for the functions. We will shortly see why this is useful. 
 
 Now that we have a typeclass \lstinline{T} defined, we can begin to define 
 \textit{typeinstances} of \lstinline{T}. 
 
-\highlightdef{An \textbf{typeinstance} is similar to a \textit{class} in Java.}
+\highlightdef{A \textbf{typeinstance declaration} is similar to a \textit{class} in Java.}
 
 So, when we say \lstinline{M} is a typeinstance of \lstinline{T} 
 we can compare this to how a class implements the methods of an interface. 
-Below shows a typeinstance \lstinline{M} of typeclass \lstinline{T}.
+Below shows a typeinstance declaration that uses typeclass \lstinline{T}.
 
 \begin{lstlisting}
 instance T M where
@@ -69,8 +71,41 @@ instance T M where
    fn = [body of fn]
 \end{lstlisting}
 
-As we can see, \lstinline{M} gives the body of the functions that are in. 
-It must do this. There cannot be any unimplemented function bodies.   
+As we can see, we have declared the bodies of all the functions that are in 
+the typeclass \lstinline{T}. All bodies must be there. 
+There cannot be any unimplemented function bodies. This is similar to 
+when how a class that implements an interface must implement all the methods.
+
+You mind think that M is like a name of a new class being defined. 
+It turns out that \lstinline{M} is \textit{not} name of the typeinstance. 
+Type instance declarations do not define a new name or identifer.
+This typeinstance declaration is actually expecting 
+an \textit{already defined type} \lstinline{M}.
+When we write \lstinline{instance T M} we are saying
+that \textit{given the signatures in M and these are the bodies, 
+that you should use for type T}. 
+
+We are giving a concrete implementation on how to do  \lstinline{f1, f2, ...} 
+for concrete T. Remember the typeclass gave us a vague collection 
+of methods \lstinline{f1, f2, ...} on a general type \lstinline{a}. 
+An instance declaration gives concrete bodies that work for concrete type T.
+
+Also notice that a single typeclass declaration allows for many instance declarations. 
+They are many ways to give bodies for the functions \lstinline{f1, f2, ...}. 
+It depends on what our concrete type $N$ is and what bodies work for that type. 
+
+\begin{lstlisting}
+instance T N where
+   f1 = [body of f1]
+   f2 = [body of f2]
+   f3 = [body of f3]
+   ...
+   fn = [body of fn]
+\end{lstlisting}
+
+This is an important part of how Haskell does code resuse and how Haskell 
+does support programming to an interface rather than to an implementation. 
+
 
 
 
@@ -112,11 +147,9 @@ Functional programming languages divides into two: \textit{Pure Functional} prog
 and \textit{Impure Functional} programming languages. Haskell is an example of a \textit{pure} functional 
 programming language. Standard ML and Clojure are examples of \textit{impure} functional programming languages.
 
-Impure languages, such as Scheme and Standard ML, augment lambda calculus
-with a number of possible eects, such as assignment, exceptions, or continu-
-ations. Pure languages are easier to reason about and may benet from lazy
-evaluation, while impure languages oer eciency benets and sometimes make
-possible a more compact mode of expression.
+Impure languages, suffer from side effects. assignment, exceptions, or continuations. 
+Pure languages are easier to reason about 
+and may benifit from lazy evaluation, while impure languages can provide more compact mode of expression.
 
 
 \highlightdef{A \textbf{pure function} always returns the same result for a given argument}
