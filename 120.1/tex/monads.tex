@@ -8,7 +8,6 @@ A type declaration defines a new name for an existing data type.
 A data declaration defines a new data structure that consists of a collection of constructors for building that data type.
 
 
-
 \chapter{Typeclasses}
 
 We are familar with types. Types have been important for writing function 
@@ -22,7 +21,7 @@ This section will introduce two new structures that build on our knowledge of ty
 Be careful. Typeclasses are sometimes simply called \textit{classes}. 
 You should definitely not compare typeclasses with 
 classes from object-oriented programming. Instead, you should think of typeclasses 
-as being similar to an \textit{interface with a generic type}. 
+as being similar to an \textit{Java interface with a generic type}. 
 Interfaces are a bit like a todo list where we purposely don't say how exactly 
 to do the things in the list - because they can be done in so many ways. 
 
@@ -38,13 +37,13 @@ class T a where
 \end{lstlisting}
 
 To put it simply, a typical typeclass is a \textit{collection of function signatures}.
-First we begin the typeclass definition with the \lstinline{class} keyword
+First we begin the typeclass definition with the \lstinline{class} keyword.
 We write \lstinline{class} rather than \lstinline{typeclass} because it's shorter and easier.
 Next, we declare that this typeclass is called \lstinline{T}. 
 For now, ignore the \lstinline{a} and look inside, we have the collection of function signatures. 
 
 We are simply stating that \lstinline{f1}
-has a certain signature. We only give it's names and it's type. 
+has a certain signature. We only give its names and its type. 
 There is \textit{no body} for \lstinline{f1}, it's \textit{just the signature}. 
 Similarly for \lstinline{f2}, \lstinline{f3}, \lstinline{...}, we have given just their name 
 and what their type is.
@@ -74,16 +73,15 @@ instance T M where
 As we can see, we have declared the bodies of all the functions that are in 
 the typeclass \lstinline{T}. All bodies must be there. 
 There cannot be any unimplemented function bodies. This is similar to 
-when how a class that implements an interface must implement all the methods.
+how a class that implements an interface must implement all the methods.
 
-You mind think that M is like a name of a new class being defined. 
-It turns out that \lstinline{M} is \textit{not} name of the typeinstance. 
-Type instance declarations do not define a new name or identifer.
+You mind think that \lstinline{M} is like a name of a new class being defined. 
+Don't. It turns out that \lstinline{M} is \textit{not} the name of the typeinstance. 
+Type instance declarations do not define a \text{new} name or identifer.
 This typeinstance declaration is actually expecting 
 an \textit{already defined type} \lstinline{M}.
 When we write \lstinline{instance T M} we are saying
-that \textit{given the signatures in M and these are the bodies, 
-that you should use for type T}. 
+that \textit{given the signatures in M, these bodies tell you how them for type \lstinline{T}}. 
 
 We are giving a concrete implementation on how to do  \lstinline{f1, f2, ...} 
 for concrete T. Remember the typeclass gave us a vague collection 
@@ -103,6 +101,9 @@ instance T N where
    fn = [body of fn]
 \end{lstlisting}
 
+This is why it was useful to define the \textit{typeclass parameter}
+\lstinline{a} just after \lstinline{class T}. It forces us to write 
+ code that pertains to a particular concrete type. 
 This is an important part of how Haskell does code resuse and how Haskell 
 does support programming to an interface rather than to an implementation. 
 
@@ -124,43 +125,97 @@ class Alive a :: where
 
 
 
-\begin{itemize}	
-\renewcommand{\labelitemi}{$\Box$}
-\item \textbf{Definition} We first define a collection:
-\lstinline{class Cool a}
-(==)                  :: a -> a -> Bool
-\item \textbf{Implementation} We first define a collection:
-\lstinline{class Cool a}
 
+
+
+\chapter{Functors and Monads}
+
+\section{Pure and Impure Functions}
+
+Functional programming languages divide into two: \textit{Pure Functional} programming languages 
+and \textit{Impure Functional} programming languages. Haskell is an example of a \textit{pure} functional programming language. 
+Standard ML and Clojure are examples of \textit{impure} functional programming languages.
+
+Impure languages are flexible and provide features such as assignment, exceptions, 
+continuations at a lost cost to write. By low cost I mean that that it's easier to learn how to write code with these features or the features are provided in more carefree manner. 
+This trades away ease of mathematically reasoning with the language.
+Pure languages on the other hand are easier to reason about, benifit from lazy evaluation
+but certain features are most costly to write.
+
+\highlightdef{A \textbf{pure function} always returns the same result for a given argument}
+
+All functions in Haskell are pure functions. This is what makes Haskell a pure language.
+There is no way to define an impure function in Haskell.
+However we can model how an impure function behave safely and purely in Haskell
+using an idea of {wrapping values} in a data structure. 
+We wrap arguments and outputs in what we call a data structure which we will call an
+ \textit{context}. For now, think of this as a box.
+
+A good design pattern for storing state is by carrying it around as an extra 
+argument.
+\highlightdef{We can model impurities by wrapping values in an \textit{context}}
+How can wrapping values in boxes model impure functions? Let's see.
+
+
+
+Below shows how an example of how we might like to wrap up a general value \lstinline{a}.
+\begin{lstlisting}
+data Box a = OK a | Empty
+\end{lstlisting}
+
+A \textit{boxed \lstinline{a}}, i.e. \lstinline{Box a}, is more 
+expressive than just the value \lstinline{a} and we'll use it to model 
+function application involving impure function.
+
+\begin{lstlisting}
+fnmap :: (Box -> Box) -> Box -> Box 
+fnmap f (OK a) 
+   | [condition1] = OK (f a)
+   | [condition2] = Empty
+fnmap f (Empty)
+   | always = Empty
+\end{lstlisting}
+
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item In the first case we have a value in the box.
+We perform function application and the value changes inside the box to the output 
+of the function. This is similar to how when impure function gives a conistent result.
+\item In the second case,  we have a value in the box but
+ the value can simply disappears from it's box. This is similar 
+to how the output of an impure function gives a value that is inconsistent or nonsense. 
+\item In the third case, we have a box where the value has 
+already disappeared. Once the value has disappeared, it cannot come back. 
 \end{itemize}
 
 
 
-
-\chapter{Monads}
-
+\section{Functors}
 
 
-\section{Pure and Impure Functions}
 
-Functional programming languages divides into two: \textit{Pure Functional} programming languages 
-and \textit{Impure Functional} programming languages. Haskell is an example of a \textit{pure} functional 
-programming language. Standard ML and Clojure are examples of \textit{impure} functional programming languages.
-
-Impure languages, suffer from side effects. assignment, exceptions, or continuations. 
-Pure languages are easier to reason about 
-and may benifit from lazy evaluation, while impure languages can provide more compact mode of expression.
+\section{Category Theory Introduction}
 
 
-\highlightdef{A \textbf{pure function} always returns the same result for a given argument}
+\highlightdef{A \textbf{Category} is a collection of objects and arrows between them...}
+... where there are certain constraints on how arrows can be drawn.
 
-All functions in Haskell are pure functions. There is no way to define an impure function.
-However we can model how an impure function behave using pure functions. 
-We think of an impure function as a function returning \textit{two values}. 
-It returns a pure part $p$ and an impure part $i$. A given argument $x$ maps to some $p$ and $i$.
-The pure part, $p$ is always the same value for the given $x$. However the $i$ can vary for a single $x$. 
 
-\begin{lstlisting}
-f :: x -> (p, i)
-f = ...
-\end{lstlisting}
+\highlightdef{A \textbf{Monoid} is a category with \textit{one object}}
+A monoid my have possibly many arrows or just one arrow. 
+
+\begin{example}
+$C = (\mathbb{N}, \square)$ is a monoid where the composition law is given by $n \square m = nm$.
+Here, $Arr(C)$ is the set of natural numbers. 
+
+\end{example}
+
+
+\highlightdef{A \textbf{Functor} is a mapping from one category to another ...}
+... that preserves the arrows in a particular way. 
+
+the source and target of every arrow, the identity arrow of every node, 
+and, the composition law.
+
+
