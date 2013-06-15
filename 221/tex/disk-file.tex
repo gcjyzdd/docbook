@@ -21,6 +21,30 @@ cache miss case.
 
 \section{Unix inodes}
 
+
+\begin{lstlisting}
+typedef struct{
+unsigned inode_number : 16; /* 2 bytes */
+char file_name[14] : 112; /* 14 bytes */
+} DIRECTORY_ENTRY
+\end{lstlisting}
+
+An inode number uniquely identiﬁes an inode.
+There is precisely one inode per ﬁle.
+
 \section{Virtual File Systems}
 
 \section{File System Recovery}
+
+storage devices still mess up – they have
+so-called bad blocks that make it hard to keep a ﬁle
+system reliable.
+
+simply backup the system regularly so that
+parts of it can be restored when a bad block occurs.
+The problem is how to do backups efﬁciently:
+
+incremental dumps, by which changes are added
+to the backup, say, every day
+use doubling technique, such as doing writes to
+two drives, but reading only from one.

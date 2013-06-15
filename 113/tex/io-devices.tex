@@ -73,13 +73,90 @@ Very often the device controller is a very small part of the actual hardware dev
 Sometimes the device controller is the majority of the hardware device 
 (like a network card).
 
-\highlightdef{The \textbf{IO Address Space} is the \textit{processor's collection}
-of \textit{every controller register} of every device}
 
+\section{IO Memory Interfaces}
+
+How do we make that interface available to programs
+
+\begin{figure}[h]
+\begin{tikzpicture} [
+   every node/.style={node_sty, align=center},
+   edge from parent/.style={edge_sty},
+   edge from parent path={(\tikzparentnode.south) 
+   |- ($(\tikzparentnode.south)!0.5!(\tikzchildnode.north)$) -| (\tikzchildnode.north)},
+   level 1/.style={sibling distance=4cm, level distance = 0.9cm}
+]
+   \node (root) [text width=18em] {IO Memory Interface}
+      child {node (pio) {Physical-Memory Mapping}}
+      child {node(intio) {Seperate-Memory Mapping}};
+\end{tikzpicture}
+\end{figure}
+
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Physical-Memory Mapping} 
 The device controller’s registers appear to the processor as normal memory locations. 
 Hence the cpu can easily manipulate the device controller’s registers by simply 
-using instructions such as mov, and, or, test. 
+using instructions such as mov, and, or, test.
+\item \textbf{Seperate-Memory Mapping} 
+IO registers have their own (very small) address space. 
+The architecture must provide some method for accessing it. 
+This is usually done by proving special io instructions.
+\end{itemize}
+
+IA-32 supports both physical-memory mapping and seperate-memory mapping. 
+IA-32 supports seperate-Memory mapping by providing
+64K 8-bit IO ports numbered 0 to 65535
+
+
+\highlightdef{The \textbf{IO-Address Space} is the \textit{processor's collection}
+of \textit{every controller register} of every device}
+
+All I/O registers are contained in a separate address space that can 
+only be accessed through special io instructions. 
 The operand be will an io-address-space memory address.
+
+\begin{example}
+Below shows an example of seperate-memory mapping in IA-32.
+
+\begin{lstlisting}
+in  ax, 10 ; copy bits from reg at address 10 into ax
+out 20, ah ; copy bits from ah into reg at address 20
+\end{lstlisting}
+The first instruction copies 16 bits from the io controller register
+that is mapped to io address 10 into the processor's register ax. 
+The second instruction copies 8 bits from the processor's register al
+into the io controller register that is mapped to io address 20. 
+
+\end{example}
+
+\begin{example}
+Below shows an example of seperate-memory mapping in IA-32.
+
+\begin{lstlisting}
+mov 30, ax ; copy bits from ax to reg at address 23
+\end{lstlisting}
+The first instruction copies 16 bits from the processor's register ax
+into the io controller register that is mapped to physical address 30. 
+This is a hardware mapping.
+\end{example}
+
+\begin{example}
+Below shows another way of doing seperate-memory mapping.
+\begin{lstlisting}
+mov dx, 40    ; Register address = 40
+mov ax, VALUE ; Register value
+out           ; Perform the io. Write to the device reg.
+\end{lstlisting}
+The first instruction copies the port into register dx. 
+This tells the processor we want the register located at 
+io memory address 40. The second instruction copies 
+into ax the value we want to put into the register.
+Now the processor has access all the information it needs, 
+we perform the io with the out instruction. 
+\end{example}
+
 
 \section{Buses and Bridges}
 

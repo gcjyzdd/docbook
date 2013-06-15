@@ -31,19 +31,25 @@ However unix allows an io device to be purely software.
 \begin{itemize}   
 \renewcommand{\labelitemi}{$\Box$}
 \item \textbf{Character} 
-A \textit{character io device} is one that works with streams of bytes. The driver 
-for character io devices are written to be able to work with streams.
+A \textit{character io device} is one that works with a sequential streams of bytes. 
+The driver for character io devices are written to be able to work with streams.
 They need to implement at least the \textit{open}, \textit{close}, \textit{read}, and 
 \textit{write} unix system calls. 
 \item \textbf{Block} 
 A \textit{block io device} is the like a character io device. 
-It works with streams of bytes. It also must implement at least \textit{open}, \textit{close}, \textit{read}, and \textit{write}. However, \textit{more operations} are provided to
-handle streams of bytes as a \textit{flow of blocks}. 
+It works with streams of bytes. It also must implement at least \textit{open}, \textit{close}, \textit{read}, and \textit{write}. However, \textit{more operations} are provided to handle streams of bytes as a \textit{flow of blocks}. Block io devices are 
+able to process blocks whose data arrives in a non-sequential order.
 \item \textbf{Network} 
 A network device is in charge of sending and receiving network bytes.
 Instead of \textit{read} and \textit{write}, functions
 related to packet transmission are provided.
 \end{itemize}
+
+Note that these three categories are not absolute. 
+The distinction is often blurred. For example, is a tape a 
+block device or a character device? Others devices don't fit 
+into any of these characters.
+For example clocks.
 
 
 Block device transfers are buffered through a \textit{block buffer cache}.
