@@ -1,0 +1,72 @@
+
+\chapter{Unix Drivers}
+
+
+\section{Introducing Unix Drivers}
+
+Unix puts io devices into three categories.
+
+
+\begin{figure}[h]
+\begin{tikzpicture} [
+   every node/.style={node_sty, align=center},
+   edge from parent/.style={edge_sty},
+   edge from parent path={(\tikzparentnode.south) 
+   |- ($(\tikzparentnode.south)!0.5!(\tikzchildnode.north)$) -| (\tikzchildnode.north)},
+   level 1/.style={sibling distance=4cm, level distance = 0.9cm}
+]
+   \node 
+   (root) {IO Device}
+      child {node (pio) {Character}}
+      child {node(intio) {Block}}
+      child {node(intio) [text width=9em] {Network}};
+   
+\end{tikzpicture}
+\end{figure}
+
+We a familiar with io devices being hardware.
+However unix allows an io device to be purely software. 
+
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Character} 
+A \textit{character io device} is one that works with streams of bytes. The driver 
+for character io devices are written to be able to work with streams.
+They need to implement at least the \textit{open}, \textit{close}, \textit{read}, and 
+\textit{write} unix system calls. 
+\item \textbf{Block} 
+A \textit{block io device} is the like a character io device. 
+It works with streams of bytes. It also must implement at least \textit{open}, \textit{close}, \textit{read}, and \textit{write}. However, \textit{more operations} are provided to
+handle streams of bytes as a \textit{flow of blocks}. 
+\item \textbf{Network} 
+A network device is in charge of sending and receiving network bytes.
+Instead of \textit{read} and \textit{write}, functions
+related to packet transmission are provided.
+\end{itemize}
+
+
+Block device transfers are buffered through a \textit{block buffer cache}.
+
+Each device has a file in Unix. This is called the \textit{device file}.
+Character and Block devices are located in the \lstinline{/dev} directory.
+Network files however, are located 
+
+When the user opens /dev/docdrv, the kernel calls a function in docdrv called the
+\textit{driver open function}. Similarly, when the user closes /dev/docdrv, 
+the kernel calls a function in docdrv called the \textit{driver release function}.
+
+
+
+\section{Writing a Unix Driver}
+
+Io modules can be loaded and removed using \textit{insmod} and \textit{rmmod}.
+
+\begin{lstlisting}
+doc > gcc -c hello.c
+doc > insmod hello.o
+Hello world
+doc > rmmod hello.o
+Goodbye
+doc >
+\end{lstlisting}

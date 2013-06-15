@@ -5,7 +5,7 @@
 \usepackage{amsmath, amssymb} % Import American Society maths
 \usepackage{tikz} % Import PFG/TikZ
 % Import tikz libraries
-\usetikzlibrary{trees, positioning, arrows, shadows, calc} 
+\usetikzlibrary{trees, positioning, arrows, shadows, calc, fit, shapes.multipart} 
 \usepackage{mathptmx} % Import times lookalike font (New Century Schoolbook)
 \usepackage{calc}
 
@@ -23,6 +23,8 @@
 % =============================================================================
 \tikzstyle{node_sty}=[rectangle, draw=black, thick, fill=black!5,
 text width=8em, text centered, drop shadow, anchor=north]
+\tikzstyle{block_shadow_sty}=[draw=black, thick, fill=black!5, drop shadow]
+
 % =============================================================================
 \tikzstyle{edge_sty}=[very thick, draw=black=!70]
 % =============================================================================

@@ -1,0 +1,35 @@
+
+\chapter{Processes and Threads}
+
+
+
+
+
+\section{Introducing Process}
+
+
+Right now, program \textit{during execution} can only be seen as a sequence of machine code instructions. Before code is executed we can see a program as source code but during 
+execution there is no high level view or code to describes it's execution.
+
+We \textit{need} this higher level view of a program running on a processor.
+The execution of a program machine code instructions will lead to it requiring io devices.
+Recall that use of io devices is complex and expensive. 
+The operating system is resonsible for managing io devices as resources that 
+are to be allocated to programs.
+
+So, as a resource manager, an operating system should know how programs in 
+execution affect resources. This is done with the idea of a \textit{process}. 
+A \textit{process} is an invention by an operating system. 
+It is used as a placeholder for executing programs so that we can keep a precise 
+account of how program execution is affecting the use of hardware and software resources.
+
+\highlightdef{A \textbf{Process} is the os's view of a program in execution}
+
+As a virtual machine the os needs to provide easy access to the 
+resources and as a processor-helper it
+needs to provide a software-layer to communicate with devices.
+
+In UNIX, 
+
+
+\section{Execution-Schedule Management}

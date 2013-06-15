@@ -1,0 +1,126 @@
+
+\chapter{Operating Systems}
+
+
+\section{Introducing Operating systems}
+
+An operating system is a \textit{unified software solution for many problems} 
+that come about in managing the \textit{execution of machine code instructions}.
+In particular we are concerned with how \textit{a user can write programs} for the machine 
+by telling \textit{the processor where the program is} and, how we \textit{manage the
+physical resources} of the machine during this execution.  
+
+There are three entities that a operating system tie together. 
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Processor} 
+The cpu needs help with knowing what instructions to be executed.
+\item \textbf{User} 
+The user needs help providing his program to the cpu to be executed.
+\item \textbf{IO Devices} 
+The machine's physical resources
+\end{itemize}
+
+We have three views of what an operating system is.
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Processor Controller} 
+The operating system can be seen as software sitting on top of the cpu.
+\item \textbf{Virtual Machine} 
+The operating system can be seen as an abstraction sitting on top of hardware.
+The user is only presented with a software interface for controlling the machine.
+The user doesn't need to know how the cpu works. 
+This idea is of a software view of machine known as a \textit{virtul machine}.
+\item \textbf{Resource Manager} 
+The machine's physical resources. software protects against simultaneous accesses
+and usage of resources (one user of the ﬂoppy disk at a time)
+fair share of the resources (scheduling) account for using resources.
+\end{itemize}
+
+Responsibilities of a modern operating system.
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Memory Management} %link to above three views%
+\item \textbf{Execution-Schedule Management} 
+\item \textbf{File System Management} 
+\end{itemize}
+
+
+
+\section{Introducing Kernels}
+
+
+
+Operating system designers have the large task of 
+organising a huge amount of code. 
+A part of structuring operating systems,
+operating system designers find it helpful to follow the idea of having a \textit{kernel}.
+
+\highlightdef{A \textbf{kernel} is a low-level software layer of the os}
+
+An operating system has only one kernel.
+It's considered the \textit{lowest layer} 
+when we view the operating system source code as a whole. 
+
+The idea of a kernel highlights the os's role as a virtual machine. 
+By having a kernel, we hide certain details of the hardware from the user to present an 
+abstract programming interface. Often code written outside the kernel is 
+highly compatible with other io devices because of this kernel interface. 
+
+A kernel interface provides special functions known as \textit{system calls}.
+The interface also provides general library functions for higher os layers. 
+
+
+
+\highlightdef{An os appears to users/applications as a library of functions and system calls}
+
+
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Solaris} 
+Completely modular kernel
+– Can load device drivers as they are needed
+– Discovery of a new device automatically results in search and load of corresponding module
+\item \textbf{BSD} 
+Must be told at compilation time about devices on the system
+– You may have to take apart your system to discover some of the devices such as chipset on the ethernet card
+\item \textbf{Linux} 
+– Cross between Solaris and BSD
+– Must know about all hardware beforehand resulting in one large kernel
+– Can be conﬁgured to load drivers only when needed
+– Limitations on modularity dictated by PC hardware 
+\item \textbf{Minix} 
+In Minix there are basically two groups. System calls relating to managing files and 
+system calls relating to managing processes. 
+\end{itemize}
+
+Unix has the notion of \textit{kernel space} and \textit{user space}. 
+\highlightdef{A \textbf{User Space} is source code outside the kernel.}
+\highlightdef{A \textbf{Kernel Space} is source code inside the kernel}
+We similarly think of code above the kernel as \textit{user level} code and 
+code inside the kernel as \textit{kernel level} code.
+For instructions in exection, the context is either in 
+\textit{user mode} and \textit{kernel mode}.
+
+This distinction of user versus kernel
+ was done to help organise a large codebase but also provide security/safety.
+When we look at memory later, we will see that there protection of 
+memory between user process and kernel processes. Any process that attempts to access 
+kernel memory will be terminated. We say that the kernel memory is protected from the user. 
+
+\begin{example}
+Explain the difference between \textit{user mode} and \textit{kernel mode}
+
+In user mode, execution is restricted in that not all instructions can be executed, nor can all registers or memory locations be accessed. In contrast, in kernel mode, execution can make use of all facilities offered by the hardware.
+\end{example}
+
+
+\begin{example}
+MINIX is organized as a client-server operating system. What does this mean?
+
+It means that MINIX consists of a (relatively small) kernel whose main task is to establish communication between client applications and speciﬁc service programs. These service programs run
+as normal processes (i.e., in user mode), but there is no way that a client application can directly
+communicate with them: the kernel always sits in between.
+\end{example}
