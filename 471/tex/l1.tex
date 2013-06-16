@@ -209,7 +209,7 @@ define updating.
 \begin{itemize}   
 \renewcommand{\labelitemi}{$\Box$}
 \item \textbf{Updating Heap}
-Given object $\chi$, we define $\chi[\iota \mapsto o]$ as a new, updated heap.
+Given heap $\chi$, we define $\chi[\iota \mapsto o]$ as a new, updated heap.
 This says informally, \textit{take the heap $\chi$ and update the 
 object at address $\iota$ to have object $o$}.
 
@@ -244,12 +244,13 @@ to update a given execution context.
 \frmrule
 
 % Slide 19 typo, update express has extra left bracket. 
-% Diagram has \chi_9 but should read \chi_1
+% Diagram has \chi_9 but should read \chi_1, also 
+% it should have good:true and owner has the pointer (not good)
 
 \begin{example}
 Modify the diagram below, so that it describes the 
-update: $\chi_1 = \chi_0[\iota 
-\mapsto (\chi_0(\iota_3)[\text{good} \mapsto \text{true}])]$
+update: $$\chi_1 = \chi_0[\iota_3
+\mapsto (\chi_0(\iota_3)[\text{good} \mapsto \text{true}])]$$
 
 \begin{figure}[h]
 \begin{tikzpicture}[
@@ -258,18 +259,22 @@ update: $\chi_1 = \chi_0[\iota
   draw, text width=2cm}
 ]
 
+  % text labels
+  \node (stackflabel) {$\phi_0$};
+  \node  [below=1cm of stackflabel] (heaplabel) {$\chi_0$};
+
+  % stack frame
   \node[rectangle split, rectangle split horizontal,
   rectangle split parts=2, rectangle split draw splits=false, draw, 
-  text width=1cm, anchor=center, text centered] 
+  text width=1cm, anchor=center, text centered, right=0.2cm of stackflabel]
   (stackframe){ this \nodepart{two} x};
 
+  % objects
   \node[object,rectangle split parts=3, below=0.5cm of stackframe] 
-  (book){ \nodepart{one} :Book \nodepart{two} good:
-    \nodepart{three} owner: false};
-
+  (book){ \nodepart{one} :Book \nodepart{two} good: false
+    \nodepart{three} owner: };
   \node[object,rectangle split parts=2, right=1cm of book] 
   (person1) {\nodepart{one} :Person \nodepart{two} like: null};
-
   \node[object, rectangle split parts=2, right=1cm of person1] 
   (person2) { \nodepart{one} :Person \nodepart{two} like:};
 
@@ -278,23 +283,86 @@ update: $\chi_1 = \chi_0[\iota
   \draw(person1.one split west) -- (person1.one split east);
   \draw(person2.one split west) -- (person2.one split east);
 
-  % draw lines connecting stack frame and objects
-  % this to book, x to person2, book to person1, person2 to person2
+  % draw lines connecting stack frame and objects. Respectively:
+  % this to book, x to person1, book to person2, person2 to person2
   \path[draw,>=triangle 45, ->] (stackframe.one south) -- ++(0,0.1) 
       -- ++(0,-0.4) -| (person2.north);
   \path[draw,>=triangle 45, ->] (stackframe.two east) -- ++(-0.2,0) 
       -| (person1.north);
-  \path[draw,>=triangle 45, ->] (book.two east) -- ++(-0.2,0) 
-      -- ++(0.6,0) -- ++(0,-1.2) -| (person2.south);
+  \path[draw,>=triangle 45, ->] (book.three east) -- ++(-0.2,0) 
+      -- ++(0.6,0) -- ++(0,-0.6) -| (person2.south);
   \path[draw,>=triangle 45, ->] (person2.two east) -- ++(-0.2,0) 
-      -- ++(0.6,0) -- ++(0, 0.2) -- (person2.east);
+      -- ++(1,0) |- (person2.east);
  
 
 \end{tikzpicture}
 \end{figure} 
 
-
 \end{example}
+
+\frmrule
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  % text labels
+  \node (stackflabel) {$\phi_0$};
+  \node  [below=1cm of stackflabel] (heaplabel) {$\chi_0$};
+
+  % stack frame
+  \node[rectangle split, rectangle split horizontal,
+  rectangle split parts=2, rectangle split draw splits=false, draw, 
+  text width=1cm, anchor=center, text centered, right=0.2cm of stackflabel]
+  (stackframe){ this \nodepart{two} x};
+
+  % objects
+  \node[object,rectangle split parts=3, below=0.5cm of stackframe] 
+  (book){ \nodepart{one} :Book \nodepart{two} good: true
+    \nodepart{three} owner: };
+  \node[object,rectangle split parts=2, right=1cm of book] 
+  (person1) {\nodepart{one} :Person \nodepart{two} like: null};
+  \node[object, rectangle split parts=2, right=1cm of person1] 
+  (person2) { \nodepart{one} :Person \nodepart{two} like:};
+
+  % draw lines on first nodepart splits for the objects
+  \draw(book.one split west) -- (book.one split east);
+  \draw(person1.one split west) -- (person1.one split east);
+  \draw(person2.one split west) -- (person2.one split east);
+
+  % draw lines connecting stack frame and objects. Respectively:
+  % this to book, x to person1, book to person2, person2 to person2
+  \path[draw,>=triangle 45, ->] (stackframe.one south) -- ++(0,0.1) 
+      -- ++(0,-0.4) -| (person2.north);
+  \path[draw,>=triangle 45, ->] (stackframe.two east) -- ++(-0.2,0) 
+      -| (person1.north);
+  \path[draw,>=triangle 45, ->] (book.three east) -- ++(-0.2,0) 
+      -- ++(0.6,0) -- ++(0,-0.6) -| (person2.south);
+  \path[draw,>=triangle 45, ->] (person2.two east) -- ++(-0.2,0) 
+      -- ++(1,0) |- (person2.east);
+ 
+
+\end{tikzpicture}
+\end{figure} 
+
+The only change is that the book.good is now true instead of false.
+
+Now if we were to write out formally the new heap.
+\[ \begin{array}{lllll}
+\chi_1(\iota_3) & = & ... \\ 
+\chi_1(\iota_4) & = & ... \\
+\chi_1(\iota_5) & = & ... \\
+\end{array}\] 
+
+\frameans{Complete the definition of $\chi_1$}{
+$\chi_1(\iota_3) = (\text{Book}, (\text{good} \mapsto \text{true}),
+\text{owner} \mapsto \iota_5)) $ \\ 
+$\chi_1(\iota_4) = (\text{Person}, (\text{like} \mapsto \iota_3))$ \\
+$\chi_1(\iota_5) = (\text{Person}, (\text{like} \mapsto \text{null}))$
+}
 
 
 
@@ -308,9 +376,26 @@ Also, changing directly the values of arguments isn't too common.
 
 \section{Interfence Rules Revision}
 
+We need to be describe the type system and the operational semantics of L1.
+We will do this using \textit{inference rules}. An
+inference rules have a name has a set of premisses, and one conclusion:
+There can be any number of premisses (including zero), 
+but there is always exactly one conclusion. 
 
+\inference[name]{$P_1$ \\ $P_2$ \\ ... \\ $P_n$}{$Q$}
 
-\inference[$It(1)$]{ s \\ d}{x}
+This can be read as \textit{if you can establish $P_1$, $P_2$ ... $P_n$, 
+then you can establish $Q$}". We often give an interfence rule a name 
+that is written on the side or nearby.
+
+Such inference rules can be used to give an \textit{axiomatic deﬁnition}.
+Once we have a set of axioms defined, we can combine 
+them to prove \textit{theorems}. For example, below shows 
+axiomatic definitions for the natural numbers. 
+
+We define the natural numbers using a successor function. 
+We can also give an axiomatic definitions for the addition relation.
+
 
 
 \section{Operational Semantics}
