@@ -165,7 +165,158 @@ one parameter called x. The second component of the stack frame gives a value to
 
 \frmrule
 
+\begin{example}
+Below shows how we an example of a stack frame $\phi_0$ and heap $\chi_0$ 
+for some execution context of $P_{BP}$. 
+
+
+Below shows how we might visualise the stack frame and heap.
+
+\end{example}
+
+\frmrule
+
+\begin{example}
+Below shows a visualising of the stack frame and heap for 
+some execution context of $P_{BP}$.
+Write out formally the heap $\chi_9$ and frame $\phi_9$ 
+which correspond to the following diagram:
+
+\end{example}
+
+
+\frmrule
+
+
+
+\section{Updating Execution Contexts}
+
+To describe an execution context update, we use the notation 
+$A[s \mapsto t]$ which says informally \textit{take A, and update
+$s$ to $t$}. Here $A$ is can be anything that makes up our execution context 
+(like the heap) and $s$ is a particular stateful element of $A$ that is to be 
+updated to the new element, $t$. This notation was used in 
+\textit{Models of Computation} when we defined the operation semantics of the 
+while language.
+
+In L1 we are interesting in updating two things, (i) fields inside objects and 
+(ii) the heap. Before we do this, recall that we defined an object as a 
+function with signature $object = ClassId \times (FieldId \rightarrow val)$ 
+and we defined the heap as a function with signature
+$heap = addr \rightarrow object$. With these signatures in mind lets see how 
+define updating.
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Updating Heap}
+Given object $\chi$, we define $\chi[\iota \mapsto o]$ as a new, updated heap.
+This says informally, \textit{take the heap $\chi$ and update the 
+object at address $\iota$ to have object $o$}.
+
+Firstly we have: $\chi[\iota \mapsto o](\iota) = o$. 
+This tells us that new heap has the object $o$ at address $\iota$.
+We also require, $\chi[\iota \mapsto o](\iota') = \chi(\iota')$ if $\iota' \neq \iota$. 
+This says that the address that are not $\iota$ must stay the same.
+The update only updates on field at a time. We want to change just $\iota$ and leave 
+the other addresses alone.
+\item \textbf{Updating Fields} 
+Given object $o$, we define $o[f \mapsto v]$ as a new, updated object.
+This says informally, \textit{take the object $o$ and update the 
+value of its field $f$ to have a new value $v$}.
+
+First the update must satisfy: $o[f \mapsto v] \downarrow_1 = o \downarrow_1$. 
+This is a requirement that the new object has the same class id as the old one.
+Next the update must change the field: $o[f \mapsto v] \downarrow_2 (f) = v$.
+The field $f$ of the new object must have value $v$. 
+Finally we require, $o[f \mapsto v] \downarrow_2 (f') = f'$ if $f' \neq f$. 
+This says that the fields that are not $f$ must stay the same.
+The update only updates on field at a time.
+\end{itemize}
+
+\highlightdef{\textbf{Updating}:
+$o[f \mapsto v]$ describes \textit{field update} and
+$\chi[z \mapsto v]$ describes \textit{heap update}}
+
+
+Let's see some examples of how we can use these two definitions 
+to update a given execution context.
+
+\frmrule
+
+% Slide 19 typo, update express has extra left bracket. 
+% Diagram has \chi_9 but should read \chi_1
+
+\begin{example}
+Modify the diagram below, so that it describes the 
+update: $\chi_1 = \chi_0[\iota 
+\mapsto (\chi_0(\iota_3)[\text{good} \mapsto \text{true}])]$
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  \node[rectangle split, rectangle split horizontal,
+  rectangle split parts=2, rectangle split draw splits=false, draw, 
+  text width=1cm, anchor=center, text centered] 
+  (stackframe){ this \nodepart{two} x};
+
+  \node[object,rectangle split parts=3, below=0.5cm of stackframe] 
+  (book){ \nodepart{one} :Book \nodepart{two} good:
+    \nodepart{three} owner: false};
+
+  \node[object,rectangle split parts=2, right=1cm of book] 
+  (person1) {\nodepart{one} :Person \nodepart{two} like: null};
+
+  \node[object, rectangle split parts=2, right=1cm of person1] 
+  (person2) { \nodepart{one} :Person \nodepart{two} like:};
+
+  % draw lines on first nodepart splits for the objects
+  \draw(book.one split west) -- (book.one split east);
+  \draw(person1.one split west) -- (person1.one split east);
+  \draw(person2.one split west) -- (person2.one split east);
+
+  % draw lines connecting stack frame and objects
+  % this to book, x to person2, book to person1, person2 to person2
+  \path[draw,>=triangle 45, ->] (stackframe.one south) -- ++(0,0.1) 
+      -- ++(0,-0.4) -| (person2.north);
+  \path[draw,>=triangle 45, ->] (stackframe.two east) -- ++(-0.2,0) 
+      -| (person1.north);
+  \path[draw,>=triangle 45, ->] (book.two east) -- ++(-0.2,0) 
+      -- ++(0.6,0) -- ++(0,-1.2) -| (person2.south);
+  \path[draw,>=triangle 45, ->] (person2.two east) -- ++(-0.2,0) 
+      -- ++(0.6,0) -- ++(0, 0.2) -- (person2.east);
+ 
+
+\end{tikzpicture}
+\end{figure} 
+
+
+\end{example}
+
+
+
+Note: there is no operation which changes the class of an object.
+Once an object has been created at runtime, it is has a \textit{static binding}
+to the class. Also notice that there is no operation to change the stack frame.
+In object-oriented languages, changing the values of this isn't usually done.
+Also, changing directly the values of arguments isn't too common. 
+
+
+
+\section{Interfence Rules Revision}
+
+
+
+\inference[$It(1)$]{ s \\ d}{x}
+
 
 \section{Operational Semantics}
+
+
+
+
 
 \section{Type System}
