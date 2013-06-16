@@ -203,8 +203,8 @@ In L1 we are interesting in updating two things, (i) fields inside objects and
 (ii) the heap. Before we do this, recall that we defined an object as a 
 function with signature $object = ClassId \times (FieldId \rightarrow val)$ 
 and we defined the heap as a function with signature
-$heap = addr \rightarrow object$. With these signatures in mind lets see how 
-define updating.
+$heap = addr \rightarrow object$. With these signatures in mind lets see 
+how to define updating.
 
 \begin{itemize}   
 \renewcommand{\labelitemi}{$\Box$}
@@ -378,11 +378,13 @@ Also, changing directly the values of arguments isn't too common.
 
 We need to be describe the type system and the operational semantics of L1.
 We will do this using \textit{inference rules}. An
-inference rules have a name has a set of premisses, and one conclusion:
-There can be any number of premisses (including zero), 
+inference rules have a set of \textit{premises}, and one \textit{conclusion}.
+There can be any number of premises (including zero), 
 but there is always exactly one conclusion. 
+We use a line to separate premises from the conclusion. 
+Premises (if any) are put above the line, the conclusion is put below the line.
 
-\inference[name]{$P_1$ \\ $P_2$ \\ ... \\ $P_n$}{$Q$}
+\inference[name]{P_1 & P_2 &  ... & P_n }{Q}
 
 This can be read as \textit{if you can establish $P_1$, $P_2$ ... $P_n$, 
 then you can establish $Q$}". We often give an interfence rule a name 
@@ -392,14 +394,88 @@ Such inference rules can be used to give an \textit{axiomatic deﬁnition}.
 Once we have a set of axioms defined, we can combine 
 them to prove \textit{theorems}. For example, below shows 
 axiomatic definitions for the natural numbers. 
+It is a recursive definition that makes use of a successor function.
 
-We define the natural numbers using a successor function. 
+\inference*[zero]
+{}
+{\text{Z is a natural number}}
+
+\inference*[succ]
+{\text{n is a natural number}}
+{\text{S(n) is a natural number}}
+
+By using these two axiomatic definitions, we
+can give a derivation for the theorem: \textit{$S(S(Z))$ is a natural number}.
+As you can see from the derivation, the idea is that we combine the axioms 
+together in a tree like structure to arrive at the result we want. 
+We match conclusion of one rule to the premise of another. 
+
+Given axioms, we can write axioms that represent operations.
+For example, we can write a definition for addition using two rules.
+
+\inference*[addzero]
+{}
+{\text{add(Z,n) = n}}
+
+\inference*[addsucc]
+{}
+{\text{add(Z,n) = n}}
+
+
+ 
 We can also give an axiomatic definitions for the addition relation.
 
 
 
-\section{Operational Semantics}
+\section{Operational Semantics I}
 
+We now define the operational semantics of L1.
+We will use \textit{big-step semantics}.
+Each premise and conclusion is written in terms 
+of a \textit{full evaluation}. 
+
+\highlightdef{We define \textbf{Big-Step Semantics} relation, $\leadsto$}
+
+We are given an input expression $e \in expr$ and our context
+of stack frame $\phi$ and heap $\chi$. This expression can 
+be evaluated to some value $v$. 
+By writing $(e, \phi, \chi) \leadsto (v,\phi, \chi')$ we are 
+saying that we can deterministically work out the value and 
+the state of the stack and heap afterwards. 
+When we evaluate this, 
+the stack frame won't change but the heap may.
+Since we know the stack won't change we can write 
+$(e, \phi, \chi) \leadsto (v, \chi')$ instead.
+
+\highlightdef{\textbf{Expression Evaluation}:
+$(e, \phi, \chi) \leadsto (v, \chi')$ denotes
+that $e$ evaluates to $v$ where the execution context starts 
+at $(\phi, \chi)$ and ends up at $(\phi, \chi')$}
+
+
+\inference*[val]
+{}
+{(v, \phi, \chi) \leadsto (v,\chi) }
+
+\inference*[this]
+{}
+{(\text{this}, (\iota_i, v), \chi) \leadsto (\iota_i,\chi) }
+
+\inference*[param]
+{}
+{(x, (\iota_i, v), \chi) \leadsto (v,\chi) }
+
+\inference[if-true]
+{(e, \phi, \chi) \leadsto (\text{true}, \chi') & 
+(e_1, \phi, \chi) \leadsto (v,\chi'')}
+{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
+\leadsto (v,\chi'') }
+
+\inference[if-false]
+{(e, \phi, \chi) \leadsto (\text{false}, \chi') & 
+(e_2, \phi, \chi) \leadsto (v,\chi'')}
+{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
+\leadsto (v,\chi'') }
 
 
 
