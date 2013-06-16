@@ -18,7 +18,7 @@ Every io-device has, inside, a \textit{device controller}.
 The device controller is simply \textit{more hardware}, 
 but this hardware has a particular purpose. 
 Device controllers are placed on an io device to give the cpu an interface for communicating
-with the device. In other words, it’s the io-device’s way of making it open to be 
+with the device. In other words, it's the io-device's way of making it open to be 
 accessed or to be \textit{controlled} by the cpu.
 
 \begin{figure}[h]
@@ -144,6 +144,8 @@ This is a hardware mapping.
 
 \begin{example}
 Below shows another way of doing seperate-memory mapping.
+Here we use general purpose registers to tell the processor 
+what address and value to use for io.
 \begin{lstlisting}
 mov dx, 40    ; Register address = 40
 mov ax, VALUE ; Register value
