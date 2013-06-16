@@ -1,0 +1,171 @@
+
+\chapter{L1 Language}
+
+
+\section{Introducing L1}
+
+L1 is a minimal object oriented language. 
+It has support for classes that contain fields and methods. 
+There is no support for inheritence, abstract classes, overriding
+or interfaces. 
+
+\highlightdef{ $Prog = ClassId \rightarrow 
+((FieldId \rightarrow type) 
+\times (MethodId) \rightarrow meth))$ }
+
+where 
+\begin{flalign*}
+meth &::= type\, m (type\, x) \{ x \} &\\
+type &::= \text{bool} | m \\
+e    &::= \text{if}\, e | \text{then}\, e\, \text{else}\, e | e.f | e.f := e 
+               | e.m(e) | \text{new}\, c | x | \text{this} | \text{true} 
+               | \text{false} | \text{null}
+\end{flalign*}
+with the identiﬁer conventions: $c \in ClassId$  for class identifiers,
+$f \in FieldId$ for field identifiers and $m \in MethId$  for class 
+identifiers.
+
+\frmrule
+
+
+\begin{example}
+Here is an example program
+\begin{lstlisting}
+class Book {
+	bool good;
+	Person owner;
+	bool readBy(Person x) {this.good := true}
+}
+class Person {
+	Book like;
+	Book meet (Person x) {this.like := x.like}
+}
+\end{lstlisting}
+
+which has the following representation:
+
+
+\[ \begin{array}{lllll}
+P_{PB} & = & \text{Book}   & \mapsto & ((\text{good} \mapsto \text{bool}, 
+                                   \text{owner} \mapsto \text{Person}), \\
+       &   &               &         &  (\text{readBy} \mapsto \text{bool readBy(Person x)}
+                                    \{ \text{this.good} := \text{true} \})), \\
+       &   & \text{Person} & \mapsto & ((\text{like} \mapsto \text{Book}), \\
+       &   &               &         &  (\text{meet} \mapsto \text{Book meet(Person x)}
+                                    \{ \text{this.like} := \text{x.like} \}))	 \\
+\end{array}\] 
+
+
+\end{example}
+
+
+
+\begin{example}
+For the following program, find the representation in L1.
+
+\begin{lstlisting}
+class B {
+	D m (E x) { true }
+	C f
+}
+\end{lstlisting}
+\end{example}
+
+\frmrule
+
+\[ \begin{array}{lllll}
+P_B & = & \text{B}   & \mapsto & ((\text{f} \mapsto \text{C}), \\ 
+    &   &            &         &  (\text{m} \mapsto \text{D m (E x)}
+                                    \{ \text{true} \})) \\
+\end{array}\] 
+
+\frmrule
+
+For program $P$, and identiﬁers $c$, $f$, $m$, we define 
+a \textit{field lookup function} and a \textit{method lookup functions}.
+
+\highlightdef{The \textbf{Field Lookup Function} 
+$\mathcal{F}(\text{P},\text{c},\text{f}) 
+= \text{P}(\text{c}) \downarrow_{1} (\text{f})$ \\
+The \textbf{Method Lookup Function} 
+$\mathcal{M}(\text{P},\text{c},\text{m}) 
+= \text{P}(\text{c}) \downarrow_{2} (\text{m})$}
+
+We also define the \textit{field set function} as 
+$\mathcal{Fs}(\text{P},\text{c}) = \{ f\, |\, 
+\mathcal{F}(\text{P},\text{c}, \text{f})\, \text{is defined} \}$
+and the \textit{method set function} as
+$\mathcal{Ms}(\text{P},\text{c}) = \{ m\, |\, 
+\mathcal{M}(\text{P},\text{c}, \text{m})\, \text{is defined} \}$
+If you give the field set function a program and class, it gives 
+you the fields inside that class. If you give the method set 
+function a program and a class, it outputs the methods inside the class. 
+
+\section{Stack Frames and Heaps}
+
+We now begin defining our runtime environment for our language. 
+Most object oriented language have the notion of \textit{objects}, 
+\textit{references}, \textit{stack frames} and a \text{heap}. 
+We will give a model for all of these.
+
+First we define an \textit{address} as a greek 
+iota symbol subscripted with a natural number. 
+For example, the first address is $\iota_0$, second address is $\iota_1$, and so on.
+We therefore define the set all possible addresses, the \textit{address set}, as follows.
+
+\highlightdef{\textbf{Address Set}: $addr = \{ \iota_i\, |\, i \in \{0,1,2,...\} \}$ }
+
+Under this scheme, we can work with a \textit{countable infinite} 
+number of memory addresses. 
+But we will see soon that when we define operational semantics
+we will involve a \textit{finite} a number of computation 
+steps limiting the computation to using a finite number of addresses. 
+So this model doesn't limit the applicability to real machines.
+
+Next we define a \textit{value} to be either true, false, null, \textit{or 
+an address} (in the same way addresses were a previously defined). 
+So the set of all possible values, 
+the \textit{value set}, can be defined as follows.
+
+\highlightdef{\textbf{Value Set}: $val = \{ \text{true, false, null} \} \cup addr $}
+
+A field can only have values that are taken from this value set. 
+In fact, this coindices exactly with how we define an \textit{object}. 
+An object can be seen as an instance 
+of a class where we assign values to the fields of the objects. 
+The values assigned have to be from the value set.
+
+\highlightdef{\textbf{Objects}: $object = ClassId \times (FieldId \rightarrow val)$}
+
+Recall that we said a value is either true, false, null, or 
+an address. Well, a value that is an address is called a
+ \textit{pointer} and say that the value points to the contents of memory.
+In our model, \textit{pointers only point to addresses on heap}. 
+Furthermore, the \textit{heap can only contain objects}.
+
+In other words, a pointer cannot point to other pointers nor can they point to the primitive language values: true. false, null. Pointers are implicit – there are 
+no pointers to pointers. To formalise this, we define our memory, the stack 
+frame $\phi$ and heap $\chi$.
+
+\highlightdef{\textbf{Heap}: $heap = addr \rightarrow object$}
+
+The heap is a function that maps address to objects. 
+This definition tells us that the heap can only store objects. 
+This is definition is also how we deference pointers. When we 
+dereference a pointer, the result is an object. This tells us that 
+pointers can only point to objects.
+
+Finally we have a stack frame.
+\highlightdef{\textbf{Stack Frame}: $stack frame = addr \times val$ }
+The stack frame is a tuple. The first component gives an address for the this
+pointer in the current execution context. We give an object on the heap for this 
+to point to. The second component of the tuple gives a value for x in the 
+current execution context. Recall that right now, our methods always have exactly
+one parameter called x. The second component of the stack frame gives a value to this x. 
+
+\frmrule
+
+
+\section{Operational Semantics}
+
+\section{Type System}
