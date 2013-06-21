@@ -1,0 +1,120 @@
+
+\chapter{Character Coding}
+
+
+\section{Character Encoding}
+
+There are several entities that need to be formally defined.
+First we will define the difference between a \textit{character} and a \textit{glyph}.
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Character} We give a formal definition of the term \textit{character} for 
+encoding. Here, a \textit{character} is defined is an abstract name or description for a shape or form. A character has \textit{no concrete shape}. You cannot write a character down on paper.
+A character cannot be printed on a computer screen. It's independent of any specific rendered image or font.
+\item \textbf{Glyph} A \textit{glyph} is a concrete visual representation that we can assign
+to a character. 
+\item \textbf{Code Point} Each glyph is assign a unique natural number 
+called a \textit{code point} or or \textit{code position}. 
+\item \textbf{Binary Encoding} Each glyph has a unique binary sequence or digits 
+assigned. This does not necessarily have to be the binary representation of the 
+code point. The binary encoding must also determine  the number of leading zeros.
+Some glyphs may be given different length binary encodings. 
+\end{itemize}
+
+A single character can have many glyphs associated.
+
+\begin{example}
+We define the character: \textit{the letter a}. 
+It is just a name or description. A glyph is a concrete way of writing 
+that can be assigned to \textit{the letter a}. 
+\end{example}
+
+A single glyph can have many characters associated. 
+
+\begin{example}
+We define two characters: \textit{the latin letter a}, \textit{the german letter a}. 
+As an example, the following glyph can be assigned to \textit{the latin letter a}
+or it can be assigned to \textit{the german letter a}. 
+\end{example}
+
+We can think of glyphs as being the syntax and characters as being the semantics.
+Glyphs are the concrete written symbols whereas charactes are descriptions or names 
+that give a meaning to these symbols. 
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  entity/.style={rectangle, draw, text centered}
+]
+\node[entity] (ch) {Character};
+\node[entity, right = 1.5cm of ch] (g) {Glyph};
+\node[entity, right = 1cm of g] (cp) {Code Point};
+\node[entity, right = 1cm of cp] (b) {Binary Encoding};
+
+\draw(g) -- (cp);
+\draw(cp) -- (b);
+\draw(ch) -- (g);
+
+% draw crowsfeet
+\node[right = 0.2cm of ch] (cf1) {};
+\node[left = 0.2cm of g] (cf2) {};
+\draw(cf1.west) -- (ch.10);
+\draw(cf1.west) -- (ch.0);
+\draw(cf1.west) -- (ch.350);
+\draw(cf2.east) -- (g.170);
+\draw(cf2.east) -- (g.180);
+\draw(cf2.east) -- (g.190);
+
+\end{tikzpicture}
+\end{figure} 
+
+\frmrule
+
+
+
+
+\section{ASCII}
+
+The use of the term \textit{Extended ASCII} has been criticized. 
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item It can be mistakenly interpreted that the term \textit{Extended ASCII} 
+is an update of the ASCII standard to include more than 128 characters. 
+This is wrong. The ASCII standard 
+contains 128 characters no more no less.
+\item It can be mistakenly interpreted that the term \textit{Extended ASCII} 
+unambiguously identifies a single encoding.
+There are many encodings that may be considerd to \textit{extend} ASCII.
+\end{itemize}
+ 
+
+\frmrule
+
+
+\section{CP-1252}
+
+CP-1252 or \textit{Windows-1252} is a character encoding of the Latin alphabet, 
+used by Windows in certain components.
+CP-1252 is similar to ISO 8859-15 (8-bit ASCII) except that different characters 
+are mapped to different code points. 
+
+\frmrule
+
+
+\section{Unicode I}
+
+
+
+
+
+\highlightdef{\textbf{UTF} stands for \textit{Unicode Transfer Format}}
+
+
+\begin{example}
+For the following UTF-8 binary encoding, what is the corresponding codepoint?
+\end{example}
+
+\begin{example}
+What is the UTF-8 encoding of the following codepoint?
+\end{example}
