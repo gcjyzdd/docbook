@@ -1,0 +1,192 @@
+
+\chapter{C++ Implementation I}
+
+
+
+
+
+\section{Data Members and Member Functions}
+
+
+
+
+
+Member functions like those shown are represented by normal functions, 
+with additional hidden parameter, \lstinline{pThis} representing \lstinline{this}. 
+To call a member function of an object, \lstinline{a.f(x,y,z)} we push 
+\textit{four} parameters. We push \lstinline{x}, \lstinline{y}, \lstinline{z}, 
+as usual however, we \textit{also} push the the pointer to \lstinline{a}'s object space. 
+This is what parameter \lstinline{pThis} will be bound to.
+
+
+\highlightdef{Given
+\lstinline{class S} \lstinline{\{} \lstinline{public} \lstinline{\{}
+\lstinline{void} \lstinline{f} \lstinline{(..)} \lstinline{\{} 
+\lstinline{..} \lstinline{\}} \lstinline{\}},
+to call member function \lstinline{f},
+we push an \textit{additional hidden parameter} to bind \lstinline{this} to an object.}
+
+We can have several objects of one class, but only one copy of the instructions exist.
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  \node[rectangle split, rectangle split horizontal, rectangle split parts=3, 
+  draw, text width=1cm, anchor=center, text centered]
+  (t){ 
+  \lstinline{S_f} 
+  \nodepart{two} 
+  \lstinline{S_g} 
+  \nodepart{three} 
+  \lstinline{T_f}
+  };
+
+\end{tikzpicture}
+\end{figure} 
+
+
+Noticed how we combined the class name and the member function name together 
+to create unique identifiers for instance method bodies. 
+If two classes have the same member function name, the identifier 
+$\langle \text{classid} \rangle \_ \langle \text{memfuncid} \rangle$
+will uniquely identiy the instance method. 
+
+This idea of creating unique identifers by combining names is 
+called \textit{name mangling}. It's a common technique used by compilers. 
+
+\highlightdef{Through \textit{name mangling} we can distinguish the 
+member functions of different classes}
+
+We didn't have to choose 
+$\langle \text{classid} \rangle \_ \langle \text{memfuncid} \rangle$
+for our name mangling. Instead, we could've used 
+$\langle \text{memfuncid} \rangle \_ \langle \text{classid} \rangle$.
+Name mangling is also used to distinguish overloaded member functions 
+for a given classes. The parameter names and types would be used in the 
+name mangling process.
+
+
+\section{Inheritence}
+
+
+
+
+
+\begin{lstlisting}
+class S {
+	void u() {}; void v() {}; void w() {};
+}
+class T : public S {
+	void u() {};
+}
+\end{lstlisting}
+
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  \node[rectangle split, rectangle split horizontal, rectangle split parts=4, 
+  draw, text width=1cm, anchor=center, text centered]
+  (t){ 
+  \lstinline{S_u} 
+  \nodepart{two} 
+  \lstinline{S_v} 
+  \nodepart{three} 
+  \lstinline{S_w}
+  \nodepart{four} 
+  \lstinline{T_u}
+  };
+
+\end{tikzpicture}
+\end{figure} 
+
+
+Below shows how fields are inherited.
+
+\begin{lstlisting}
+class S {
+	int a; int b; int c;
+}
+class T : public S {
+	int x;
+}
+\end{lstlisting}
+
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  \node[rectangle split, rectangle split horizontal, rectangle split parts=3, 
+  draw, text width=1cm, text centered]
+  (t1){ 
+  \lstinline{s1_a} 
+  \nodepart{two} 
+  \lstinline{s1_b} 
+  \nodepart{three} 
+  \lstinline{s1_c}
+  };
+
+  \node[rectangle split, rectangle split horizontal, rectangle split parts=4, 
+  draw, text width=1cm, text centered, below=1cm of t1]
+  (t2){ 
+  \lstinline{t1_a} 
+  \nodepart{two} 
+  \lstinline{t1_b} 
+  \nodepart{three} 
+  \lstinline{t1_c}
+  \nodepart{four} 
+  \lstinline{t1_x}
+  };
+
+
+\end{tikzpicture}
+\end{figure} 
+
+
+
+
+
+
+\section{Virtual Methods}
+
+
+The table used for accessing virtual member functions is called 
+the \textit{virtual table}, and a pointer to it is represented by a 
+field vtab. 
+
+\highlightdef{Only virtual member functions are put in virtual tables.}
+
+Normal (non-virtual) member functions will not be found in the method table 
+for a class. 
+
+We'll use a double letter convention 
+\lstinline{ff}, \lstinline{gg}, \lstinline{hh} ... for virtual member functions.
+
+\highlightdef{If $C < D$, then $\text{vtab}_C$ is a prefix of $\text{vtab}_D$}
+
+
+
+
+\section{High Level Target Language}
+
+We can get a high level view of the changes a compiler makes.
+We can abstract compilation features we are not interested in
+and concentrating the featues we are interested in. 
+For us, we are interested in how the compiler implements 
+features for oop. We are not interested in details such as 
+memory alignment, types, sizes, machine code instructions.
+In fact, we abstract enough so our view will be independent of 
+any machine's instruction set.
+

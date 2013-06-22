@@ -374,7 +374,7 @@ Also, changing directly the values of arguments isn't too common.
 
 
 
-\section{Interfence Rules Revision}
+\section{Inference Rules Revision}
 
 We need to be describe the type system and the operational semantics of L1.
 We will do this using \textit{inference rules}. An
@@ -384,7 +384,7 @@ but there is always exactly one conclusion.
 We use a line to separate premises from the conclusion. 
 Premises (if any) are put above the line, the conclusion is put below the line.
 
-\inference[name]{P_1 & P_2 &  ... & P_n }{Q}
+\inference[\textsc{rulename}]{P_1 & P_2 &  ... & P_n }{Q}
 
 This can be read as \textit{if you can establish $P_1$, $P_2$ ... $P_n$, 
 then you can establish $Q$}". We often give an interfence rule a name 
@@ -396,11 +396,11 @@ them to prove \textit{theorems}. For example, below shows
 axiomatic definitions for the natural numbers. 
 It is a recursive definition that makes use of a successor function.
 
-\inference*[zero]
+\inference*[\textsc{zero}]
 {}
 {\text{Z is a natural number}}
 
-\inference*[succ]
+\inference*[\textsc{succ}]
 {\text{n is a natural number}}
 {\text{S(n) is a natural number}}
 
@@ -413,11 +413,11 @@ We match conclusion of one rule to the premise of another.
 Given axioms, we can write axioms that represent operations.
 For example, we can write a definition for addition using two rules.
 
-\inference*[addzero]
+\inference*[\textsc{addzero}]
 {}
 {\text{add(Z,n) = n}}
 
-\inference*[addsucc]
+\inference*[\textsc{addsucc}]
 {}
 {\text{add(Z,n) = n}}
 
@@ -433,6 +433,7 @@ We now define the operational semantics of L1.
 We will use \textit{big-step semantics}.
 Each premise and conclusion is written in terms 
 of a \textit{full evaluation}. 
+We can think of this as an evaluation or an execution.
 
 \highlightdef{We define \textbf{Big-Step Semantics} relation, $\leadsto$}
 
@@ -440,7 +441,7 @@ We are given an input expression $e \in expr$ and our context
 of stack frame $\phi$ and heap $\chi$. This expression can 
 be evaluated to some value $v$. 
 By writing $(e, \phi, \chi) \leadsto (v,\phi, \chi')$ we are 
-saying that we can deterministically work out the value and 
+saying that we can work out the value and 
 the state of the stack and heap afterwards. 
 When we evaluate this, 
 the stack frame won't change but the heap may.
@@ -453,17 +454,91 @@ that $e$ evaluates to $v$ where the execution context starts
 at $(\phi, \chi)$ and ends up at $(\phi, \chi')$}
 
 
-\inference*[val]
+\inference*[\textsc{val}]
 {}
 {(v, \phi, \chi) \leadsto (v,\chi) }
 
-\inference*[this]
+\inference*[\textsc{this}]
 {}
 {(\text{this}, (\iota_i, v), \chi) \leadsto (\iota_i,\chi) }
 
-\inference*[param]
+\inference*[\textsc{param}]
 {}
 {(x, (\iota_i, v), \chi) \leadsto (v,\chi) }
+
+\inference[\textsc{if-true}]
+{(e, \phi, \chi) \leadsto (\text{true}, \chi') & 
+(e_1, \phi, \chi) \leadsto (v,\chi'')}
+{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
+\leadsto (v,\chi'') }
+
+\inference[\textsc{if-false}]
+{(e, \phi, \chi) \leadsto (\text{false}, \chi') & 
+(e_2, \phi, \chi) \leadsto (v,\chi'')}
+{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
+\leadsto (v,\chi'') }
+
+\inference[\textsc{field}]
+{(\text{e}, \phi, \chi) \leadsto (\iota, \chi')}
+{(\text{e.f}, \phi, \chi) \leadsto (\chi'(\iota)(f),\chi') }
+
+
+\frmrule
+
+\begin{example}
+Write out the derivation for evaluating the following expression
+under the given evaluation context, $\phi_0$, $\chi_0$. 
+
+$$\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, \text{false}$$
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  % text labels
+  \node (stackflabel) {$\phi_0$};
+  \node  [below=1cm of stackflabel] (heaplabel) {$\chi_0$};
+
+  % stack frame
+  \node[rectangle split, rectangle split horizontal,
+  rectangle split parts=2, rectangle split draw splits=false, draw, 
+  text width=1cm, anchor=center, text centered, right=0.2cm of stackflabel]
+  (stackframe){ this \nodepart{two} x};
+
+  % objects
+  \node[object,rectangle split parts=3, below=0.5cm of stackframe] 
+  (book){ \nodepart{one} :Book \nodepart{two} good: true
+    \nodepart{three} owner: };
+  \node[object,rectangle split parts=2, right=1cm of book] 
+  (person1) {\nodepart{one} :Person \nodepart{two} like:};
+  \node[object, rectangle split parts=2, right=1cm of person1] 
+  (person2) { \nodepart{one} :Person \nodepart{two} like:null};
+
+  % draw lines on first nodepart splits for the objects
+  \draw(book.one split west) -- (book.one split east);
+  \draw(person1.one split west) -- (person1.one split east);
+  \draw(person2.one split west) -- (person2.one split east);
+
+  % draw lines connecting stack frame and objects. Respectively:
+  % this to book, x to person1, book to person2, person1 to book
+  \path[draw,>=triangle 45, ->] (stackframe.one south) -- ++(0,0.1) 
+      -- ++(0,-0.3) -| (book.north);
+  \path[draw,>=triangle 45, ->] (stackframe.two east) -- ++(-0.2,0) 
+      -| (person1.north);
+  \path[draw,>=triangle 45, ->] (book.three south) -- ++(0,0.1) 
+      -- ++(0,-0.4) -| (person2.south);
+  \path[draw,>=triangle 45, ->] (person1.three south) -- ++(0,0.1) 
+      -- ++(0,-0.4) -- ++(-1.5,0) |- (book.east);
+ 
+
+\end{tikzpicture}
+\end{figure} 
+
+\frmrule
+
 
 \inference[if-true]
 {(e, \phi, \chi) \leadsto (\text{true}, \chi') & 
@@ -471,11 +546,12 @@ at $(\phi, \chi)$ and ends up at $(\phi, \chi')$}
 {(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
 \leadsto (v,\chi'') }
 
-\inference[if-false]
-{(e, \phi, \chi) \leadsto (\text{false}, \chi') & 
-(e_2, \phi, \chi) \leadsto (v,\chi'')}
-{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
-\leadsto (v,\chi'') }
+
+
+
+
+
+\end{example}
 
 
 
