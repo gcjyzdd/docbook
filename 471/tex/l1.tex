@@ -1,23 +1,35 @@
 
-\chapter{L1 Language}
+\chapter{$\mathcal{L}_1$ Language}
 
 
-\section{Introducing L1}
+\section{Introducing $\mathcal{L}_1$}
 
-L1 is a minimal object oriented language. 
-It has support for classes that contain fields and methods. 
+Here we define a new language $\mathcal{L}_1$ to begin our study of 
+object-oriented language. 
+$\mathcal{L}_1$ has support for classes that contain fields and methods. 
 There is no support for inheritence, abstract classes, overriding
 or interfaces. 
 
+The work in this chapter will be on giving a formal description of $\mathcal{L}_1$ 
+consists of
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Syntax} 
+\item \textbf{Operational Semantics} 
+\item \textbf{Type System} We will see how to prove \textit{type soundness}, 
+demonstrated through an important theorem called the \textit{subject reduction theorem}.
+\end{itemize} 
+
+The \textit{structure} of an $\mathcal{L}_1$ program is defined by the function
 \highlightdef{ $Prog = ClassId \rightarrow 
 ((FieldId \rightarrow type) 
-\times (MethodId) \rightarrow meth))$ }
+\times (MethodId \rightarrow meth))$ }
 
-where 
+where $meth$ and $type$ have a syntax defined by:
 \begin{flalign*}
 meth &::= type\, m (type\, x) \{ x \} &\\
 type &::= \text{bool} | m \\
-e    &::= \text{if}\, e | \text{then}\, e\, \text{else}\, e | e.f | e.f := e 
+e    &::= \text{if}\, e \text{then}\, e\, \text{else}\, e | e.f | e.f := e 
                | e.m(e) | \text{new}\, c | x | \text{this} | \text{true} 
                | \text{false} | \text{null}
 \end{flalign*}
@@ -61,7 +73,7 @@ P_{PB} & = & \text{Book}   & \mapsto & ((\text{good} \mapsto \text{bool},
 
 
 \begin{example}
-For the following program, find the representation in L1.
+For the following program, find the representation in $\mathcal{L}_1$.
 
 \begin{lstlisting}
 class B {
@@ -199,7 +211,7 @@ updated to the new element, $t$. This notation was used in
 \textit{Models of Computation} when we defined the operation semantics of the 
 while language.
 
-In L1 we are interesting in updating two things, (i) fields inside objects and 
+In $\mathcal{L}_1$ we are interesting in updating two things, (i) fields inside objects and 
 (ii) the heap. Before we do this, recall that we defined an object as a 
 function with signature $object = ClassId \times (FieldId \rightarrow val)$ 
 and we defined the heap as a function with signature
@@ -376,7 +388,7 @@ Also, changing directly the values of arguments isn't too common.
 
 \section{Inference Rules Revision}
 
-We need to be describe the type system and the operational semantics of L1.
+We need to be describe the type system and the operational semantics of $\mathcal{L}_1$.
 We will do this using \textit{inference rules}. An
 inference rules have a set of \textit{premises}, and one \textit{conclusion}.
 There can be any number of premises (including zero), 
@@ -429,7 +441,7 @@ We can also give an axiomatic definitions for the addition relation.
 
 \section{Operational Semantics I}
 
-We now define the operational semantics of L1.
+We now define the operational semantics of $\mathcal{L}_1$.
 We will use \textit{big-step semantics}.
 Each premise and conclusion is written in terms 
 of a \textit{full evaluation}. 
@@ -453,6 +465,9 @@ $(e, \phi, \chi) \leadsto (v, \chi')$ denotes
 that $e$ evaluates to $v$ where the execution context starts 
 at $(\phi, \chi)$ and ends up at $(\phi, \chi')$}
 
+Below we introduce a few definitions to get us started. 
+These rules (plus a few others later) make up operation semantics of 
+$\mathcal{L}_1$.
 
 \inference*[\textsc{val}]
 {}
@@ -469,7 +484,7 @@ at $(\phi, \chi)$ and ends up at $(\phi, \chi')$}
 \inference[\textsc{if-true}]
 {(e, \phi, \chi) \leadsto (\text{true}, \chi') & 
 (e_1, \phi, \chi) \leadsto (v,\chi'')}
-{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
+{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi') 
 \leadsto (v,\chi'') }
 
 \inference[\textsc{if-false}]
@@ -480,7 +495,7 @@ at $(\phi, \chi)$ and ends up at $(\phi, \chi')$}
 
 \inference[\textsc{field}]
 {(\text{e}, \phi, \chi) \leadsto (\iota, \chi')}
-{(\text{e.f}, \phi, \chi) \leadsto (\chi'(\iota)(f),\chi') }
+{(\text{e.f}, \phi, \chi) \leadsto (\chi'(\iota)\downarrow_{2}(f),\chi') }
 
 
 \frmrule
@@ -539,21 +554,504 @@ $$\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, \text{false}$
 
 \frmrule
 
+It helps to work from the bottom up.
+The expression only pattern-matches the bottom of 
+\textsc{if-true} and \textsc{if-false}. We can 
+see from the diagram that \text{this.good} is true.
+So we can guess that the last rule must be \textsc{if-true}. 
+We just need to work out how to branch upwards.
+Hopefully we will reach the base cases allowing our derivation tree complete. 
 
-\inference[if-true]
-{(e, \phi, \chi) \leadsto (\text{true}, \chi') & 
-(e_1, \phi, \chi) \leadsto (v,\chi'')}
-{(\text{if} \,e\, \text{then} \,e_1\, \text{else} \,e_2, \phi, \chi) 
-\leadsto (v,\chi'') }
+
+\inference[\textsc{if-true}]
+{
+   \dotsm & \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+We can start by evaluating $\text{this.good}$.
+
+\inference[\textsc{if-true}]
+{
+   (\text{this.good}, \phi_0, \chi_0) \leadsto \dotsm & \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+\frmrule
+
+If we do pattern-matching on conclusions for $\text{this.good}$,
+the only matching conclusion is that in the \textsc{field} rule.
+So we should branch upwards using the \textsc{field} rule.
 
 
+\inference[\textsc{if-true}]
+{
+   \inference[\textsc{field}]
+   {\dotsm}
+   {(\text{this.good}, \phi_0, \chi_0) \leadsto \dotsm}
+   & \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
 
+This means we need to evaluate $\text{this}$.
 
+\inference[\textsc{if-true}]
+{
+   \inference[\textsc{field}]
+   {(\text{this}, \phi_0, \chi_0) \leadsto \dotsm}
+   {(\text{this.good}, \phi_0, \chi_0) \leadsto \dotsm}
+   & \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+\frmrule
+
+If we do pattern-matching on conclusions for $\text{this}$,
+the only matching conclusion is that in the \textsc{this} rule.
+So we should branch upwards using the \textsc{this} rule.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto \dotsm}
+  }
+  {
+  (\text{this.good}, \phi_0, \chi_0) \leadsto \dotsm
+  }
+  & \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+Given that $\phi_0 = (\iota_3, \iota_4)$,
+by using the \textsc{this} rule we can
+complete the evaluation for this.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+  (\text{this.good}, \phi_0, \chi_0) \leadsto \dotsm
+  }
+  & \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+Now we can move downwards and complete the missing evaluations. 
+According to \textsc{field}, the field access evaluates to 
+$\chi_0(\iota_3) \downarrow_{2} (\text{good})$ which equals ...
+
+\frameans{}{true}
+
+So we have 
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+  (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  & \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
 
 
 \end{example}
 
 
+
+Now that we've done the left subtree for \textsc{if-true},
+let's do the right subtree. This begins by evaluating $\text{x.like}$.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+  (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  & 
+  (\text{x.like}, \phi_0, \chi_0) \leadsto \dotsm
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+\frmrule
+
+If we do pattern-matching on conclusions on the expression $\text{x.like}$,
+the only matching conclusion is that in the \textsc{field} rule.
+So we will branch upwards using the \textsc{field} rule.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+  (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  &
+  \inference[\textsc{field}]
+  {
+  \dotsm
+  }
+  {
+  (\text{x.like}, \phi_0, \chi_0) \leadsto \dotsm
+  } 
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+This means we need to evaluate x.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+  (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  &
+  \inference[\textsc{field}]
+  {
+  (\text{x}, \phi_0, \chi_0) \leadsto \dotsm
+  }
+  {
+  (\text{x.like}, \phi_0, \chi_0) \leadsto \dotsm
+  } 
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+\frmrule
+
+Now we do pattern matching checking which 
+rules match expression $x$ in their conclusions.
+The only matching conclusion is in the \textsc{param} rule.
+So we will branch upwards using the \textsc{param} rule.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+  (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  &
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{param}]
+    {}
+    {(\text{x}, \phi_0, \chi_0) \leadsto \dotsm}
+  }
+  {
+  (\text{x.like}, \phi_0, \chi_0) \leadsto \dotsm
+  } 
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+Given that $\phi_0 = (\iota_3, \iota_4)$,
+by using the \textsc{param} rule we can
+complete the evaluation for x.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+    (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  &
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{param}]
+    {}
+    {(\text{x}, \phi_0, \chi_0) \leadsto (\iota_4, \chi_0)}
+  }
+  {
+  (\text{x.like}, \phi_0, \chi_0) \leadsto \dotsm
+  } 
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+\frmrule
+
+Now we can move downwards and complete the missing evaluations. 
+According to \textsc{field}, the field access evaluates to 
+$\chi_0(\iota_4) \downarrow_{2} (\text{like})$ which equals ...
+
+\frameans{}{$\iota_3$}
+
+So the field evaluation gives 
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+    (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  &
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{param}]
+    {}
+    {(\text{x}, \phi_0, \chi_0) \leadsto (\iota_4, \chi_0)}
+  }
+  {
+  (\text{x.like}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)
+  } 
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+\dotsm
+}
+
+We can finish the evaluation of the if statement.
+
+\inference[\textsc{if-true}]
+{
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{this}]
+    {}
+    {(\text{this}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)}
+  }
+  {
+    (\text{this.good}, \phi_0, \chi_0) \leadsto (\text{true}, \chi_0)
+  }
+  &
+  \inference[\textsc{field}]
+  {
+    \inference[\textsc{param}]
+    {}
+    {(\text{x}, \phi_0, \chi_0) \leadsto (\iota_4, \chi_0)}
+  }
+  {
+  (\text{x.like}, \phi_0, \chi_0) \leadsto (\iota_3, \chi_0)
+  } 
+}
+{
+(\text{if} \,(\text{this.good})\, \text{x.like} \, \text{else} \, 
+\text{false}, \phi_0, \chi_0)
+\leadsto
+(\iota_3, \chi_0)
+}
+
+
+\section{Operational Semantics II}
+
+
+We now introduce more rules.
+
+\begin{prooftree}
+\AxiomC{$(e,\phi, \chi) \leadsto (\iota, \chi')$}
+\AxiomC{$(e',\phi, \chi') \leadsto (v, \chi'')$}
+\LeftLabel{\textsc{assign}}
+\RightLabel{$\begin{smallmatrix}
+                    \chi'(\iota) \text{ is defined} \\
+                    \chi''' = \chi''[\iota \mapsto \chi''(\iota)[f \mapsto v]]
+                  \end{smallmatrix}$}
+\BinaryInfC{$(\text{e.f := e'},\phi, \chi) \leadsto (v, \chi''')$}
+\end{prooftree}
+
+\begin{prooftree}
+\def\defaultHypSeparation{\hskip .01in}
+\AxiomC{$(e_0,\phi, \chi_1) \leadsto (\iota, \chi_2)$}
+\AxiomC{$(e_1,\phi, \chi_2) \leadsto (v, \chi_3)$}
+\AxiomC{$(e_2,\phi, \chi_3) \leadsto (v, \chi_4)$}
+\LeftLabel{\textsc{method}}
+\RightLabel{$\begin{smallmatrix}
+                    \chi_3(\iota) \downarrow_1 = \text{c} \\
+                    \mathcal{M}(\text{P},\text{c}, \text{m})\, = t_1 m (t_2 x) \{ e_2 \}
+                  \end{smallmatrix}$}
+\TrinaryInfC{$(\text{e}_0.\text{m}(\text{e}_1),\phi, \chi) \leadsto (v, \chi_4)$}
+\end{prooftree}
+
+
+\begin{prooftree}
+\def\defaultHypSeparation{\hskip .01in}
+\AxiomC{ }
+\LeftLabel{\textsc{new}}
+\RightLabel{$\begin{smallmatrix}
+              \chi' = \chi[\iota \mapsto (c, (f_1 \mapsto v_1, \dotsm, f_r \mapsto v_r))] \\
+              \mathcal{Fs}(\text{P},\text{c})\, = \{f_1, \dotsm, f_r\} \\
+              \forall l \in 1, ..., r: \; v_l \text{ is init val for} 
+              \mathcal{F}(\text{P},\text{c},\text{f}_1)
+            \end{smallmatrix}$}
+\UnaryInfC{$(\text{new c},\phi, \chi) \leadsto (\iota, \chi')$}
+\end{prooftree}
+
+\rotatebox{90}{\parbox{4.5cm}{Long Header Over Several Lines}}
+
+
+
+\begin{example}
+Write out the derivation for executing \\
+(a) $\text{x.like.good := false}, \phi_0, \chi_0$ \\
+(b) $\text{this.owner.meet(x)}, \phi_0, \chi_0$
+for the following execution context:
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  % text labels
+  \node (stackflabel) {$\phi_0$};
+  \node  [below=1cm of stackflabel] (heaplabel) {$\chi_0$};
+
+  % stack frame
+  \node[rectangle split, rectangle split horizontal,
+  rectangle split parts=2, rectangle split draw splits=false, draw, 
+  text width=1cm, anchor=center, text centered, right=0.2cm of stackflabel]
+  (stackframe){ this \nodepart{two} x};
+
+  % objects
+  \node[object,rectangle split parts=3, below=0.5cm of stackframe] 
+  (book){ \nodepart{one} :Book \nodepart{two} good: true
+    \nodepart{three} owner: };
+  \node[object,rectangle split parts=2, right=1cm of book] 
+  (person1) {\nodepart{one} :Person \nodepart{two} like:};
+  \node[object, rectangle split parts=2, right=1cm of person1] 
+  (person2) { \nodepart{one} :Person \nodepart{two} like:null};
+
+  % draw lines on first nodepart splits for the objects
+  \draw(book.one split west) -- (book.one split east);
+  \draw(person1.one split west) -- (person1.one split east);
+  \draw(person2.one split west) -- (person2.one split east);
+
+  % draw lines connecting stack frame and objects. Respectively:
+  % this to book, x to person1, book to person2, person1 to book
+  \path[draw,>=triangle 45, ->] (stackframe.one south) -- ++(0,0.1) 
+      -- ++(0,-0.3) -| (book.north);
+  \path[draw,>=triangle 45, ->] (stackframe.two east) -- ++(-0.2,0) 
+      -| (person1.north);
+  \path[draw,>=triangle 45, ->] (book.three south) -- ++(0,0.1) 
+      -- ++(0,-0.4) -| (person2.south);
+  \path[draw,>=triangle 45, ->] (person1.three south) -- ++(0,0.1) 
+      -- ++(0,-0.4) -- ++(-1.5,0) |- (book.east);
+ 
+
+\end{tikzpicture}
+\end{figure} 
+
+
+\end{example}
+
+
+\frmrule
+
+There is no rule that changes a object completely.
+We can only update objects, on a field-by-field basis.
+Also notice that we can add objects to the heap using \textsc{new},
+but there are no rules which remove objects from the heap. 
+We could end up with objects that are never referenced. 
+An extension to L1 could be to implement a garbage-collecting scheme.
+
+
+
+
+\section{Operational Semantics III}
+
+
+\section{Proving Determinism}
 
 
 \section{Type System}
