@@ -1,13 +1,4 @@
 
-
-\chapter{Data Structures}
-
-
-We careful and notice the difference between \lstinline{data} and \lstinline{type} declarations.
-A type declaration defines a new name for an existing data type.
-A data declaration defines a new data structure that consists of a collection of constructors for building that data type.
-
-
 \chapter{Typeclasses}
 
 We are familar with types. Types have been important for writing function 
@@ -45,12 +36,11 @@ For now, ignore the \lstinline{a} and look inside, we have the collection of fun
 We are simply stating that \lstinline{f1}
 has a certain signature. We only give its names and its type. 
 There is \textit{no body} for \lstinline{f1}, it's \textit{just the signature}. 
-Similarly for \lstinline{f2}, \lstinline{f3}, \lstinline{...}, we have given just their name 
-and what their type is.
-
+Similarly for \lstinline{f2}, \lstinline{f3}, \lstinline{...}, 
+we have given just their name and what their type is. 
 Finally, recall that there is an \lstinline{a} just after \lstinline{class T}. 
 This is the \textit{typeclass parameter}. The typeclass parameter may be used in any of the 
-type definitions for the functions. We will shortly see why this is useful. 
+type definitions for \lstinline{f1}, \lstinline{f2}, \lstinline{...} \lstinline{fn}.
 
 Now that we have a typeclass \lstinline{T} defined, we can begin to define 
 \textit{typeinstances} of \lstinline{T}. 
@@ -188,6 +178,13 @@ to how the output of an impure function gives a value that is inconsistent or no
 \item In the third case, we have a box where the value has 
 already disappeared. Once the value has disappeared, it cannot come back. 
 \end{itemize}
+
+
+\highlightdef{A \textbf{Monad} is a typeclass designed for specifying
+\textit{function composition} on functions 
+that produce \textit{accumulating results} together.}
+
+
 
 
 
