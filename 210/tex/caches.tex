@@ -1,0 +1,266 @@
+
+\chapter{Cache Memory}
+
+
+\section{Introducing Caches}
+
+Recall that a \textit{word} is whatever object is being addressed by memory addresses. 
+The \textit{word-size} is the size of whatever object is being addressed. 
+The most common word-size is 8 bits or 1 byte. 
+This is called \textit{byte-addressing}. We will assume byte-addressing.  
+
+
+\highlightdef{We assume \textbf{byte-addressing}.
+Each address numbers a byte stored in memory} 
+
+\highlightdef{A cache \textbf{block} is a contiguous group of $b$ bytes.} 
+where $b$ is some power, $B$, of two: $b = 2^{B}$. 
+Despite the name \textit{cache} block, a cache block doesn't have to 
+be cache memory. We can think of it as being any group of $b$ bytes. 
+In fact, the contents of $b$ contiguous main memory addresses form 
+a cache block.
+
+To uniquely identify each byte within a single block, we need $B$ bits. 
+We are using word-addressing and so there are $B$ addresses per block.
+
+\begin{example}
+Given an address \lstinline{x}, how do we find the main memory 
+block it belongs to?We can find a formula that determines the first address 
+and last address 
+of the block \lstinline{x} belongs to.
+\end{example}
+
+\frameans{}{first: $\lfloor x/b \rfloor \times b$ \\
+last: $\lceil x/b \rceil \times b - 1$}
+
+Here we are using the \textit{floor to multiples of $k$},
+and \textit{ceil to multiples of $k$} formulas.
+Rather than flooring and ceiling to the nearest 1, the formulas
+$\lfloor r/k \rfloor \times k$ and $\lceil r/k \rceil \times k$
+take the floor and ceiling of $r$ to multiples of $k$. 
+Note that $\lceil x/b \rceil \times b - 1 = \lfloor x/b \rfloor \times b + (b-1)$.
+This is true because $\lceil t \rceil = \lfloor t \rfloor + 1$.
+
+
+\highlightdef{A \textbf{cache line} is a location in the cache} 
+
+In the same way that we give address to main memory locations, 
+we can \textit{number the cache lines} of a cache. 
+Each cache line has exactly one block of data.
+We say the block occupies a cache line or sits on the cache line. 
+
+Besides a cache line having an number, we also have a \textit{side store} for the 
+line. The side store of a line stores extra information about the data that sits 
+on that line. So each cache line is a function: 
+$L(\text{\lstinline{n}}) =
+\langle \text{\lstinline{data}}, \text{\lstinline{s}} \rangle$
+where \lstinline{n} is the number of the line,
+\lstinline{s} is side information store for that side and
+\lstinline{data} is the \textit{cache block} that is stored (sits) on the line.
+
+\begin{example}
+A cache has cache lines that requires $s$ bits to store side information 
+Each line stores blocks of $b$ bytes.
+The number of cache lines is a power of two, and exactly $T$ bits 
+give binary values that uniquely address the cache line number. 
+
+How many bits are needed for this cache?
+\end{example}
+
+\frameans{}{bits required: $(s + 8b) \times 2^T$}
+
+% Define capacity of cache
+% Cache Size versus cache capacity
+
+
+\section{Direct-Mapped Caches}
+
+
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  entity/.style={rectangle, draw, minimum height=2em, minimum width=4em, fill=white, drop shadow},
+]
+  \node [entity] (cache) {cache};
+  \node [entity, right=1.2cm of cache] (map) {mapping scheme};
+  \node [entity, right=1.2cm of map] (ram) {main memory};
+  \draw [draw, ->] (map) -- (cache);
+  \draw [draw, ->] (map) -- (ram);
+  \node [below=0.1cm of cache] () {\textit{cache line}};
+  \node [below=0.1cm of ram] () {\textit{memory addresses}};
+\end{tikzpicture}
+\end{figure} 
+
+\frmrule
+
+\begin{example}
+
+Here is an artificial example with a very small memory and very small cache.
+This unrealistic example will show how a direct mapped cache works. 
+
+\begin{tikzpicture}[
+      start chain=1 going right,
+      node distance=0mm,
+      addr/.style={draw, on chain=1, minimum height=1cm,
+      text centered, text width=0.1em, inner sep=1.7pt}
+  ]
+
+  \foreach \xx in {0,1,2,3} {
+    \foreach \yy in {0,1} {
+      \foreach \zz in {0,1,2,3,4,5,6,7} {
+        \node [addr] (\xx\yy\zz) {};
+        %\draw[|-|, label={[above]{\zz}}] 
+        %  let \p1 = (\xx\yy\zz.west), \p2 = (\xx\yy\zz.east)
+        %  in (\x1, 1.2cm) to [above, font=\tiny] node {\zz} (\x2, 1.2cm);
+        \node [font=\tiny, above=0.05em of \xx\yy\zz,
+        inner sep=1pt
+        ] {\zz};
+      }
+      \draw[|-|, label={[above]{\yy}}] 
+        let \p1 = (\xx\yy0.west), \p2 = (\xx\yy7.east)
+        in (\x1, 1.0cm) to [above, font=\small] node {\yy} (\x2, 1.0cm);
+    }
+    \draw[|-|, label={[above]{\xx}}] 
+      let \p1 = (\xx00.west), \p2 = (\xx17.east)
+      in (\x1, 1.5cm) to [above] node {\xx} (\x2, 1.5cm);
+  }
+  \node [left=0.2cm of 000, rotate=90, font=\small, anchor=center] 
+  (memlabel) {memory};
+  \node [right=of memlabel, xshift=-0.25cm] (zlabel) {z};
+  \node [above=of zlabel] (ylabel) {y};
+  \node [above=of ylabel] (xlabel) {x};
+  % \draw[dashed] (b\y.one split north) -- (b\y.one split south);
+\end{tikzpicture}
+
+In total, we have $4 \times 2 \times 8 = 64$ addresses where each address 
+stores one byte. 
+
+\end{example}
+
+
+
+
+
+
+
+\highlightdef{A \textbf{direct-mapped cache} 
+uses a mapping scheme with two \textit{functions}} 
+
+We use a function for each direction: one function for 
+mapping lines to addresses and one function mapping addresses to lines. 
+This cache is said to be \textit{directly mapped} because we are using 
+\textit{functions}. An address maps to exactly \textit{one} line. 
+A cache line maps to exactly to \textit{one} address.
+We are using \textit{functions}, by definition, they give a \textit{single output}.
+
+Assume that the mapping scheme using block size $b$. 
+\begin{itemize}	
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{$\text{Memory Address} \rightarrow \text{Cache Line}$} 
+A $b$-byte block in main memory given by:
+$ [\langle \text{\lstinline{x}}, \text{\lstinline{y}}, 0 \rangle
+\dotsm \langle \text{\lstinline{x}}, \text{\lstinline{y}}, b-1 \rangle]$
+is mapped to \textit{exactly one} $b$-byte cache block sitting on a line with the 
+number given by
+$$C([\langle \text{\lstinline{x}}, \text{\lstinline{y}}, 0 \rangle
+\dotsm \langle \text{\lstinline{x}}, \text{\lstinline{y}}, b-1 \rangle]
+= \text{\lstinline{y}}$$
+
+\item \textbf{$\text{Cache Block} \rightarrow \text{Memory Blocks}$} 
+A $b$-byte block cache block that sits on a cache line with number \lstinline{n}
+is mapped to \textit{exactly one} $b$-byte block in main memory given by 
+$$M(\text{\lstinline{n}}) = [
+\langle \text{\lstinline{t}}, \text{\lstinline{n}}, 0 \rangle
+\dotsm
+\langle \text{\lstinline{t}}, \text{\lstinline{n}}, b-1 \rangle]$$
+where \lstinline{t} is a value read from the side store for line \lstinline{n}.
+\end{itemize}
+
+
+Below shows a diagram that shows how these functions create the 
+mapping scheme between memory addresses and cache blocks. 
+
+
+
+\begin{figure}[h]
+\begin{tikzpicture}[]
+  \tikzstyle{every node}=[font=\small]
+  \node[rectangle split,rectangle split parts=12, draw, 
+  text width=2cm, anchor=center, text centered, fill=white, drop shadow, rotate=90]
+  (addr) 
+  {
+  \foreach \x in {1,2,3} 
+  {
+
+      $\langle \x, \x, 0 \rangle$
+      %\nodepart{\nodepartnum{\x}}
+  }
+  
+  };
+\end{tikzpicture}
+\end{figure} 
+
+
+
+
+
+
+
+\highlightdef{\textbf{Cache contention}: Each cache line 
+has $C(x,2)$ \textit{conficting pairs} of addresses}
+
+The probability of a conflict is $C(x,2)/C(v,2) = x(x-1)/v(v-1)$
+
+
+
+\begin{figure}[h]
+\begin{tikzpicture}[]
+  \node[rectangle split, rectangle split horizontal,
+  rectangle split parts=3, rectangle split draw splits=false, draw, 
+  rectangle split part align=base text width=1cm, anchor=center, text centered, 
+  fill=white, drop shadow]
+  (addr){ Tag \nodepart{two} Row \nodepart{three} Col};
+  \draw[dashed] (addr.one split north) -- (addr.one split south);
+  \draw[dashed] (addr.two split north) -- (addr.two split south);
+\end{tikzpicture}
+\end{figure} 
+
+
+\begin{itemize}	
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Row} The \textit{row field} tells us the row we looking at in the cache. 
+\item \textbf{Column} The \textit{column field} tells us the offset byte.
+\item \textbf{Tag} The \textit{tag field} is needed to give us a few bits to create a unique
+identifier for the data located at $(r,c)$. If we know $(r,c)$ and the cache tag field $t$,
+then we can recreate the address that maps to this location. If there are $T$ bits, 
+then $2^{T}$ map to the same $(r,c)$. By storing this $t$ in the cache, 
+we know which address it the data in $(r,c)$ belongs to.
+
+
+
+
+\section{Associative Caches}
+
+
+\newcounter{cntShader}
+\begin{figure}[h]
+\begin{tikzpicture}[]
+  \foreach \y in {0,1,...,5} 
+  {																																																																											
+  	\node[rectangle split, rectangle split horizontal,
+  rectangle split parts=6, rectangle split draw splits=false, draw, 
+  anchor=center, text centered, fill=white, drop shadow] (b\y)
+  	at (0,-\y){};
+  	\draw[dashed] (b\y.one split north) -- (b\y.one split south);
+  	\draw[dashed] (b\y.two split north) -- (b\y.two split south);
+  	\draw[dashed] (b\y.three split north) -- (b\y.three split south);
+  	\draw[dashed] (b\y.four split north) -- (b\y.four split south);
+  	\draw[dashed] (b\y.five split north) -- (b\y.five split south);
+  }
+\end{tikzpicture}
+\end{figure} 
+
+
+
+
+\end{itemize}
