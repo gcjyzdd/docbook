@@ -319,6 +319,12 @@ named pipe.
 * When all I/O is done by sharing processes, the named 
 pipe remains in the file system for later use.
 
+• Persistent pipes can outlive the process which 
+created them
+• Stored on the file system
+• Any process can open it like a regular file
+ Why ever use named pipes instead of files?
+
 
 \begin{example}
 Here is another shell command \lstinline{ls -l | tee file.txt | less}.

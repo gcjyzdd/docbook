@@ -4,6 +4,39 @@
 
 \section{Introducing Unix Drivers}
 
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Immediate Handler} (Top Half)
+Since interrupt handler must be minimal, all other 
+processing related to the event that caused the 
+interrupt must be \textit{deferred}.
+\item \textbf{Kernel Thread} (Bottom Half)
+A thread performing the remainder of the work that 
+was too heavy to do in the immediate handler. 
+\end{itemize}
+
+\begin{example}
+Network interrupt causes packet to be copied from 
+network card to kernel space (kernel interrupt handler)
+Other processing on the packet should be deferred until 
+its time comes (kernel deferrable function)
+\end{example}
+
+\frmrule
+
+The bottom half can’t block. 
+Interrupts are enabled during bottom half, 
+there are not disabled like they are during top half.
+
+If an interrupt occurs during the bottom half, 
+a new top half is introduced. 
+The bottom half preemptable by top half of a different driver.
+This introduces the idea of \textit{interrupt nesting}.
+
+
+
+
 Unix puts io devices into three categories.
 
 
