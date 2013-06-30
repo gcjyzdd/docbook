@@ -266,6 +266,16 @@ Here, $Arr(C)$ is the set of natural numbers.
 \frmrule
 
 
+
+\highlightdef{The \textbf{Product Category}  ...}
+
+\highlightdef{The \textbf{SET Category}  ...}
+\highlightdef{The \textbf{GRP Category}  ...}
+\highlightdef{The \textbf{REL Category}  ...}
+
+\frmrule
+
+
 \section{Functors}
 
 In mathematics, it is often useful to define the notion of 
@@ -277,16 +287,31 @@ what properties are the same and what properties differ.
 A \textit{graph homomorphism} is an example 
 of a \textit{structure preserving mapping} on a graph. 
 Given two graphs, if they are alike enough, 
-then we can define a mapping that acknowledges the likeness
-in structure.
+then we can define a mapping that acknowledges and formalises their 
+likeness in structure.
 
-For graphs,  
+\highlightdef{A \textbf{Graph Homomorphism} is a \textit{structure-preserving 
+mapping} $h$ from one graph to another ...}
+
+where the structure that we preserve is the existence of \textit{arrows} 
+by requiring: $(A,B) \in N \rightarrow (h(A), h(B)) \in N$ for our 
+mapping $h$. 
+
+\begin{example}
+
+\end{example}
+
+The structure of the nodes is allowed to change. 
 
 
-
-
-\highlightdef{A \textbf{Functor} is a mapping from one category to another ...}
-... that preserves the arrows in a particular way. 
+\highlightdef{A \textbf{Functor} is a structure preserving 
+mapping from one category to another ...}
+... where we preserve the edges in a particular way. 
 
 the source and target of every arrow, the identity arrow of every node, 
 and, the composition law.
+
+
+\section{Natural Transformations}
+
+\section{Monads}
