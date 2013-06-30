@@ -93,10 +93,31 @@ How many bits are needed for this cache?
 
 \frmrule
 
-\begin{example}
+The idea of a direct mapped cache is to split the address into three parts 
+x, y, and z. Then, blocks are mapped cache slots based on the 
+value of y. 
 
-Here is an artificial example with a very small memory and very small cache.
-This unrealistic example will show how a direct mapped cache works. 
+\begin{example}
+Here is an artificial example with a very small 64\textsc{b} memory and very small
+16\textsc{b} cache. This unrealistic example will show how a direct mapped cache works. 
+First, we have memory addresses of 7 bits that are split into the 
+following three parts.
+
+\begin{figure}[h]
+\begin{tikzpicture}[]
+  \node[rectangle split, rectangle split horizontal,
+  rectangle split parts=3, rectangle split draw splits=false, draw, 
+  rectangle split part align=base, text width=1cm, anchor=center, text centered, 
+  fill=white, drop shadow]
+  (addr){ x \nodepart{two} y \nodepart{three} z};
+  \draw[dashed] (addr.one split north) -- (addr.one split south);
+  \draw[dashed] (addr.two split north) -- (addr.two split south);
+\end{tikzpicture}
+\end{figure} 
+
+
+By doing this division, we are adding groupings to the memory 
+in the following way:
 
 \begin{tikzpicture}[
       start chain=1 going right,
@@ -132,26 +153,44 @@ This unrealistic example will show how a direct mapped cache works.
   % \draw[dashed] (b\y.one split north) -- (b\y.one split south);
 \end{tikzpicture}
 
+The groupings for z byte level. Each increment of z is an increment of 1. 
+The groupings for y are at the block level. Each increment in y is an 
+increment of $b = 8$ bytes. The groupings for x are at the cache-capacity level. 
+Each increment in x is an increment of $b = 16$ bytes. 
+
 In total, we have $4 \times 2 \times 8 = 64$ addresses where each address 
 stores one byte. 
 
 \end{example}
 
 
+\begin{center}
+  \begin{tabular}{ |l|l| }
+    \hline
+    Cache line & Memory Blocks \\ 
+    \hline
+    \multirow{4}{*}{0} 
+     & $[\langle 0,0,0 \rangle \dotsm \langle 0,0,7 \rangle]$ \\
+     & $[\langle 1,0,0 \rangle \dotsm \langle 1,0,7 \rangle]$ \\
+     & $[\langle 2,0,0 \rangle \dotsm \langle 2,0,7 \rangle]$ \\
+     & $[\langle 3,0,0 \rangle \dotsm \langle 3,0,7 \rangle]$ \\ 
+    \hline
+    \multirow{4}{*}{1}
+     & $[\langle 0,0,0 \rangle \dotsm \langle 0,0,7 \rangle]$ \\
+     & $[\langle 1,1,0 \rangle \dotsm \langle 1,1,7 \rangle]$ \\
+     & $[\langle 2,1,0 \rangle \dotsm \langle 2,1,7 \rangle]$ \\
+     & $[\langle 3,1,0 \rangle \dotsm \langle 3,1,7 \rangle]$ \\ 
+    \hline
+  \end{tabular}
+\end{center}
 
 
 
 
-
-\highlightdef{A \textbf{direct-mapped cache} 
-uses a mapping scheme with two \textit{functions}} 
+\frmrule
 
 We use a function for each direction: one function for 
 mapping lines to addresses and one function mapping addresses to lines. 
-This cache is said to be \textit{directly mapped} because we are using 
-\textit{functions}. An address maps to exactly \textit{one} line. 
-A cache line maps to exactly to \textit{one} address.
-We are using \textit{functions}, by definition, they give a \textit{single output}.
 
 Assume that the mapping scheme using block size $b$. 
 \begin{itemize}	
@@ -167,14 +206,27 @@ $$C([\langle \text{\lstinline{x}}, \text{\lstinline{y}}, 0 \rangle
 = \text{\lstinline{y}}$$
 
 \item \textbf{$\text{Cache Block} \rightarrow \text{Memory Blocks}$} 
-A $b$-byte block cache block that sits on a cache line with number \lstinline{n}
+A $b$-byte block cache block that sits on a cache line with number \lstinline{y}
 is mapped to \textit{exactly one} $b$-byte block in main memory given by 
-$$M(\text{\lstinline{n}}) = [
-\langle \text{\lstinline{t}}, \text{\lstinline{n}}, 0 \rangle
+$$M(\text{\lstinline{y}}) = [
+\langle \text{\lstinline{x}}, \text{\lstinline{y}}, 0 \rangle
 \dotsm
-\langle \text{\lstinline{t}}, \text{\lstinline{n}}, b-1 \rangle]$$
-where \lstinline{t} is a value read from the side store for line \lstinline{n}.
+\langle \text{\lstinline{x}}, \text{\lstinline{y}}, b-1 \rangle]$$
+where \lstinline{x} is a value read from the side store for line \lstinline{y}.
 \end{itemize}
+
+This cache is said to be \textit{directly mapped} because we are using 
+\textit{functions}. An address maps to exactly \textit{one} line. 
+A cache line maps to exactly to \textit{one} address.
+We are using \textit{functions}, and so by definition, 
+they give a \textit{single output}.
+
+\highlightdef{A \textbf{direct-mapped cache} 
+uses a mapping scheme with two \textit{functions}} 
+
+
+\frmrule
+
 
 
 Below shows a diagram that shows how these functions create the 
