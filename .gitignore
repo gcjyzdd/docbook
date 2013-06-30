@@ -38,3 +38,9 @@ Desktop.ini
 # Windows batch files
 .bat
 .cmd
+
+# Misc
+.txt
+.doc
+.ppt
+.xsl
