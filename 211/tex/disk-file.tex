@@ -9,6 +9,124 @@
 
 \highlightdef{A \textbf{Disk Cylinder} is a collection of}
 
+In other words, a \textit{cylinder} is a collection of tracks 
+with the same radius but on different platters.
+
+
+\section{Unix Fast File System}
+
+Original UNIX File System (UFS).
+Simple, elegant, but \textit{slow}.
+
+
+Each file is described by an \textit{index node}.
+Index nodes are data structures used to store information about each file
+An \textit{inode} may contain references to single, double 
+and triple indirect blocks.
+
+Every file has one index nodes that is assigned unique number.
+
+
+
+
+\highlightdef{An \textbf{index node} (inode) is the root of a tree of references to 
+the blocks of a file}.
+
+\begin{example}
+For a particular filesystem, an inode contains 8 direct pointers, 
+1 pointer to an indirection block and 1 pointer to a 
+two-level indirection block. 
+Each pointer is $p$ bytes. Each disk block is $b$ bytes.
+Each indirection block has $k$ pointers.
+
+For this file system, \\
+(a) determine the maximum file size \\
+(b) determine the disk space required to store this file
+\end{example}
+
+\frameans{}{
+	(a) $(8+k+k^2)b$ \\
+	(b) $(8+k+k^2)b + (10+2k+k^2)p$
+}
+
+Drawing a diagram is useful for this question. 
+
+\begin{tikzpicture}[
+      start chain=1 going right,
+      start chain=2 going right,
+      node distance=0mm,
+      inode/.style={draw, minimum height=1.4em,
+      text width=2em, text centered, inner sep=1.7pt}
+  ]
+  % Index node
+  \node[on chain=1, inode, text width=6em] (i1) {$8p$};
+  \node[on chain=1, inode] (i2) {$p$};
+  \node[on chain=1, inode] (i3) {$p$};
+  % Data nodes
+  \node[inode, below=2.1cm of i2] (d1) {$kp$};
+  \node[inode, below=0.8cm of i3] (d2) {$kp$};
+  \node[inode, below=0.8cm of d2] (d3) {$kp$};
+  % File nodes
+  \node[on chain=2, below=1cm of d3, inode, text width=2em, xshift=-3cm] (f1) {$b$};
+  \node[on chain=2, inode, text width=5em] (f2) {$b$};
+  \node[on chain=2, inode, text width=8em] (f3) {$b$};
+
+  % Draw edges
+  \coordinate (f1n) at (f1.north);
+  \draw [->] (i1) |- node[pos=0.25, name=s1, rotate=70] {\tiny$/$} ($(f1n)+(0.0cm, 0.5cm)$) -- (f1n);
+  \draw [->] (i2) -- node[pos=0.25, name=s2, rotate=70] {\tiny$/$} (d1);
+  \draw [->] (i3) -- node[pos=0.5, name=s3, rotate=70] {\tiny$/$} (d2);
+  \draw [->] (d2) -- node[pos=0.5,name=s4, rotate=70] {\tiny$/$} (d3);
+  \coordinate (f2n) at (f2.north);
+  \draw [->] (d1) |- node[pos=0.3, name=s5, rotate=70] {\tiny$/$} ($(f2n)+(0.0cm, 0.5cm)$) -- (f2n);
+  \coordinate (f3n) at (f3.north);
+  \draw [->] (d3) |- node[pos=0.7, name=s6, rotate=70] {\tiny$/$} ($(f3n)+(0.0cm, 0.5cm)$) -- (f3n);
+
+  \node[left=0.05cm of s1, yshift=0.2cm] {8};
+  \node[left=0.05cm of s2, yshift=0.2cm] {1};
+  \node[left=0.05cm of s3, yshift=0.2cm] {1};
+  \node[left=0.05cm of s4, yshift=0.2cm] {$k$};
+  \node[left=0.05cm of s5, yshift=0.2cm] {$k$};
+  \node[right=0.05cm of s6, yshift=0.1cm] {$k$};
+
+  % Manually draw the strike thru
+  %\coordinate (m1) at ($(i1)-(0, 1.5cm)$);
+  %\draw [-] ($(m1)-(0.15,0.15)$) -- ($(m1)+(0.15,0.15)$);
+  %\coordinate (m2) at ($(i2)!0.5!(d1)$);
+  %\draw [-] ($(m2)-(0.15,0.15)$) -- ($(m2)+(0.15,0.15)$);
+
+
+  %
+  %\coordinate (MidWay) at ($(2.east)!0.5!(1.west)$);
+  %\draw [thick, red,-] ($(MidWay)-(0.15,0.15)$) -- ($(MidWay)+(0.15,0.15)$);
+
+\end{tikzpicture}
+
+From the diagram, we can work out the required values:\\
+(a) The total file size is $8b + kb + k^2b = (8+k+k^2)b$ \\
+(b) The total file size plus the size of the pointers which is:
+$[(8+k+k^2)b] + [(8p + p + p) + (kp) + (kp) + (k^2p)] = (8+k+k^2)b + (10+2k+k^2)p$
+
+
+
+
+
+
+
+
+
+
+\begin{example}
+In the \textit{Linux ext2fs filesystem}, an inode has 15 pointers.
+The first 12 pointers directly locate 12 data blocks, 
+the 13th is an indirect pointer, the 14th is a doubly-indirect pointer and the 
+15th is triply-indirect pointer. 
+
+Each of these pointers is 8 bytes long.
+
+\end{example}
+
+
 
 
 \section{Unix Block Buffer Cache}
