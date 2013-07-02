@@ -201,3 +201,49 @@ as normal processes (i.e., in user mode), but there is no way that a client appl
 communicate with them: the kernel always sits in between.
 \end{example}
 
+
+
+\section{\textsc{unix} Special Files}
+
+\highlightdef{In \textsc{unix}, \textit{everything} is file}
+
+Most operating system have \textit{normal files}.
+Any structure is determined by positions of 
+binary digits in the file. It is up to the reader to 
+parse the file to determine the structure. These files 
+can are independent of the operating system. 
+
+Unix however, has the notion of \textit{special files}.
+These can be viewed as operating system constructs that 
+have a much richer structure and are tied to the operating system 
+source code.
+
+\begin{figure}[h]
+\begin{tikzpicture} [
+   every node/.style={node_sty, align=center},
+   edge from parent/.style={edge_sty},
+   edge from parent path={(\tikzparentnode.south) 
+   |- ($(\tikzparentnode.south)!0.5!(\tikzchildnode.north)$) -| (\tikzchildnode.north)},
+   level 1/.style={sibling distance=4cm, level distance = 0.9cm},
+   level 2 every node/.style={text width=0.1cm}
+]
+   \node 
+   (root) {Unix Files}
+      child {
+        node (pio) {Normal Files}
+        child {
+            node(n) {\lstinline{-}}
+        }
+      }
+      child {
+        node(intio) {Special Files}
+        child {node(d) {\lstinline{d}}}
+        child {node(l) {\lstinline{l}}}
+        child {node(p) {\lstinline{p}}}
+        child {node(c) {\lstinline{c}}}
+        child {node(b) {\lstinline{b}}}
+        child {node(s) {\lstinline{s}}}
+      };
+   
+\end{tikzpicture}
+\end{figure}

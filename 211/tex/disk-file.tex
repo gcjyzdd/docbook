@@ -161,6 +161,45 @@ There is precisely one inode per ﬁle.
 \textbf{w} for \textit{write},
 \textbf{x} for \textit{execution}}
 
+\highlightdef{\textbf{Symbolic notation} is a sequence of 
+9 binary flags where the \textit{symbol} 
+(either \lstinline{r},\lstinline{w}, or \lstinline{x})
+is written for 1, and a \textit{dash} (\lstinline{-}) is written for 0}
+
+\begin{example}
+Write the flags 001100011 in symbolic notation.
+
+We replace the zeros with \lstinline{-} and replace the ones with the 
+appropriate symbol based on their position 
+(following the pattern \textit{rwx,rwx,rwx}). 
+The \textit{symbolic notation} is therefore: \lstinline{--xr---wx}
+
+\end{example}
+
+\frmrule
+
+
+Note that \textit{three binary digits} corresponds exactly with one \textit{octal digit}. 
+As a result, the symbol notation corresponds to 9 binary digits or 3 octal digits. 
+The \textit{octal notation} gives a sequence of octal digits that correspond to the 
+9 binary flags. 
+
+\frmrule
+
+\begin{example}
+Write the flags 001100011 in octal notation.
+
+The first three digits, 001, correspond to octal digit 1. \\
+The next three digits, 100, correspond to octal digit 4. \\
+The last three digits, 011, correspond to octal digit 3. \\
+Hence the octal notation is: 143.
+\end{example}
+
+\begin{example}
+Give the symbolic representation that corresponds to octal notation 777.
+\end{example}
+
+
 
 
 \section{File System Recovery}

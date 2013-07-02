@@ -266,17 +266,17 @@ variable. This value can be converted to a millisecond value using
 
 
 
-\section{Interprocess Communication I}
+\section{Inter-process Communication I}
 
 
-\highlightdef{\textbf{Interprocess Communication} (IPC)
-describes methods for communication by sending data and sharing memory} 
+\highlightdef{\textbf{Interprocess Communication} (\textsc{ipc})
+concerns data communication between processes} 
 
 Recall that Unix is written in C. From a source-code perspective, 
 a program has a standard output stream and a standard input stream. 
 
 \highlightdef{A \textbf{Unix Pipe} connects the \textit{standard output} of $P_1$ 
-to the \textit{standard output} of $P_2$ }
+to the \textit{standard input} of $P_2$ }
 
 Unix pipes therefore provide a mechanism
 for \textit{one-way communication} betweeen $P_1$ and $P_2$ where 
@@ -302,6 +302,12 @@ Below shows an example of a Unix pipe used in shell command \lstinline{ls | wc -
 \end{tikzpicture}
 \end{figure} 
 \end{example}
+
+So far we have been using \textit{anonymous pipes}. This is fine if both 
+processes are living in the same parent process space, 
+started by the same user. 
+There are however circumstances where the communicating processes
+must use \textit{named pipes}. One such circumstance is that the processes have to be executed under different user names and permissions.
 
 
 (Anonymous) pipes can only be used by related 
@@ -334,6 +340,11 @@ visualise this as a T.
 
 
 
-\section{Interprocess Communication II}
+\section{Inter-process Communication II}
+
+Unix domain sockets (IPC socket) \\
+Solaris doors \\
+Windows COM \\
+
 
 \section{Introducing Threads}
