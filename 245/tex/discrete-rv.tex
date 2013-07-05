@@ -2,3 +2,65 @@
 \chapter{Discrete Random Variables}
 
 
+
+
+\section{Transformations}
+
+
+A \textit{predicate transformation}
+defines a transformation between a first order logic 
+sentence and a formal P expression. 
+Given a sentence $\forall x : \mathbb{N} P(x)$ 
+we have the following transformation.
+
+$$\mathbb{P}[P(x)] \rightarrow \mathbb{P}[x \leqslant X]$$
+
+We can allow more variables other than $x$ to be used. 
+It is understood that these variables are quantified by a forall.
+
+
+\section{Cumulative Functions}
+
+
+
+
+\section{Distributions}
+
+\highlightdef{A \textbf{Probability Distribution} is 
+a discrete \textsc{rv} with \textit{zero or more parameters}}
+
+
+\section{Poisson Processes}
+
+
+\highlightdef{A \textbf{Poisson Process} is a distribution 
+$\text{Poi}(T, \lambda)$ whose whose mass 
+function $p(x)$ determines 
+$\mathbb{P}[
+x \text{ \textit{arrivals with intervals numbered} } [t,t+T]
+]$ ...}
+... for all $t$ where $\lambda$ is called the \textit{arrival rate}, 
+$T$ is the \textit{duration}. 
+
+
+A poisson process has \textit{no state}. 
+Knowing that the process has been running for time t doesn’t
+affect how the distribution hehaves for the remaining time.
+
+$\mathbb{P}[x \text{ \textit{arrivals in} } [t,t+T] | 
+x \text{ \textit{arrivals in} } [t-T',t]]
+= \mathbb{P}[x \text{ \textit{arrivals in} } [t,t+T]$
+
+This is known as the \textit{lack of memory property}. 
+
+
+
+
+\section{Independent and Identically Distributed}
+
+
+A collection of random variables may all have the 
+\textit{same distribution function}, and, are pairwise independent 
+of each other. This when we have \textit{independent and identically 
+distributed random variables}. This is often abreviated as \textsc{iid}.
+
