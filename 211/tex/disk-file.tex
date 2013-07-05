@@ -13,9 +13,26 @@ In other words, a \textit{cylinder} is a collection of tracks
 with the same radius but on different platters.
 
 
-\section{Unix Fast File System}
 
-Original UNIX File System (UFS).
+\section{File Allocation Tables}
+
+• Associate with each disk exactly one table FAT,
+where FAT[k] contains information on the k
+block.
+• Each ﬁle is uniquely associated with its ﬁrst block
+on disk, e.g. ﬁrst(F) = 8 means that the ﬁrst block
+of ﬁle F is disk block #8.
+• FAT[k] denotes the next disk block of the ﬁle whose
+data is also stored on disk block #k.
+• If FAT[k] = EOF then disk block #k was the ﬁle’s
+last block.
+• FAT[k]= FREE denotes an unused block; FAT[k]=
+BAD denotes a bad block, etc.
+
+
+\section{\textsc{unix} Fast File System}
+
+Original \textsc{unix} File System (\textsc{ufs}).
 Simple, elegant, but \textit{slow}.
 
 
@@ -129,7 +146,7 @@ Each of these pointers is 8 bytes long.
 
 
 
-\section{Unix Block Buffer Cache}
+\section{\textsc{unix} Block Buffer Cache}
 
 We can cache files in main memory for a speedup (compared to accessing the files 
 from disk). The cache works in the usual manner, we have a cache hit case and a 
@@ -137,7 +154,7 @@ cache miss case.
 
 
 
-\section{Unix inodes}
+\section{\textsc{unix} inodes}
 
 
 \begin{lstlisting}
@@ -153,10 +170,10 @@ There is precisely one inode per ﬁle.
 \section{Virtual File Systems}
 
 
-\section{Unix Permissions}
+\section{\textsc{unix} Permissions}
 
 
-\highlightdef{Unix has access levels: 
+\highlightdef{\textsc{unix} has access levels: 
 \textbf{r} for \textit{read},
 \textbf{w} for \textit{write},
 \textbf{x} for \textit{execution}}
