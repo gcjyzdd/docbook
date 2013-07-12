@@ -2,7 +2,7 @@
 \chapter{Operating Systems}
 
 
-\section{Introducing Operating systems}
+\section{Introducing Operating Systems}
 
 An operating system is a \textit{unified software solution for many problems} 
 that come about in managing the \textit{execution of machine code instructions}.
@@ -104,7 +104,7 @@ sits between the user and the hardware to provide a virtual machine interface.
 
 \begin{example}
 One Unix system call is \lstinline{time()} that returns the number of milliseconds 
-since January 1st, 1970 (the \textit{UNIX Epoch}). The user doesn't need to know 
+since January 1st, 1970 (the \textit{\textsc{UNIX} Epoch}). The user doesn't need to know 
 how the operating system worked this out. It relies on \textit{hardware interrupts}
 and a notion of a \textit{timer device}, but, this is all hidden from this user. 
 \end{example}
@@ -229,26 +229,31 @@ Special files are data strctures with a rich structure.
    edge from parent/.style={edge_sty},
    edge from parent path={(\tikzparentnode.south) 
    |- ($(\tikzparentnode.south)!0.5!(\tikzchildnode.north)$) -| (\tikzchildnode.north)},
-   level 1/.style={sibling distance=4cm, level distance = 0.9cm},
-   level 2 every node/.style={text width=0.1cm}
+   level 1/.style={sibling distance=6cm, level distance = 0.9cm},
+   level 2/.style={sibling distance=1cm},
+   ch/.style={text width=0.5cm}
 ]
    \node 
-   (root) {Unix Files}
+   (root) {\textsc{unix} Files}
       child {
         node (pio) {Normal Files}
         child {
-            node(n) {\lstinline{-}}
+            node(n)[ch] {\lstinline{-}}
         }
       }
       child {
         node(intio) {Special Files}
-        child {node(d) {\lstinline{d}}}
-        child {node(l) {\lstinline{l}}}
-        child {node(p) {\lstinline{p}}}
-        child {node(c) {\lstinline{c}}}
-        child {node(b) {\lstinline{b}}}
-        child {node(s) {\lstinline{s}}}
+        child {node(d)[ch] {\lstinline{d}}}
+        child {node(l)[ch] {\lstinline{l}}}
+        child {node(p)[ch] {\lstinline{p}}}
+        child {node(c)[ch] {\lstinline{c}}}
+        child {node(b)[ch] {\lstinline{b}}}
+        child {node(s)[ch] {\lstinline{s}}}
       };
    
 \end{tikzpicture}
 \end{figure}
+
+
+A \textit{file descriptor} an integer used for accessing to uniquely 
+identifer \textsc{unix} files whether they be normal files or special files.

@@ -87,13 +87,22 @@ For example clocks.
 
 Block device transfers are buffered through a \textit{block buffer cache}.
 
-Each device has a file in Unix. This is called the \textit{device file}.
+Each device has a \textsc{unix} special file. 
+Recall from the first chapter the difference between normal file system files 
+and \textsc{unix} special files.
+This is called the \textit{device file}.
 Character and Block devices are located in the \lstinline{/dev} directory.
-Network files however, are located 
+Network devices also have \textsc{unix} special files, but these are located 
 
-When the user opens /dev/docdrv, the kernel calls a function in docdrv called the
-\textit{driver open function}. Similarly, when the user closes /dev/docdrv, 
-the kernel calls a function in docdrv called the \textit{driver release function}.
+Suppose we create our own driver called \textsc{doc} Driver or \lstinline{docdrv}. 
+This will be stored in \lstinline{/dev/docdrv}.
+When the user opens \lstinline{/dev/docdrv}, 
+the kernel calls a function in \lstinline{docdrv} called the
+\textit{driver open function}. Similarly, when the user closes \lstinline{/dev/docdrv}, 
+the kernel calls a function in \lstinline{docdrv} called the 
+\textit{driver release function}. These are event functions that give us a chance 
+to write code that executes when the driver is loaded and also write code 
+for when it is stopped. 
 
 
 

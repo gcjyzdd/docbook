@@ -2,31 +2,285 @@
 \chapter{Disk and File}
 
 
-\section{Introducing Disk Systems}
+\section{Introducing Disk Topology}
 
 
 
 
-\highlightdef{A \textbf{Disk Cylinder} is a collection of}
+\highlightdef{A \textbf{Cylinder} is a collection of tracks 
+with the \textit{same radius} but on \textit{different platters}}
 
-In other words, a \textit{cylinder} is a collection of tracks 
-with the same radius but on different platters.
+Each cylinder is determined by its radius $r$. 
+Assuming the \textit{virtual geometry} can assume that each cylinder 
+has the same number of tracks. 
+We will use the notation \textsc{c}[$r$] to denote a cylinder 
+(the vertical stack of tracks) that are at radius $r$. 
 
+
+The \textsc{os} treats the hard disk as a one-dimensional array of \textit{disk blocks}.
+
+\highlightdef{The \textbf{Disk Block Size} is a \textit{convenient} 
+fixed \textit{byte size} chosen by the \textsc{os}}
+
+The point of this definition is defining 
+what it means to have a block size that is \textit{convenient}.
+
+Designing data structutes to work on the byte-level (or bit-level) is too complicated. 
+And, the chances are, the structure will be too inefficient.
+
+\frmrule
+
+Assuming we only need \textit{one track} for disk transfer and 
+request to read/write $b$ \textit{contiguous} bytes on that track, then
+a request to read and writing disk blocks can be done in three steps. 
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Seek}
+We move the radius of the read/write heads to change the current cylinder.
+This changing of radius is called \textit{seeking}. Once we reach the 
+radius/cylinder with the track we need, we stop seeking.
+The time it takes for read/write heads to change to the required radius is 
+called the \textit{seek time}.
+\item \textbf{Wait}
+Next, we wait for the disk to rotate so that the first sector is under the head.
+The time we wait for the disk to rotate in this step is referred to as 
+\textit{rotational latency}.
+\item \textbf{Transfer}
+Now that the head is finally positioned correctly, we begin the transfer 
+(reading or writing). Under our assumption, we read/write contiguous blocks 
+and on only on a single track.
+The time spend transferring data from the track to the disk controller
+is called the \textit{transfer time}.
+\end{itemize}
+
+
+
+\highlightdef{The \textbf{Average Turnaround Time} is
+$T = t_{\text{seek}} + \frac{1}{2}  \frac{1}{r} + \frac{b}{N} \frac{1}{r}$
+}
+
+in seconds, where $t_{\text{seek}}$ is the cylinder seek time,
+$b$ is how many bytes in the request, $N$ is the number of bytes in each track, 
+$r$ is the rotational frequency (the number revolutions per second).
+
+Note that $\frac{1}{r}$ is the total time it takes for the disk to complete one revolution. 
+In the worst case, we wait $\frac{1}{r}$ seconds for the disk to rotate a full revolution 
+because we just missed it. In the best case, the disk is at the perfect position and we 
+wait 0 seconds. The time it takes is a uniform random variable. So the \textit{average} time 
+it takes for the disk to rotate to where we need it is  
+$\frac{1}{2} \times \frac{1}{r}$. This is the \textit{average rotational latency}. 
+
+As we are reading/writing, the disk is still rotating. 
+The more bytes we read, the more longer the rotation time we 
+need. The fraction $\frac{b}{N}$ is \textit{what fraction of the track} we need for 
+reading/writing. Here, $0 \leqslant b \leqslant N$. If we read/write the whole track, $b = N$, 
+if we read/write to none of it $b = 0$, and if we 
+read/write, say, a contiguous 30 percent of the track, then $\frac{b}{N} = 0.3$. 
+The overall time for doing reading/writing is the \textit{fraction of the track we need} 
+for the reading/writing multiplied by \textit{the total time to go around the track}.
+This is the \textit{transfer time} of $\frac{b}{N} \times \frac{1}{r}$. 
+
+\frmrule
+
+\begin{tikzpicture}
+  % disk
+  \draw[black!20] (0cm,0cm) circle(0.3cm);
+  \draw[black!20, very thick] (0cm,0cm) circle(1.2cm);
+  \draw[black!20] (0cm,0cm) circle(2.5cm);
+  \foreach \x in {0,5,...,360} {
+    \draw[dashed,black!20] (\x:0.3cm) -- (\x:2.5cm);
+  }
+  % transfer time arc with label
+  \draw [|-|, thick] (0cm,0cm) ++(30:1.2cm) arc (30:300:1.2cm);
+  \node at (180:2.2cm) (seek) {transfer};
+  \coordinate (seekfr) at ($(seek)+(0.0cm,-0.4cm)$);
+  \node at (seekfr) {$\frac{b}{N} = 0.75$};
+  % seek time with label
+  \draw [<-, dashed] (340:1.25cm) -- (340:2.0cm);
+  \draw (340:2.5cm) node (seek) {seek};
+  % rotational latency arc with label
+  \draw [<->, dashed] (0cm,0cm) ++(300:1.2cm) arc (300:340:1.2cm);
+  \draw (320:1.6cm) node {wait};
+
+
+
+\end{tikzpicture}
+
+\frmrule
+
+\begin{example}
+Explain why we cannot have $b > N$.
+\end{example}
+
+\begin{example}
+Do we need to know whether the disk is rotating clockwise or anticlockwise to use 
+the turnaround time equation? Explain your answer.
+\end{example}
+
+\begin{example}
+How many revolutions does the disk complete while the head is seeking?
+\end{example}
+
+
+
+
+\frmrule
+
+\highlightdef{The \textbf{Cylinder Seek Time} affects the turnaround time \textit{greatly} }
+
+To improve disk performance, a hard disk driver therefore attempts
+to control how the head moves in an attempt to give the smallest seek time. 
+The concept of controlling head's radius according to \textsc{io} requests is called 
+\textit{cylinder seek scheduling}. There have been several \textit{scheduling algorithms} 
+developed that attempt to give the smallest seek time and can significantly reduce 
+the turnaround time.  
+
+
+
+\begin{figure}[h]
+\begin{tikzpicture} [
+  every node/.style={node_sty, align=center},
+  edge from parent/.style={edge_sty},
+  edge from parent path={(\tikzparentnode.south) 
+   |- ($(\tikzparentnode.south)!0.5!(\tikzchildnode.north)$) -| (\tikzchildnode.north)},
+  level 1/.style={sibling distance=2cm, level distance = 0.9cm},
+  ro/.style={text width=5cm},
+  ch/.style={text width=1.4cm},
+]
+  \node [ro]
+  (root) {Cylinder Seek Scheduling}
+    child {node[ch] (pio) {FCFS}}
+    child {node[ch] (intio) {SSTF}}
+    child {node[ch] (intio) {SCAN}}
+    child {node[ch] (intio) {CSCAN}}
+    child {node[ch] (intio) {NSCAN}};
+   
+\end{tikzpicture}
+\end{figure}
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{FCFS} 
+This is short for \textit{First Come First Served}. 
+We seek to the cylinders in the order the requests arrived. 
+\item \textbf{SSTF}
+This is short for \textit{Shortest Seek Time First}. 
+We seek to the cylinder that is closest (shortest difference in radius) 
+to the current radius of the disk heads. 
+\item \textbf{SCAN}
+We \textit{temporarily maintain a fixed direction} while processing requests. 
+When there are no requests left in the fixed direction, we change direction and 
+temporarily maintain that direction. 
+We always process requests that are the closest to current radius of the disk heads. 
+\item \textbf{CSCAN}
+This is called \textit{continuous} \textsc{scan}. 
+We \textit{continuously maintain a fixed direction} while processing requests.
+When there are no requests left in our fixed direction,
+we change direction \textit{once} to go to the request that's furthest away, 
+but then resume processing requests in our fixed direction. 
+\item \textbf{NSCAN}
+This is called \textit{n-step} \textsc{scan}. This is a modification to \textsc{scan}.
+When we begin/change direction we remember these requests at this point in time and only
+process those. If any new requests that arrive, they will only be 
+considered at the next direction change. 
+\end{itemize}
+
+To get a more concrete understanding of these algorithms, let's look at some examples.
+
+\frmrule
+
+\begin{example}
+Below shows an example of FCFS with the queue: 98, 183, 37, 122, 14, 130, 60, 67
+with initial head position $h_0 = 53$. 
+
+\begin{tikzpicture}
+\pgfplotsset{width=12cm, height=3cm}
+\selectcolormodel{gray}
+\begin{axis}[
+  enlargelimits=false, 
+  tick label style={font=\footnotesize},
+  minor x tick num=1,
+  minor y tick num=4
+]
+  \addplot[sharp plot, mark=*, nodes near coords, point meta=explicit symbolic] coordinates
+  {(0,98)[1] (1,183)[2] (2,37)[3] (3,122)[4] (4,14)[5] (5,130)[6] (6,60)[7] (7,67)[8]};
+
+\end{axis}
+\end{tikzpicture}
+\end{example}
+
+\frmrule
+
+\begin{example}
+Below shows an example of SSTF with the queue: 98, 183, 37, 122, 14, 130, 60, 67
+with initial head position $h_0 = 53$. 
+
+\begin{tikzpicture}
+\pgfplotsset{width=12cm, height=3cm}
+\selectcolormodel{gray}
+\begin{axis}[
+  enlargelimits=false, 
+  tick label style={font=\footnotesize},
+  minor x tick num=1,
+  minor y tick num=4
+]
+  \addplot[sharp plot, mark=*, nodes near coords, point meta=explicit symbolic] coordinates
+  {(0,98)[1] (1,183)[2] (2,37)[3] (3,122)[4] (4,14)[5] (5,130)[6] (6,60)[7] (7,67)[8]};
+
+\end{axis}
+\end{tikzpicture}
+\end{example}
+
+\frmrule
+
+\begin{example}
+Below shows an example of SCAN with the queue: 125, 95, 33, 174, 8, 19, 58, 79, 195
+with initial head position $h_0 = 100$ and initial direction of +. 
+
+\begin{tikzpicture}
+\pgfplotsset{width=12cm, height=3cm}
+\selectcolormodel{gray}
+\begin{axis}[
+  enlargelimits=false, 
+  tick label style={font=\footnotesize},
+  minor x tick num=1,
+  minor y tick num=4
+]
+  \addplot[draw=none, area style, fill=black!30, opacity=0.5] coordinates
+  {(0,200) (3,200)}\closedcycle;
+  \addplot[draw=none, area style, fill=black!50, opacity=0.5] coordinates
+  {(3,200) (9,200)}\closedcycle;
+
+  \addplot[sharp plot, mark=*, nodes near coords, point meta=explicit symbolic] coordinates
+  {(0,100) (1,125)[+25] (2,174)[+49] (3,195)[+21] (4,95)[-100] (5,79)[-16] (6,58)[-21] (7,33)[-25] (8,19)[-14] (9,8)[-11]};
+
+\end{axis}
+\end{tikzpicture}
+\end{example}
+
+
+
+
+\frmrule
+
+Below shows an example of how we might write pseudocode for the scheduling algorithms.
 
 
 \section{File Allocation Tables}
 
-• Associate with each disk exactly one table FAT,
-where FAT[k] contains information on the k
-block.
-• Each ﬁle is uniquely associated with its ﬁrst block
+Associate with each disk exactly one table 
+called the \textit{file allocation table}, \textsc{fat}.
+This is a table that stores information about \textit{every disk block}. 
+We will write \textsc{fat}[$k$] to denote the information the table has on the $k$th block.
+
+Each file is uniquely associated with its ﬁrst block
 on disk, e.g. ﬁrst(F) = 8 means that the ﬁrst block
-of ﬁle F is disk block #8.
+of ﬁle F is disk block no8.
 • FAT[k] denotes the next disk block of the ﬁle whose
-data is also stored on disk block #k.
-• If FAT[k] = EOF then disk block #k was the ﬁle’s
-last block.
-• FAT[k]= FREE denotes an unused block; FAT[k]=
+data is also stored on disk block nok.
+If FAT[k] = EOF then disk block nok was the ﬁle’slast block.
+FAT[k]= FREE denotes an unused block; FAT[k]=
 BAD denotes a bad block, etc.
 
 
@@ -144,6 +398,8 @@ Each of these pointers is 8 bytes long.
 \end{example}
 
 
+\section{Disk Caching}
+
 
 
 \section{\textsc{unix} Block Buffer Cache}
@@ -237,3 +493,6 @@ two drives, but reading only from one.
 
 
 
+\section{\textsc{raid} Storage}
+
+Properties of XOR:

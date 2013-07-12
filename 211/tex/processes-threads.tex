@@ -61,7 +61,7 @@ or a \textit{task descriptor}.
 
 
 
-\highlightdef{A \textbf{Context Switch} is }
+\highlightdef{An \textbf{Execution Context Switch} is }
 
 
 
@@ -75,7 +75,7 @@ The contents of all the general purpose registers are copied across.
 In fact, the exact execution context is recreated for newly created branch process, 
 but with \textit{one difference}. 
 The difference between the branch copy and the original is
-that the return result of \lstinline{fork} is different.
+that the return result of \lstinline{fork()} is different.
 
 \begin{figure}[h]
 \begin{tikzpicture}
@@ -88,11 +88,11 @@ that the return result of \lstinline{fork} is different.
   \coordinate (x2) at ($(c2)+(2.5cm, 0.0cm)$);
   \coordinate (x3) at ($(c3)+(2.5cm, 0.0cm)$);
   % lines
-  \draw[dashed] (c1) -- (c2);
-  \draw[dashed] (c1) -- (c3);
-  \draw (x1) -- (c1);
-  \draw (c2) -- (x2);
-  \draw (c3) -- (x3);
+  \draw[dashed,->] (c1) -- (c2);
+  \draw[dashed,->] (c1) -- (c3);
+  \draw[->] (x1) -- (c1);
+  \draw[->] (c2) -- (x2);
+  \draw[->] (c3) -- (x3);
   % labels
   \node[above=0.1cm of c1] {\lstinline{r = fork()}};
   \node[above=0.1cm of c2] {$\text{\lstinline{r} } \neq 0$};
@@ -105,7 +105,10 @@ that the return result of \lstinline{fork} is different.
 
 The newly created process has a return value of \textit{zero} given back 
 from calling fork(). On the other hand, the original process has a \textit{non-zero} 
-value given back. We can use this to write conditional statements 
+value given back. When the \textsc{os} is recreating the execution context
+for the new process, it ensures that this difference is put in.
+
+We can use this difference to write conditional statements 
 that will only execute code for a single branch (i.e. for a single process). 
 Below shows an example.
 
@@ -329,7 +332,7 @@ because of the use of a \textit{timer interrupt}}
 
 
 
-\section{Inter-process Communication I}
+\section{Interprocess Communication I}
 
 
 \highlightdef{\textbf{Interprocess Communication} (\textsc{ipc})
@@ -351,7 +354,8 @@ We can create a pipe using the \lstinline{pipe()} system call.
 
 
 \begin{example}
-Below shows an example of a Unix pipe used in shell command \lstinline{ls | wc -l}.
+Below shows an example of a \textsc{unix} pipe is used 
+in shell command \lstinline{ls | wc -l}.
 
 \begin{figure}[h]
 \begin{tikzpicture}[
@@ -365,6 +369,37 @@ Below shows an example of a Unix pipe used in shell command \lstinline{ls | wc -
 \end{tikzpicture}
 \end{figure} 
 \end{example}
+
+
+
+\frmrule
+
+\begin{example}
+Below shows an example of a Unix pipe used in shell command \lstinline{cat hello.txt | wc -w}.
+
+\begin{lstlisting}
+int main(void) {
+    int pipefds[2];
+    pipe(pipefds);
+    if (fork() != 0) { 
+        close(pipefds[1]);
+        dup2(pipefds[0], STDIN_FILENO);
+        close(pipefds[0]);
+        execl("/usr/bin/wc", "wc", "-w", NULL);
+    } else { 
+        close(pipefds[0]);
+        dup2(pipefds[1], STDOUT_FILENO);
+        close(pipefds[1]);
+        execl("/bin/cat", "cat", "hello.txt", NULL);
+    }
+    return EXIT_FAILURE;
+}
+\end{lstlisting}
+\end{example}
+
+
+
+\frmrule
 
 So far we have been using \textit{anonymous pipes}. This is fine if both 
 processes are living in the same parent process space, 
@@ -403,7 +438,7 @@ visualise this as a T.
 
 
 
-\section{Inter-process Communication II}
+\section{Interprocess Communication II}
 
 Unix domain sockets (IPC socket) \\
 Solaris doors \\
@@ -412,10 +447,11 @@ Windows COM \\
 
 \section{Introducing Threads}
 
-
 \highlightdef{\textbf{POSIX} was developed to 
 \textit{standardise} threads and thread management 
 }
+as well as to standardise \textsc{ipc} mechanisms and commands 
+in \textsc{unix} operating systems.
 
 Before \textsc{posix}, the responsibility of writing the
 implementation of threads and their interaction was placed 
