@@ -1,0 +1,26 @@
+
+\chapter{Grammars}
+
+\section{Context Free Grammars}
+
+\begin{example}
+$E' \rightarrow E$;
+$E \rightarrow T \text{+} E | T$;
+$T \rightarrow F \times T | F$;
+$F \rightarrow D | \text{(} E \text{)}$;
+$D \rightarrow \text{0} | \text{1} | \dotsm | \text{9}$;
+\end{example}
+
+We do a \textit{left factorisation}. 
+Each alternative can start with the same thing. 
+
+An expression can start with a term.
+A term can start with a factor.
+
+
+$E' \rightarrow E$;
+$E \rightarrow T (\text{+} E | \epsilon)$;
+$T \rightarrow F (\times T | \epsilon)$;
+$F \rightarrow D | \text{(} E \text{)}$;
+$D \rightarrow \text{0} | \text{1} | \dotsm | \text{9}$;
+
