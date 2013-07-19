@@ -1,15 +1,15 @@
 
-\chapter{Processes and Threads}
+\chapter{Processes and Threads \textsc{i}}
 
 
 
 
 
-\section{Introducing Process}
+\section{Introducing Processes}
 
-Q: \textit{What is a process exactly?} \\
-Q: \textit{Is it possible to have more than one process? How?}  \\
-Q: \textit{How does the operating system' code get executed?}
+%Q: \textit{What is a process exactly?} \\
+%Q: \textit{Is it possible to have more than one process? How?}  \\
+%Q: \textit{How does the operating system' code get executed?}
 
 Right now, the operating system sees a program \textit{during execution} 
 an ongoing sequence of machine code instructions. Before code is executed 
@@ -120,11 +120,10 @@ Below shows an example.
 
 \begin{example}
 \begin{lstlisting}
-void example()
-{
-	pid_t pid = fork();
-	if (pid != 0) printf("P");
-	else          printf("C");
+void example() {
+    pid_t pid = fork();
+    if (pid != 0) printf("P");
+    else          printf("C");
 }
 \end{lstlisting}
 \end{example}
@@ -137,11 +136,10 @@ conditional logic using the result from \lstinline{fork()}.
 
 \begin{example}
 \begin{lstlisting}
-void example()
-{
-  printf("E");
-  fork();
-  printf("F");
+void example() {
+    printf("E");
+    fork();
+    printf("F");
 }
 \end{lstlisting}
 \end{example}
@@ -172,12 +170,11 @@ For the following code, state what is printed, and precisely in what order.
 Explain your answer. State how many processes are running 
 after \lstinline{example()} returns.
 \begin{lstlisting}
-void example()
-{
-	pid_t pid = fork();
-	if (pid != 0) printf("P");
-	else          printf("C");
-	printf("X");
+void example() {
+    pid_t pid = fork();
+    if (pid != 0) printf("P");
+    else          printf("C");
+    printf("X");
 }
 \end{lstlisting}
 \end{example}
@@ -190,19 +187,18 @@ For the following code, state what is printed, and precisely in what order.
 Explain your answer. State how many processes are running 
 after \lstinline{example()} returns.
 \begin{lstlisting}
-void example()
-{
-	pid_t pid1 = fork();
-	if (pid1 != 0) {
-		printf("A")
-	} else {
-		pid_t pid2 = fork();
-		if (pid2 != 0) {
-			printf("B");
-		} else {
-			printf("C");
-		}
-	} 
+void example() {
+    pid_t pid1 = fork();
+    if (pid1 != 0) {
+        printf("A")
+    } else {
+        pid_t pid2 = fork();
+        if (pid2 != 0) {
+            printf("B");
+        } else {
+            printf("C");
+        }
+    } 
 }
 \end{lstlisting}
 \end{example}
@@ -215,21 +211,20 @@ For the following code, state what is printed, and precisely in what order.
 Explain your answer. State how many processes are running 
 after \lstinline{example()} returns.
 \begin{lstlisting}
-void example()
-{
-	pid_t pid1 = fork();
-	if (pid1 != 0) {
-		printf("A")
-	} else {
-		pid_t pid2 = fork();
-		if (pid2 != 0) {
-			printf("B");
-		} else {
-			printf("C");
-		}
-		printf("Y");
-	} 
-	printf("X");
+void example() {
+    pid_t pid1 = fork();
+    if (pid1 != 0) {
+        printf("A")
+    } else {
+        pid_t pid2 = fork();
+        if (pid2 != 0) {
+            printf("B");
+        } else {
+            printf("C");
+        }
+        printf("Y");
+    } 
+    printf("X");
 }
 \end{lstlisting}
 \end{example}
@@ -241,16 +236,15 @@ For the following code, state what is printed, and precisely in what order.
 Explain your answer. State how many processes are running 
 after \lstinline{example()} returns.
 \begin{lstlisting}
-void example()
-{
-	pid_t pid1 = fork();
-	if (pid1 != 0) {
-		printf("X")
-	}
-	pid_t pid2 = fork();
-	if (pid2 != 0) {
-		printf("Y")
-	}
+void example() {
+    pid_t pid1 = fork();
+    if (pid1 != 0) {
+        printf("X")
+    }
+    pid_t pid2 = fork();
+    if (pid2 != 0) {
+        printf("Y")
+    }
 }
 \end{lstlisting}
 \end{example}
@@ -262,28 +256,53 @@ For the following code, state what is printed, and precisely in what order.
 Explain your answer. State how many processes are running 
 after \lstinline{example()} returns.
 \begin{lstlisting}
-void example()
-{
-	pid_t pid1 = fork();
-	if (pid1 != 0) {
-		printf("X")
-	}
-	printf("S")
-	pid_t pid2 = fork();
-	if (pid2 != 0) {
-		printf("Y")
-	}
-	printf("T")
+void example() {
+    pid_t pid1 = fork();
+    if (pid1 != 0) {
+        printf("X");
+    }
+    printf("S");
+    pid_t pid2 = fork();
+    if (pid2 != 0) {
+        printf("Y");
+    }
+    printf("T");
 }
 \end{lstlisting}
 \end{example}
 
+\frmrule
+
+\begin{example}
+Suppose the first process has a pid of 0. What problem arrises 
+when conditional logic with \lstinline{fork()} is used?
+\end{example}
+
+The initial process is therefore given an id of 1.
+This initial process is handcrafted by the \textsc{os}. 
+There is no \lstinline{fork()} call. 
 
 
-\highlightdef{The \lstinline{execve()} system call
+\frmrule
+
+Quite often, the child process we desire will have \textit{little resemblence} 
+to the parent process. We need a mechanism to making it easier to change our child 
+process's execution context. This can be achieved with the \lstinline{exec} 
+system call.
+
+\highlightdef{The \lstinline{exec} system calls
  replaces the current process with a new process}
-By this we mean that the memory allocated for a process is replaced with new 
-instructions and new data. There is a large family of \lstinline{exec} calls.
+
+By this, we mean that the memory allocated for a process is replaced with new 
+instructions and new data. For a child process, this effectively 
+replaces the recreated execution context - so the child has no similarity 
+to the parent at all. 
+
+There is a large family of \lstinline{exec} calls. These are defined in  
+\lstinline{<unistd.h>} \textsc{posix} header.
+
+
+First we will look at \lstinline{execv}.
 
 \frmrule
 
@@ -293,19 +312,51 @@ Explain your answer. State how many processes are running
 after \lstinline{example()} returns.
 
 \begin{lstlisting}
-void example()
-{
-	pid_t pid = fork();
-	if (pid != 0) {
-		printf("P");
-	} else {
-		printf("C");
-		execv('./prog', 5, 'hello');
-	}       
-	printf("X");
+void example() {
+    pid_t pid = fork();
+    if (pid != 0) {
+        printf("P");
+    } else {
+        printf("C");
+        execv('./prog', 5, 'hello');
+    }       
+    printf("X");
 }
 \end{lstlisting}
 \end{example}
+
+\frmrule
+
+Another \lstinline{exec} system call is \lstinline{execl}.
+
+\begin{example}
+For the following code, state what is printed, in all possible orders.
+Explain your answer. State how many processes are running 
+after \lstinline{example()} returns.
+
+\begin{lstlisting}
+void example() {
+    pid_t pid = fork();
+    if (pid == 0) {
+        execl("/bin/ps", "ps", "-l", NULL);
+        printf("A");
+    } else {
+        printf("B");
+    }
+    printf("C");
+}
+\end{lstlisting}
+\end{example}
+
+\lstinline{execl} first takes in the \textit{path of a program} to run,
+then we assign a name \textit{name of the command} (usually a shortened form), 
+and then a  \textit{list of parameters} (just like on 
+the command line), and then finishes with \textsc{null}.
+
+
+
+
+% execl(“/bin/cat”, “cat”, doc.txt”, NULL);
 
 
 
@@ -336,25 +387,90 @@ because of the use of a \textit{timer interrupt}}
 
 
 \highlightdef{\textbf{Interprocess Communication} (\textsc{ipc})
-concerns data communication between processes} 
+concerns \textit{data communication} and \textit{synchronisation} between processes} 
+
+
+
+In \textsc{unix} most \textsc{ipc} obhects are \textsc{unix} \textit{special files} by 
+are identified by \textit{file descriptors}. 
+File descriptors 0, 1, and 2 are reserved by convention 
+for standard input, standard output, and standard error.
 
 Recall that \textsc{unix} is written in \textsc{c}. From a source-code perspective, 
 a program has a standard output stream and a standard input stream. 
 
-\highlightdef{A \textbf{UNIX Pipe} connects the \textit{standard output} of $P_1$ 
-to the \textit{standard input} of $P_2$ }
+\highlightdef{A \textbf{UNIX Pipe} connects a 
+\textit{write file descriptor} of $A$ to a \textit{read file descriptor} of $B$}
 
 \textsc{unix} pipes therefore provide a mechanism
-for \textit{one-way communication} betweeen $P_1$ and $P_2$ where 
-$P_1$ is sending data to $P_2$. 
+for \textit{one-way communication} betweeen $A$ and $B$ where 
+$A$ is sending data to $B$. A common example would be 
+connecting the \textit{standard output} of $A$ 
+to the \textit{standard input} of $B$.
 
 We can create a pipe using the \lstinline{pipe()} system call.
+The \lstinline{pipe()} has just one parameter, \lstinline{pipefds} 
+which is an out array for two file descriptors. 
+The system call creates the pipe and two descriptors, 
+one for writing to the pipe (\lstinline{pipefds[1]}) 
+and one for reading from the pipe (\lstinline{pipefds[0]}). 
+
+\begin{example}
+Below shows an example of how to create a pipe 
+using the \lstinline{pipe()} system call.
+
+\begin{lstlisting}
+int pipefds[2] = {0,0};
+pipe(pipefds);
+printf("pipe read fds: %d\n", pipefds[0]);
+printf("pipe write fds: %d\n", pipefds[1]);
+\end{lstlisting}
+\end{example}
+
+\frmrule
+
+In the previous example, after the call to \lstinline{pipe()} 
+we file descriptor table for the process looks like the following.
 
 
+\frmrule
 
 
 \begin{example}
-Below shows an example of a \textsc{unix} pipe is used 
+Below shows an example of parent child communication 
+using \lstinline{fork()} and \lstinline{pipe()}.
+
+
+\begin{lstlisting}
+int main(void) {
+    int pipefds[2] = {0,0};
+    pipe(pipefds);
+    pid_t pid = fork();
+    if (pid != 0) { 
+        write(pipefds[1], "test", 5);
+        printf("send: %s\n", buf);
+        exit(0);
+    } else { 
+        char message[30];
+        read(pipefds[0], buf, 5);
+        printf("received: %s\n", buf);
+        wait(NULL);
+    }
+    return 0;
+}
+\end{lstlisting}
+\end{example}
+
+
+
+
+
+
+\frmrule
+
+\begin{example}
+Below shows an example of a \textsc{unix} pipe is used to 
+implement a \textsc{unix} \textit{command line pipe}  is used 
 in shell command \lstinline{ls | wc -l}.
 
 \begin{figure}[h]
@@ -375,13 +491,15 @@ in shell command \lstinline{ls | wc -l}.
 \frmrule
 
 \begin{example}
-Below shows an example of a Unix pipe used in shell command \lstinline{cat hello.txt | wc -w}.
+Below shows an example of a \textsc{unix} \textit{command line pipe} 
+used in shell command \lstinline{cat hello.txt | wc -w}.
 
 \begin{lstlisting}
-int main(void) {
-    int pipefds[2];
+int example() {
+    int pipefds[2] = {0,0};
     pipe(pipefds);
-    if (fork() != 0) { 
+    pid_t pid = fork();
+    if (pid != 0) { 
         close(pipefds[1]);
         dup2(pipefds[0], STDIN_FILENO);
         close(pipefds[0]);
@@ -392,7 +510,6 @@ int main(void) {
         close(pipefds[1]);
         execl("/bin/cat", "cat", "hello.txt", NULL);
     }
-    return EXIT_FAILURE;
 }
 \end{lstlisting}
 \end{example}
@@ -439,6 +556,13 @@ visualise this as a T.
 
 
 \section{Interprocess Communication II}
+
+
+\highlightdef{A \textbf{UNIX Signal} provide notifications for internal or external events} 
+
+These can \textit{roughly} be compared to exceptions as seen in \textsc{c}++, Java.
+The biggest difference is that signals are implemented at the \textit{kernel level}. 
+
 
 Unix domain sockets (IPC socket) \\
 Solaris doors \\

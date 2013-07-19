@@ -60,6 +60,13 @@ Responsibilities of a modern operating system.
 \end{itemize}
 
 
+\highlightdef{Modern operating systems and \textsc{c} programming are \textit{in unison}}
+
+Although this is not a programming course, to understand operating systems 
+concretely, being comfortable with \textsc{c} programming is \textit{extremely}
+helpful. \textsc{c} itself is an old programming language yet still today 
+there is a active operating system development community.
+
 
 \section{Introducing Kernels}
 
@@ -155,6 +162,12 @@ service routine (\textsc{isr}).
 – The result is usually returned in \textsc{eax}.
 
 
+\highlightdef{System calls have multiple levels of indirection, 
+and are \textit{more expensive} than a function call}
+
+System calls switching back and forth from user mode and kernel mode. 
+
+
 \begin{example}
 
 \begin{lstlisting}
@@ -176,9 +189,9 @@ Completely modular kernel
 \item \textbf{Windows} 
 \end{itemize}
 
-Unix has the notion of \textit{kernel space} and \textit{user space}. 
-\highlightdef{\textbf{User Space} is source code outside the kernel. \\
-\textbf{Kernel Space} is source code inside the kernel}
+Unix has the notion of \textit{kernelspace} and \textit{userspace}. 
+\highlightdef{\textbf{Userspace} is source code outside the kernel. \\
+\textbf{Kernelspace} is source code inside the kernel}
 We similarly think of code above the kernel as \textit{user level} code and 
 code inside the kernel as \textit{kernel level} code.
 For instructions in exection, the context is either in 
@@ -206,22 +219,29 @@ communicate with them: the kernel always sits in between.
 \end{example}
 
 
+\section{Shells and Intepreters}
+
+
+\highlightdef{A \textbf{Shell} is a 
+\textit{command-line interpreter} 
+interface for users to access the kernel}
+
+Users direct the operation of the computer by entering commands as text for a command line interpreter to 
+execute or by creating scripts that will be interpreted.
+
+The \textsc{unix} shell is an example of a command-line interpreter 
+that provides the most traditional user interface for the \textit{unix} systems. 
+
+
+
 
 \section{\textsc{unix} Special Files}
 
 \highlightdef{In \textsc{unix}, \textit{everything} is file}
 
-Most operating system have \textit{normal files}.
-Any structure is determined by positions of 
-binary digits in the file. It is up to the reader to 
-parse the file to determine the structure. These files 
-can are independent of the operating system. 
+In \textsc{unix}, files can be divided into \textit{normal files} 
+and \textit{special files}.
 
-\textsc{unix} however, has the notion of \textit{special files}.
-These can be viewed as operating system constructs that 
-have a much richer structure and are tied to the operating system 
-source code. Special files are not normal files with additions. 
-Special files are data strctures with a rich structure.
 
 \begin{figure}[h]
 \begin{tikzpicture} [
@@ -254,6 +274,32 @@ Special files are data strctures with a rich structure.
 \end{tikzpicture}
 \end{figure}
 
+Most operating system today have \textit{normal files}.
+Normal files are \textit{just bytes}. Any meaning or structure 
+is supplied by programs in the userspace. 
+It is up to programs in the userspace to parse the file 
+to determine the structure.
+These files are independent of the operating system.
+
+\textsc{unix} however, has the notion of \textit{special files}.
+These can be viewed as operating system constructs that 
+have a structure designd for the kernel to parse and understand. 
+Special files are data structures tightly coupled to 
+the \textsc{os} implementation. They require less parsing 
+because, rather than being a stream of bytes, they can have a more 
+flexible layout. 
+
+Special files are \textit{not} normal files with additions.
+
+The etymology of \textsc{unix} Special Files is a result of how 
+operating systems before \textsc{unix} behaved. Before \textsc{unix}, 
+the concept of normal files was not used extensively. 
+The \textsc{os} had the responsibility of understand the structure 
+of all various kinds of file formats. This was \textit{not} delegated 
+to the userspace. 
+
+\frmrule
 
 A \textit{file descriptor} an integer used for accessing to uniquely 
 identifer \textsc{unix} files whether they be normal files or special files.
+
