@@ -20,6 +20,9 @@ decorations.markings, chains, snakes, backgrounds}
 \usepackage{bussproofs}
 \usepackage{rotating}
 \usepackage{multirow} 
+\usepackage{stmaryrd}
+\usepackage[explicit]{titlesec}
+
 
  % For typesetting code.
  % [final] is needed because listings doesn't like draft and renders nothing
@@ -35,6 +38,10 @@ decorations.markings, chains, snakes, backgrounds}
 % =============================================================================
 \tikzstyle{node_sty}=[rectangle, draw=black, thick, fill=black!5,
 text width=8em, text centered, drop shadow, anchor=north]
+
+\tikzstyle{node_sty2}=[rectangle, draw=black, thick, fill=black!5,
+text centered, drop shadow, anchor=north]
+
 \tikzstyle{block_shadow_sty}=[draw=black, thick, fill=black!5, drop shadow]
 
 % =============================================================================
@@ -43,6 +50,25 @@ text width=8em, text centered, drop shadow, anchor=north]
 \tikzstyle{fra_ans_sty}=[rectangle, draw=black, thick, fill=white, 
 align=center, minimum width=8em, text centered, anchor=north]
 % =============================================================================
+
+
+\titleformat{\chapter}
+{\gdef\chapterlabel{}\normalfont\Huge\bfseries}
+{\gdef\chapterlabel{\thechapter\ }}{0pt}
+{\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.north west)
+    {\begin{tikzpicture}[remember picture, overlay]
+    \draw[fill=black!15, draw=none] (0,0) rectangle (\paperwidth,-2cm);
+    \node[anchor=west,xshift=.167\paperwidth,yshift=-4cm,rectangle,inner sep=14pt,fill=black!15] (l) 
+    {\chapterlabel};
+    \node[anchor=west,right=0.1cm of l,inner sep=11pt,yshift=-0.1cm, text=black!85] {#1};
+    \draw[draw=black!85] (3.5cm,-2.6cm) -- (\paperwidth,-2.6cm);
+    \draw[draw=black!85] (3.5cm,-5.4cm) -- (\paperwidth,-5.4cm);
+    \end{tikzpicture}
+    };
+\end{tikzpicture}
+}
+\titlespacing*{\chapter}{0pt}{6pt}{-5pt}
 
 
 \newcommand{\frmrule}{\rule{\linewidth}{0.1mm}}
@@ -85,11 +111,11 @@ align=center, minimum width=8em, text centered, anchor=north]
 
 
 % =============================================================================
-\newlength{\remaining}
-\newcommand{\titleline}[1]{
-	\setlength{\remaining}{\textwidth-\widthof{\textit{#1}}}
-	\noindent\underline{\raggedright \textit{#1}\hspace*{\remaining}}\par
-}
+%\newlength{\remaining}
+%\newcommand{\titleline}[1]{
+%	\setlength{\remaining}{\textwidth-\widthof{\textit{#1}}}
+%	\noindent\underline{\raggedright \textit{#1}\hspace*{\remaining}}\par
+%}
 % =============================================================================
 
 % Example Environment
@@ -105,7 +131,7 @@ align=center, minimum width=8em, text centered, anchor=north]
 \lstdefinestyle{doclisting}{
   belowcaptionskip=1\baselineskip,
   breaklines=true,
-  xleftmargin=0.5in,
+  xleftmargin=0in,
   showstringspaces=false,
   basicstyle=\footnotesize\ttfamily,
 }
