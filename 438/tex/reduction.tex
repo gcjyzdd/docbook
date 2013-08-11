@@ -137,9 +137,10 @@ We can show that $\text{\textit{LogicSat}} \leq_P \text{\textit{LogicSat3}}$
 
 \frmrule
 
-The reduction relies on two main ideas. 
-First we will add new variables $x_i$ so that we will obtain clauses with three literals.
-Secondly, we will repeatedly use the lemma $\top = a \vee \neg a$. 
+The reduction add new variables $x_i$ to build up clauses with three literals.
+However, we make sure the  $x_i$'s cancel out by using the lemma $\top = x \vee \neg x$.
+This ensures the new formula of 3-clauses is logically equivalent to the original.
+
 Notice that the following are logically equivalent:
 
 

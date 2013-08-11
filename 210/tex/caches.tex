@@ -93,9 +93,12 @@ How many bits are needed for this cache?
 
 \frmrule
 
-The idea of a direct mapped cache is to split the address into three parts 
-x, y, and z. Then, blocks are mapped cache slots based on the 
-value of y. 
+The idea of a direct mapped cache is to split the address into three parts, 
+x, y, and z. We will write the memory address as 
+$[\langle \text{\lstinline{x}},\text{\lstinline{y}},\text{\lstinline{z}} \rangle]$
+Then, blocks are mapped cache slots based on the 
+value of y. The value of z determined by our block size. 
+The number of bits for x is whatever is left over. There may be zero bits for x.
 
 \begin{example}
 Here is an artificial example with a very small 64\textsc{b} memory and very small
@@ -150,6 +153,12 @@ in the following way:
   \node [right=of memlabel, xshift=-0.25cm] (zlabel) {z};
   \node [above=of zlabel] (ylabel) {y};
   \node [above=of ylabel] (xlabel) {x};
+
+  % Background Box
+  \begin{pgfonlayer}{background} 
+  \node[fill=black!10,drop shadow,draw=black,inner sep=0pt, fit = (000) (317)] (background) {};
+  \end{pgfonlayer}
+
   % \draw[dashed] (b\y.one split north) -- (b\y.one split south);
 \end{tikzpicture}
 
@@ -167,7 +176,7 @@ stores one byte.
 \begin{center}
   \begin{tabular}{ |l|l| }
     \hline
-    Cache line & Memory Blocks \\ 
+    Cache line, y & Memory Blocks \\ 
     \hline
     \multirow{4}{*}{0} 
      & $[\langle 0,0,0 \rangle \dotsm \langle 0,0,7 \rangle]$ \\
@@ -176,7 +185,7 @@ stores one byte.
      & $[\langle 3,0,0 \rangle \dotsm \langle 3,0,7 \rangle]$ \\ 
     \hline
     \multirow{4}{*}{1}
-     & $[\langle 0,0,0 \rangle \dotsm \langle 0,0,7 \rangle]$ \\
+     & $[\langle 0,1,0 \rangle \dotsm \langle 0,1,7 \rangle]$ \\
      & $[\langle 1,1,0 \rangle \dotsm \langle 1,1,7 \rangle]$ \\
      & $[\langle 2,1,0 \rangle \dotsm \langle 2,1,7 \rangle]$ \\
      & $[\langle 3,1,0 \rangle \dotsm \langle 3,1,7 \rangle]$ \\ 
@@ -202,7 +211,7 @@ $ [\langle \text{\lstinline{x}}, \text{\lstinline{y}}, 0 \rangle
 is mapped to \textit{exactly one} $b$-byte cache block sitting on a line with the 
 number given by
 $$C([\langle \text{\lstinline{x}}, \text{\lstinline{y}}, 0 \rangle
-\dotsm \langle \text{\lstinline{x}}, \text{\lstinline{y}}, b-1 \rangle]
+\dotsm \langle \text{\lstinline{x}}, \text{\lstinline{y}}, b-1 \rangle])
 = \text{\lstinline{y}}$$
 
 \item \textbf{$\text{Cache Block} \rightarrow \text{Memory Blocks}$} 
@@ -224,14 +233,26 @@ they give a \textit{single output}.
 \highlightdef{A \textbf{direct-mapped cache} 
 uses a mapping scheme with two \textit{functions}} 
 
-
-\frmrule
-
-
-
+Where our two functions are $C$ and $M$.
 Below shows a diagram that shows how these functions create the 
 mapping scheme between memory addresses and cache blocks. 
 
+
+\frmrule
+
+\begin{example}
+Suppose we have the following address format. \\
+Fill in the missing entries in  the following table to show which blocks map to which cache lines
+\end{example}
+
+\begin{example}
+Suppose we have the following address format. Determine: \\
+\textbf{(a)} $C([\langle 0, 3, 0 \rangle \dotsm \langle 0, 3, 15 \rangle]$
+\end{example}
+
+\begin{example}
+Explain why $C([\langle 1, 1, 0 \rangle \dotsm \langle 1, 2, 7 \rangle]$ is undefined.
+\end{example}
 
 
 \begin{figure}[h]
@@ -253,10 +274,12 @@ mapping scheme between memory addresses and cache blocks.
 \end{figure} 
 
 
+\frmrule
 
-
-
-
+Direct-mapped caches are simple in that they use functions to work 
+out the mapping. Furthermore, the calculations are simple to 
+work out using a mod operation. However direct-mapped caches 
+suffer from a problem called \textit{cache line contention}.
 
 \highlightdef{\textbf{Cache contention}: Each cache line 
 has $C(x,2)$ \textit{conficting pairs} of addresses}

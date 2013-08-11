@@ -13,6 +13,14 @@ equals.
 
 
 \section{Scala Traits/Mixins}
+
+
+Mixins are \textit{fragments of a class}.
+Mixins \textit{cannot have a superclass}, they describe their superclass via an 
+interface. Mixins put constraints on the behaviour of the superclass. 
+But mixins do not specify what a superclass expects
+from its subclass. This inverts the relationship between 
+
 Traits provide a set of methods 
 Traits require a set of methods
 Traits are the behavioral building blocks of classes
@@ -53,15 +61,19 @@ As a result traits are stateful.
 
 \section{Ruby Traits/Mixins}
 
-\section{Objective-C Protocols and Categories}
+\section{Objective-C Protocols, Categories, Class Extensions}
+
+A category allows us to add methods to a class. 
+We can even add methods to classes that we don't own. 
+A common case is adding new methods to NSString. 
+
+By convention, the file is named: Class+CategoryName. 
 
 
 
-Mixins are \textit{fragments of a class}.
-Mixins \textit{cannot have a superclass}, they describe their superclass via an 
-interface. Mixins put constraints on the behaviour of the superclass. 
-But mixins do not specify what a superclass expects
-from its subclass. This inverts the relationship between 
+
+\section{C\textsuperscript{\#} Class Extensions}
+
 
 \section{Javascript Prototypes}
 
