@@ -27,12 +27,12 @@ We already have a prioirity on what byte is the most important
 or significant. This is the most significant byte. However 
 
 \highlightdef{\textbf{Endianness} tells us \textit{what direction}
-to imagine multibyte filling memory starting from \textsc{msb} and finishing at \textsc{lsb}}
+\textit{multibyte data} fills memory starting from the \textsc{msbyte} and finishing at the \textsc{lsbyte}}
 
-A \textit{little-endian} means that we are filling the memory, 
-moving towards the little-end (lower addresses).
-Whereas \textit{big-endian} means that we are filling the memory, 
-moving towards the big-end (higher addresses).
+A \textit{little}-endian means that we are filling the memory, 
+byte-by-byte, moving towards the \textit{little}-end or \textit{lower} addresses.
+Whereas \textit{big}-endian means that we are filling the memory, 
+moving towards the \textit{big}-end (higher addresses).
 
 
 
@@ -53,3 +53,12 @@ bottom-right to the top-left.
 \highlightdef{Big-endian is the more natural/intuitive choice}
 
 Yet there are systems that use little endian. %intel x86
+
+
+
+\section{RAM Internals}
+
+
+\highlightdef{\textbf{DDR} stands for \textit{double data rate}}
+
+\highlightdef{A \textit{refresh} is a recharging of the \textsc{ram} capacitors}

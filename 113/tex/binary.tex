@@ -1,0 +1,105 @@
+
+
+\chapter{Data Representation}
+
+
+\section{Introducing Binary}
+
+
+
+Here we introduce some non-standard notation. 
+We use these \textit{Oxford Brackets} 
+to show we are assigning a meaning to the binary digits. 
+The \textit{natural} (unsigned) assignment is denoted by subscript $N$. 
+Suppose we have a binary digits \textsf{x} and the unsigned we associate is $x$.
+We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{n} = x$
+where the $n$ denotes a \textit{natural} interpretation of the binary. 
+
+\highlightdef{\textbf{Number Table Series}: 
+$\llbracket \text{\textsf{x}} \rrbracket_{n} = \sum^{N-1}_{t=0} 2^{t} \textsf{x}_t$}
+
+This is the most natural way to assign an 
+arithmetical value to this sequence of digits. 
+
+\frmrule
+
+Proof of uniqueness.
+
+\frmrule
+
+
+
+\section{Excess-n}
+
+We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{ex(n)} = x$
+
+The definition of excess-n works backwards from the definition 
+of $\llbracket \text{\textsf{x}} \rrbracket_{n}$. 
+If we compare $\llbracket \text{\textsf{x}} \rrbracket_{n}$ 
+to $\llbracket \text{\textsf{x}} \rrbracket_{ex(n)}$,
+then $\llbracket \text{\textsf{x}} \rrbracket_{n}$ is \textit{in excess} of $n$ 
+(has an extra of $n$). Written as an equation, the definition is as follows.
+
+\highlightdef{\textbf{Excess-n}: 
+$\llbracket \text{\textsf{x}} \rrbracket_{n}  = 
+\llbracket \text{\textsf{x}} \rrbracket_{ex(n)} + n$}
+
+The value, $x$, that we want excess-n to give for binary \textsf{x} 
+is $n$ too much when we use the natural representation. It's \textit{in excess}. 
+And so, to find $\llbracket \text{\textsf{x}} \rrbracket_{ex(n)}$, 
+we simply subtract $n$ from the natural representation. 
+
+\frmrule 
+
+\begin{example}
+Find $\llbracket \text{\textsf{1011}} \rrbracket_{ex(8)}$.
+\end{example}
+
+\frameans{}{3}
+
+The normal interpretation \textsf{x} has an excess of 8 (having an extra of 8) 
+in comparison with the excess-8 interpretation. 
+So if we subtract 8 from $\llbracket \text{\textsf{x}} \rrbracket_{n}$, 
+we will find the $\llbracket \text{\textsf{x}} \rrbracket_{ex(8)}$
+
+
+\section{One's Complement}
+
+
+\section{Two's Complement}
+
+We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{2c} = x$
+
+
+
+
+% TODO: fix render
+\highlightdef{\textbf{Two's Complement}: 
+$ \llbracket \text{\textsf{x}} \rrbracket_{2c} = \left\{ 
+  \begin{array}{ll}
+    \llbracket \text{\textsf{x}} \rrbracket_{n} & 
+    \quad \text{for} \quad 0 \leqslant \llbracket \text{\textsf{x}} \rrbracket_{n} < 2^{n-1}  \\
+    \llbracket \text{\textsf{x}} \rrbracket_{n} - 2^{n} & 
+    \quad \text{for} \quad 2^{n-1} \leqslant \llbracket \text{\textsf{x}} \rrbracket_{n} < 2^{n}
+  \end{array} \right.$
+}
+
+\highlightdef{\textbf{Two's Complement Operation}: 
+$\llbracket 2C(\text{\textsf{x}}) \rrbracket_{2c}  = 
+- \llbracket \text{\textsf{x}} \rrbracket_{2c}$
+}
+
+
+
+\section{Ten's Complement}
+
+We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{10c} = x$
+
+
+\section{Hexidecimal}
+
+
+\section{General Base-n}
+
+\highlightdef{\textbf{Number Table Series}: 
+$\llbracket \text{\textsf{x}} \rrbracket_{r} = \sum^{N-1}_{t=0} r^{t} \textsf{x}_t$}

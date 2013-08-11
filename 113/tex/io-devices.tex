@@ -88,7 +88,7 @@ How do we make that interface available to programs
 ]
    \node (root) [text width=18em] {IO Memory Interface}
       child {node (pio) {Physical-Memory Mapping}}
-      child {node(intio) {Seperate-Memory Mapping}};
+      child {node(intio) {Separate-Memory Mapping}};
 \end{tikzpicture}
 \end{figure}
 
@@ -194,9 +194,9 @@ Communication is done through on network only.
    (root) [text width=18em] {CPU-Device Scheduling Problem}
    child{
       node (sol) {Solutions}
-      child {node (pio) {Programmed IO}}
-      child {node(intio) {Interrupt-driven IO}}
-      child {node(intio) [text width=9em] {IO Mediator}}
+      child {node (pio) {Programmed \textsc{io}}}
+      child {node(intio) {Interrupt-driven \textsc{io}}}
+      child {node(intio) [text width=9em] {\textsc{io} Mediator}}
    };
    
 \end{tikzpicture}
@@ -216,34 +216,36 @@ At the end of a fetch-execute cycle, the processor will see that the device is r
 by reading the \textit{interrupt flag register}. 
 \item \textbf{IO Mediator} 
 We will later see that adding more another processor or hardware controller dedicated 
-to IO transfer can solve the problem. This processor/controller has the responsibility 
+to \textsc{io} transfer can solve the problem. This processor/controller has the responsibility 
 of being a mediator and passing messages from device to processor and vice versa. 
 \end{itemize}
 
-Programmed IO is also called \textit{polling}. Although this is slightly misleading because 
-the processor does polling in some sense in Interrupt-driven IO as well. The processor 
-has to poll the interrupt flag register. However interrupt-driven IO is much preferred.
+Programmed \textsc{io} is also called \textit{polling}. Although this is slightly misleading because 
+the processor does polling in some sense in Interrupt-driven \textsc{io} as well. The processor 
+has to poll the interrupt flag register. However interrupt-driven \textsc{io} is much preferred.
 Firstly, the processor only has to check \textit{one register}. 
-It's own flag register. In programmed IO, it has to check the register 
+It's own flag register. In programmed \textsc{io}, it has to check the register 
 of \textit{each device} to see if it's ready. 
 
-Programmed IO results in poor utilisation of the CPU. 
+Programmed \textsc{io} results in poor utilisation of the CPU. 
 We waste the cpu’s usage by busy waiting. We more cycles to checking control register than 
 we would if we checked a register inside the cpu. 
 When have multiple devices – devices must take turns communicating with the cpu. 
 If one device takes too long then we can no longer guarantee good response times.
 
-If we know our computer has only one device, then programmed-io may be a solution. A washing machine may for example use programmed-io. However, most desktop computers, use a large array of io-devices. And in general, most general-purpose computers require the luxury of having multiple devices. And so Programmed-IO isn’t seen in these situations. 
+If we know our computer has only one device, then programmed-io may be a solution. A washing machine may for example use programmed-io. However, most desktop computers, use a large array of io-devices. And in general, most general-purpose computers require the luxury of having multiple devices. And so Programmed-\textsc{io} isn’t seen in these situations. 
 
 
 \section{Interrupt-Driven IO}
 
-Processor designers realised the issues brought up with Programmed-IO.
-And so processors are now designed to provide a calling mechanism called an Interrupt.
+Processor designers realised the issues brought up with Programmed-\textsc{io}.
+And so processors and low-level architectures are now designed with a
+\textit{calling mechanism} called \textit{interrupts}.
 
 
-\highlightdef{An \textbf{Interrupt} is a calling 
-mechanism provided by the processor that is given to devices }
+\highlightdef{\textbf{Interrupts} are a \textit{calling 
+mechanism} provided by the processor (and nearby chips) 
+and given to \textsc{io} devices }
 
 An interrupt allows devices to call the processor’s attention to a 
 change in the device controller’s registers.
@@ -277,7 +279,7 @@ What happens if another interrupt is signalled while the interrupt handler is ex
 \end{tikzpicture}
 
 
-The operating system schedules io-requests in an attempt to maximise their throughput (based on the io- device’s characteristics).
+The operating system schedules io-requests in an attempt to maximise their throughput (based on the \textsc{io} device’s characteristics).
 
 
 \highlightdef{A \textbf{Device Driver} is software ...}
@@ -287,8 +289,8 @@ The operating system schedules io-requests in an attempt to maximise their throu
 \highlightdef{The \textbf{Bottom Half} is responsible for ...}
 
 
-Synchronous I/O read() or write() will block a user process until its completion 
-OS overlaps synchronous I/O with another process 
-Asynchronous I/O read() or write() will not block a user process 
-user process can do other things before I/O completion 
-I/O completion will notify the user proces
+Synchronous \textsc{io} read() or write() will block a user process until its completion 
+OS overlaps synchronous \textsc{io} with another process 
+Asynchronous \textsc{io} read() or write() will not block a user process 
+user process can do other things before \textsc{io} completion 
+\textsc{io} completion will notify the user proces
