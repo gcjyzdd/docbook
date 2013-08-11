@@ -1,0 +1,179 @@
+
+\chapter{Quantum Algorithms II}
+
+
+\section{Fourier Transform}
+
+
+\highlightdef{\textbf{Root of Unity}: $\omega^j_n = e^{2\pi i\frac{j}{n}}$}
+
+\highlightdef{\textbf{Phasor}: 
+$w^j_n = (\omega^0_n,\omega^j_n,\omega^{2j}_n,...,\omega^{(n-1)j}_n) 
+= \sum^{n-1}_{k=0} \omega^{kj}_n \ket{k}$}
+
+\highlightdef{\textbf{Vandermonde Matrix}: $V_{n \times n} = [w^0_n w^1_n \dotsm w^{n-1}_n]$}
+
+\begin{example}
+Determine the inner product of $w^{j_1}$ and $w^{j_2}$ for $j_1 \neq j_2$. 
+\end{example}
+
+\begin{example}
+Determine the inner product of $w^{j_1}$ and $w^{j_2}$ for $j_1 = j_2$. 
+\end{example}
+
+
+\begin{example}
+Prove that $V_{n \times n}$ is unitary.
+\end{example}
+
+
+\begin{example}
+Prove that $V_{n \times n}$ is unitary.
+\end{example}
+
+
+\highlightdef{\textbf{Quantum Fourier Transform}: $F = \frac{1}{\sqrt{2^n}}V_{2^n \times 2^n}$}
+
+\begin{example}
+What is the matrix for $F$ for $n = 1,2,3$?
+\end{example}
+
+\begin{example}
+Prove that $F$ is unitary.
+\end{example}
+
+
+
+
+\begin{example}
+Determine $\sum_{\textsf{t}_1 \textsf{t}_2 \dotsm \textsf{t}_n \in \{0,1\}^n} 
+c^{\textsf{t}_1 \textsf{t}_2 \dotsm \textsf{t}_n} 
+\ket{\textsf{t}_1 \textsf{t}_2 \dotsm \textsf{t}_n} = ...$ 
+written in the form of a tensor product with $n$ factors.
+\end{example}
+
+\frameans{}{$\bigotimes^n_{l=1} \left(\ket{0} + c^{2^{n-l}} \ket{1} \right)$ }
+
+
+\begin{example}
+Determine $\sum_{\textsf{t}_1 \textsf{t}_2 \dotsm \textsf{t}_n \in \{0,1\}^n} 
+c^{d \textsf{t}_1 \textsf{t}_2 \dotsm \textsf{t}_n} 
+\ket{\textsf{t}_1 \textsf{t}_2 \dotsm \textsf{t}_n} = ...$ 
+written in the form of a tensor product with $n$ factors.
+\end{example}
+
+\frameans{}{$\bigotimes^n_{l=1} \left(\ket{0} + c^{d2^{n-l}} \ket{1} \right)$ }
+
+
+\frmrule
+
+\[ 
+\begin{array}{ll}
+F\ket{j} = \frac{1}{\sqrt{2^n}} V_{2^n \times 2^n} \ket{j} & \text{def of } F  \\
+         = \frac{1}{\sqrt{2^n}} w^{j}_{2^n} & \text{def of } V_{2^n \times 2^n}; j\text{th col} \\
+         = \frac{1}{\sqrt{2^n}} \sum^{2^n-1}_{k=0} \omega^{kj}_{2^n} \ket{k} & \text{def of } w^{j}_{n}\\
+         = \frac{1}{\sqrt{2^n}} \sum^{2^n-1}_{k=0} e^{2\pi i\frac{kj}{2^n}} \ket{k} & \text{def of } \omega^{j}_{n} \\
+         = \frac{1}{\sqrt{2^n}} \sum_{\textsf{k}_1 \textsf{k}_2 \dotsm \textsf{k}_n \in \{0,1\}^n} 
+                   e^{\frac{2 \pi ij}{2^n} \times \textsf{k}_1 \textsf{k}_2 \dotsm \textsf{k}_n} 
+                   \ket{\textsf{k}_1 \textsf{k}_2 \dotsm \textsf{k}_n} & \text{writing }k\text{ in binary} \\
+        %
+		= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{\frac{2\pi i j}{2^n} 2^{n-l}} \ket{1})
+		& \text{prev ex with } c = e, d = \frac{2\pi i j}{2^n} \\
+		%
+		= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{\frac{2\pi i j}{2^l}} \ket{1})
+		 & \text{cancelling }2^n \\
+		= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{\frac{2\pi i}{2^l} \sum^{n}_{r=1} 2^{n-r}
+         \textsf{j}_r} \ket{1}) & \text{writing }j\text{ in binary} \\
+		%
+		= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{\frac{2\pi i}{2^l} 
+		[\sum^{l}_{r=1} 2^{n-r} \textsf{j}_r + \sum^{n}_{r=l+1} 2^{n-r} \textsf{j}_r]}  \ket{1}) & 
+		\text{breaking up least sig } l \text{ bits} \\
+		%
+		= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{2\pi i
+		[\sum^{l}_{r=1} 2^{n-r-l} \textsf{j}_r + \sum^{n}_{r=l+1} 2^{n-l+1} \textsf{j}_r]}  \ket{1}) & 
+		\text{binary shift right by } l \text{ bits} \\
+		%
+		= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{2\pi i
+		[K + \sum^{n}_{r=l+1} 2^{n-r-l} \textsf{j}_r]}  \ket{1}) & \text{where } K\text{ is an integer} \\
+		%
+		= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{2\pi i
+		\sum^{n}_{r=l+1} 2^{n-r-l} \textsf{j}_r}  \ket{1})  & e^{2\pi i K} = 1 \text{ for any integer } K \\
+        %
+        = \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} (\ket{0} + e^{2\pi i
+        \sum^{n-l-1}_{r=0} 2^{n-r+1} \textsf{j}_{r+l+1}}  \ket{1})  & \text{reindex summation }
+\end{array}
+\] 
+
+
+\highlightdef{\textbf{QFT Output}: $F\ket{\textsf{j}_1 \textsf{j}_2 \dotsm \textsf{j}_n} 
+= \frac{1}{\sqrt{2^n}} \bigotimes^n_{l=1} 
+(\ket{0} + e^{2\pi i \sum^{l}_{r=1} 2^{r-l-1} \textsf{j}_r} \ket{1})$}
+
+To implement the circuit we need a new gate, the \textit{controlled phase shift} gate.
+This is a two qubit gate that adjusts the relative phase of $\ket{1}$ on the first qubit provided 
+the second qubit is $\ket{1}$.
+
+$$
+R_k = \begin{bmatrix}
+       1 & 0 & 0 & 0                        \\[0.3em]
+       0 & e^{2\pi i \frac{1}{2^k}} & 0 & 0 \\[0.3em]
+       0 & 0 & 0 & 0 \\[0.3em]
+       0 & 0 & 0 & 1
+     \end{bmatrix}
+$$
+
+In the \textsc{qft}, we are interested in adjusting the relative phase by factors of 
+$e^{2\pi i \frac{1}{2^k}}$. In other words doing bit shift right by some $k$. 
+The goal is to get  $e^{2\pi i \sum^{l}_{r=1} 2^{r} \textsf{j}_r }$ for each line in our 
+parallel circuit using our gate $R_k$.
+
+First line corresponds to $l = 1$. We need $\ket{\textsf{j}_1} \mapsto e^{2\pi i \sum^{1}_{r=1} 2^{r-1} \textsf{j}_1}$
+which simplifies to $\ket{\textsf{j}_1} \mapsto e^{2\pi i 2^{1-1} \textsf{j}_1}$
+
+\begin{example}
+Given that $F$ is unitary, what is the matrix for the inverse fourier transform.
+\end{example}
+
+
+\section{Phase Estimation}
+
+
+
+
+\section{Order Finding}
+
+\section{Period Finding}
+
+
+\highlightdef{$f_{a,N}(x) = a^x \text{mod } N$}
+
+We want to find the order of $a$, the smallest 
+
+
+\section{Discrete Logarithms}
+
+
+
+A \textit{Discrete logarithm}, $dlog$, is borrowing the the idea of logarithm with real numbers 
+and applying them to \textit{multiplicative cyclic groups}. 
+They are sometimes called \textit{indexes}.
+
+\begin{example}
+Consider the group $\mathbb{Z}^{*}_{5}$ that has generator 2. \\ 
+The discrete log of 1, $dlog(1) = 4$ because $2^4 = 1 \text{mod } 5$.
+\end{example}
+
+\frmrule
+
+\section{Hidden Subgroup Problem}
+
+
+
+\section{Grover's Algorithm}
+
+\begin{example}
+Show that the averaging operator is \textit{unitary}.
+\end{example}
+
+
+\section{Shor's Algorithm}

@@ -1,0 +1,121 @@
+
+\chapter{Further Topics}
+
+
+\section{Quantum Cryptography}
+
+
+\section{Quantum Error Correction}
+
+
+
+\highlightdef{\textbf{3-Qubit Bit-Flip Code}: }
+
+We need to keep in mind that we have to measure to determine if there was an error.
+
+
+
+
+
+
+ \begin{tikzpicture}[thick]
+    % `operator' will only be used by Hadamard (H) gates here.
+    % `phase' is used for controlled phase gates (dots).
+    % `surround' is used for the background box.
+    \tikzstyle{operator} = [draw,fill=white,minimum size=1.5em] 
+    \tikzstyle{phase} = [draw,fill,shape=circle,minimum size=5pt,inner sep=0pt]
+    \tikzstyle{control} = [draw,shape=circle,minimum size=5pt,inner sep=0pt]
+    \tikzstyle{surround} = [fill=blue!10,thick,draw=black,rounded corners=2mm]
+    %
+    \matrix[row sep=0.4cm, column sep=0.8cm] (circuit) {
+    % First row.
+    \node (q1) {\ket{\phi}}; &
+    \node[phase] (p1) {}; &
+    \node[phase] (p2) {}; &
+    \coordinate (end1); \\
+    % Second row.
+    %
+    \node (q2) {\ket{0}}; &
+    \node[control] (c1) {}; &
+    &
+    \coordinate (end2);\\
+    % Third row.
+    %
+    \node (q3) {\ket{0}}; &
+    &
+    \node[control] (c2) {}; &
+    \coordinate (end3); \\
+    };
+    % Draw bracket on right with resultant state.
+    \draw[decorate,decoration={brace},thick]
+        ($(circuit.north east)-(0cm,0.3cm)$)
+        to node[midway,right] (bracket) {$\ket{\phi'}$}
+        ($(circuit.south east)+(0cm,0.3cm)$);
+    \begin{pgfonlayer}{background}
+        % Draw lines.
+        \draw[thick] (q1) -- (end1)  (q2) -- (end2) (q3) -- (end3) (p1) -- (c1) (p2) -- (c2);
+        % Draw control vertical lines.
+        \draw[thick] (c1.north) -- (c1.south);
+        \draw[thick] (c2.north) -- (c2.south);
+
+
+    \end{pgfonlayer}
+    %
+\end{tikzpicture}
+
+
+
+
+The initial state $\ket{\phi} = \alpha \ket{0} + \beta \ket{1}$ is converted by
+the circuit into $\ket{\phi'} = \alpha \ket{000} + \beta \ket{111}$.
+Then each qubit of $\ket{000}$ is sent independently through the bit flip channel.
+Each qubit of $\ket{111}$ is sent independently through the bit flip channel. 
+This gives us $\ket{\phi''}$.
+
+We then apply a two-stage error correction method. 
+We first make a measurement using the four measurement
+operators. Each measurement operator is gives a basis for the errors. 
+
+These operators are called \textit{error syndromes}.
+Depending on which error syndrome is measured we then recover the original
+state.
+
+$M_0 = \ket{000}\bra{000} + \ket{111}\bra{111}$ \\
+$M_1 = \ket{100}\bra{100} + \ket{011}\bra{011}$ \\
+$M_2 = \ket{010}\bra{010} + \ket{101}\bra{101}$ \\
+$M_3 = \ket{001}\bra{001} + \ket{110}\bra{110}$ \\
+
+
+
+\begin{example}
+Suppose, for example, that a bit flip occurred, on the second qubit.
+Then $\ket{\phi} = \alpha \ket{0} + \beta \ket{1}$ is converted by
+the circuit into $\ket{\phi'} = \alpha \ket{000} + \beta \ket{111}$.
+Then $\ket{\phi'} = \alpha \ket{000} + \beta \ket{111}$ is converted to 
+$\ket{\phi''} = \alpha \ket{010} + \beta \ket{101}$. 
+
+Now we determine $p(2) = \bra{\phi''} M^{H}_{2} M_{2} \ket{\phi''} = ...$
+
+\end{example}
+
+\frameans{}{$1$}
+
+So it is \textit{certain} that $j = 2$. 
+
+The state of the system will not change $M_2 \ket{\phi''} = \ket{\phi''}$
+Therefore, we finally flip the second qubit two to recover $\ket{\phi'}$.
+
+
+
+\begin{example}
+Show that these four measurement operators 
+satisfy the \textit{General Measurement Principle}: $\sum^{3}_{j=0} M^{H}_{j} M_{j} = I$
+\end{example}
+
+
+\section{Teleportation Quantum Computation}
+
+
+\section{One-way Quantum Computation}
+
+\section{Measurement Calculus}

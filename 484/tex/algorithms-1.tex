@@ -1,0 +1,181 @@
+
+\chapter{Quantum Algorithms I}
+
+
+\section{Parallel Hadamard Gates}
+
+
+\highlightdef{$H\ket{x} = \frac{1}{\sqrt{2}} \left[(-1)^{x \wedge 0} \ket{0} + (-1)^{x \wedge 1} \ket{1} \right]$  }
+
+This may seem like a useless way to write the Hadamard operation but it was done in preparation 
+for understanding how \textit{parallel} Hadamard gates operate. 
+
+
+
+\highlightdef{$[x_0 x_1 \dotsm x_n, \; y_0 y_1 \dotsm y_n] = 
+(x_0 \wedge y_0) \oplus (x_1 \wedge y_1) \oplus \dotsm \oplus (x_n \wedge y_n)$}
+
+\frmrule
+
+\begin{example}
+Determine $[\textsf{0011}, \; \textsf{0101}]$ 
+\end{example}
+
+\frameans{}{$0$}
+
+
+\frmrule
+
+\begin{example}
+Show that $(-1)^{u \wedge v}\ket{i} \otimes (-1)^{x \wedge y}\ket{j} = (-1)^{[ux,vy]}\ket{ij}$ 
+where $u,v,x,y,i,j$ are bits.
+\end{example}
+
+\frmrule
+
+$(-1)^{u \wedge v} (-1)^{x \wedge y} \ket{i} \ket{j} = $\\
+$(-1)^{u \wedge v + x \wedge y} \ket{ij} = $\\
+$(-1)^{[u \wedge v + x \wedge y]\text{mod } 2} \ket{ij} = $\\
+$(-1)^{u \wedge v \oplus x \wedge y} \ket{ij} = $
+$(-1)^{[ux, vy]} \ket{ij} $
+
+
+\frmrule
+
+\begin{example}
+Show that $(-1)^{[ux,vy]}\ket{ij} \otimes (-1)^{s \wedge t}\ket{k} = (-1)^{[uxs,vyt]}\ket{ijk}$ 
+\end{example}
+
+\frmrule
+
+After doing the previous examples, it's now not too hard to what happens 
+in the general case. 
+
+$(-1)^{x_1 \wedge y_1}\ket{i_1} \otimes
+(-1)^{x_2 \wedge y_2}\ket{i_2} \otimes
+\dotsm \otimes
+(-1)^{x_n \wedge y_n}\ket{i_n} = $ 
+
+$(-1)^{x_1 \wedge y_1 + x_2 \wedge y_2 + \dotsm + x_n \wedge y_n}\ket{i_1 i_2 \dotsm i_n} = $
+
+$(-1)^{[x_1 \wedge y_1 + x_2 \wedge y_2 + \dotsm + x_n \wedge y_n] \text{mod } 2}\ket{i_1 i_2 \dotsm i_n}$
+
+$(-1)^{(x_1 \wedge y_1) \oplus (x_2 \wedge y_2) \oplus \dotsm \oplus (x_n \wedge y_n)}
+\ket{i_1 i_2 \dotsm i_n} =$
+
+$(-1)^{[x_1 x_2 \dotsm x_n, \; y_1 y_2 \dotsm y_n]}
+\ket{i_1 i_2 \dotsm i_n}$
+
+We will use this next.
+
+\frmrule
+
+
+\begin{example}
+Determine $H^{\otimes n}\ket{x}$.
+\end{example}
+
+
+$H^{\otimes n}\ket{x}$
+
+$= 
+\frac{1}{\sqrt{2}} \left[(-1)^{x_1 \wedge 0} \ket{0} + (-1)^{x_1 \wedge 1} \ket{1} \right] \otimes
+\frac{1}{\sqrt{2}} \left[(-1)^{x_2 \wedge 0} \ket{0} + (-1)^{x_2 \wedge 1} \ket{1} \right] \otimes
+\dotsm 
+\\ \otimes \frac{1}{\sqrt{2}} \left[(-1)^{x_n \wedge 0} \ket{0} + (-1)^{x_n \wedge 1} \ket{1} \right]
+$
+
+$= \sum_{y_1 y_2 \dotsm y_n \in \{0,1\}^n}
+\frac{1}{\sqrt{2}} [(-1)^{x_1 \wedge y_1}\ket{y_1}] \otimes \frac{1}{\sqrt{2}} [(-1)^{x_2 \wedge y_2}\ket{y_2}] 
+\otimes \dotsm \otimes \frac{1}{\sqrt{2}} [(-1)^{x_n \wedge y_n}\ket{y_n}]
+$
+
+$= 
+\frac{1}{\sqrt{2}^n} \sum_{y_1 y_2 \dotsm y_n \in \{0,1\}^n}
+(-1)^{x_1 \wedge y_1 + x_2 \wedge y_2 + \dotsm + x_n \wedge y_n} \ket{y_1 y_2 \dotsm y_n}
+$
+
+$= 
+\frac{1}{\sqrt{2}^n} \sum_{y_1 y_2 \dotsm y_n \in \{0,1\}^n}
+(-1)^{[x_1 \wedge y_1 + x_2 \wedge y_2 + \dotsm + x_n \wedge y_n] \text{mod } 2 } \ket{y_1 y_2 \dotsm y_n}
+$
+
+$= 
+\frac{1}{\sqrt{2}^n} \sum_{y_1 y_2 \dotsm y_n \in \{0,1\}^n}
+(-1)^{(x_1 \wedge y_1) \oplus (x_2 \wedge y_2) \oplus \dotsm \oplus (x_n \wedge y_n)} \ket{y_1 y_2 \dotsm y_n}
+$
+
+$= 
+\frac{1}{\sqrt{2}^n} \sum_{y_1 y_2 \dotsm y_n \in \{0,1\}^n}
+(-1)^{[x_1 x_2 \dotsm x_n, \; y_1 y_2 \dotsm y_n]} \ket{y_1 y_2 \dotsm y_n}
+$
+
+
+
+\highlightdef{
+\textbf{Parallel Hadamard}: 
+$H^{\otimes n}\ket{\textsf{x}} = 
+\frac{1}{\sqrt{2}^n} \sum_{\textsf{y} \in \{0,1\}^n}
+(-1)^{[\textsf{x}, \; \textsf{y}]} \ket{\textsf{y}}$  }
+
+This is known as \textit{Fourier Samping}. 
+
+\frmrule
+
+\begin{example}
+Using the previous result, what is $H^{\otimes n}\ket{\textsf{00..0}}$?
+\end{example}
+
+We insert $\textsf{x} = \textsf{00..0}$ into the Parallel Hadamard equation to get:\\
+$H^{\otimes n}\ket{\textsf{00..0}} = 
+\frac{1}{\sqrt{2}^n} \sum_{\textsf{y} \in \{0,1\}^n}
+(-1)^{[\textsf{00..0}, \; \textsf{y}]} \ket{\textsf{y}}$
+$ = \frac{1}{\sqrt{2}^n} \sum_{\textsf{y} \in \{0,1\}^n} \ket{\textsf{y}}$
+
+\frmrule
+
+This is a special case of Fourier Sampling where here, instead of 
+using a general $\ket{\textsf{x}}$, we are using $\textsf{x} = \textsf{00..0}$. 
+Notice how this gives a superposition of all $2^n$ computational basis vectors 
+for an $n$ qubit system.
+
+\highlightdef{An \textbf{$n$-Qubit Superposition}
+is given by $H^{\otimes n}\ket{\textsf{00..0}}$
+}
+In other words, by connecting $n$ Hadamards in parallel each with input $\ket{0}$. 
+
+
+\section{Bernstein-Vazirani Algorithm}
+
+The \textit{parity problem}.
+
+\highlightdef{
+\textbf{Parity Problem}: 
+Can we determine whether a function $f: \{0,1\}^n \rightarrow \{0,1\}$ 
+is \textit{balanced or not} using $U_f$ only once in a given circuit $D$
+}
+
+
+
+
+\section{Deutsch Algorithm}
+
+\highlightdef{
+\textbf{Balanced Problem}: 
+Can we determine whether a function $f: \{0,1\} \rightarrow \{0,1\}$ 
+is \textit{balanced or not} using $U_f$ only once in a given circuit $D$
+}
+
+\highlightdef{The \textbf{Deutsch Algorithm} solves the \textit{Balanced Problem}}
+
+
+
+\highlightdef{
+\textbf{Generalized Balanced Problem}: 
+Can we determine whether a function $f: \{0,1\}^n \rightarrow \{0,1\}$ 
+is \textit{balanced or not} using $U_f$ only once in a given circuit $D$
+}
+
+\highlightdef{The \textbf{Deutsch-Jorza Algorithm} solves \textit{Generalized Balanced Problem}}
+
+
