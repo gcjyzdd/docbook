@@ -44,7 +44,6 @@ We will see that we can have processes running in a somewhat simulatenous manner
 Here, the operating system will allocates 
 a process control block for each process running. 
 
-
 The \textsc{pcb} contains a \textit{huge amount of information} in
 one \textit{large} structure. It is a heavyweight abstraction.
 
@@ -65,7 +64,7 @@ or a \textit{task descriptor}.
 
 
 
-\section{Unix Fork-Exec Model}
+\section{UNIX Fork-Exec Model}
 
 
 \highlightdef{The \lstinline{fork()} system call creates 
@@ -515,6 +514,39 @@ int example() {
 \end{example}
 
 
+
+\frmrule
+
+\begin{example}
+The program below is run with the input 10 20 30 40 50 and piped to a file, as follows: 
+\lstinline{a.out >output 10 20 30 40 50}. \\
+\textbf{(a)} What is the sum of all the numbers written to the file \lstinline{output}? \\
+\textbf{(b)} What numbers are printed on standard error?
+
+\begin{lstlisting}
+int main(int argc, char **argv) {
+    int i, a=0, n=1;
+    int fd[2];
+    pipe(fd);
+    dup2(fd[0],0);
+    dup2(fd[1],1);
+    for (i=0;i<5;i++) {
+        printf("%d\n",n);
+        fflush(stdout);
+        n = n+a;
+        fprintf(stderr, "%d\n",n);
+        scanf("%d", &a);
+    }
+}
+\end{lstlisting}
+\end{example}
+
+\frameans{}{
+\textbf{(a)} 0.  \\
+\textbf{(b)} 1 2 3 5 8
+}
+
+The program redirects stdout to a pipe. So no data is written to file output.
 
 \frmrule
 

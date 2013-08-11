@@ -24,9 +24,17 @@ fixed \textit{byte size} chosen by the \textsc{os}}
 
 The point of this definition is defining 
 what it means to have a block size that is \textit{convenient}.
-
 Designing data structutes to work on the byte-level (or bit-level) is too complicated. 
 And, the chances are, the structure will be too inefficient.
+
+\highlightdef{\textbf{Logical block addressing} is a simple linear addressing scheme 
+where blocks are uniquely addressed by an integer index}
+
+\begin{example}
+The \textsc{ide} standard included 22-bit LBA option. 
+Howw many disk blocks can be addressed under these scheme?
+\end{example}
+
 
 \frmrule
 
@@ -54,7 +62,9 @@ The time spend transferring data from the track to the disk controller
 is called the \textit{transfer time}.
 \end{itemize}
 
-
+We also assume that the \textit{spinup time} 
+(time for platters to start to accelerate to constant angular velocity from rest).
+For this three-step model, the average time is given by:
 
 \highlightdef{The \textbf{Average Turnaround Time} is
 $T = t_{\text{seek}} + \frac{1}{2}  \frac{1}{r} + \frac{b}{N} \frac{1}{r}$
@@ -284,7 +294,7 @@ FAT[k]= FREE denotes an unused block; FAT[k]=
 BAD denotes a bad block, etc.
 
 
-\section{\textsc{unix} Fast File System}
+\section{UNIX Fast File System}
 
 Original \textsc{unix} File System (\textsc{ufs}).
 Simple, elegant, but \textit{slow}.
@@ -421,7 +431,7 @@ Each of these pointers is 8 bytes long.
 
 
 
-\section{\textsc{unix} Block Buffer Cache}
+\section{UNIX Block Buffer Cache}
 
 We can cache files in main memory for a speedup (compared to accessing the files 
 from disk). The cache works in the usual manner, we have a cache hit case and a 
@@ -429,7 +439,7 @@ cache miss case.
 
 
 
-\section{\textsc{unix} inodes}
+\section{UNIX inodes}
 
 
 
@@ -437,7 +447,7 @@ cache miss case.
 \section{Virtual File Systems}
 
 
-\section{\textsc{unix} Permissions}
+\section{UNIX Permissions}
 
 
 \highlightdef{\textsc{unix} has access levels: 

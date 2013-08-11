@@ -71,7 +71,7 @@ Executable object files typically do not have a file extension.
 \item \textbf{Shared Object Files (.so)} 
 A shared object file is a special type of relocatable object 
 file that is used for \textit{dynamic linking}. We will see dynamic linking later. 
-In Windows, the equivalent of a shared object file is a dynamic link library file (.dll).  
+In Windows, the equivalent of a shared object file is a \textit{dynamic link library file} (.dll).  
 \end{itemize}
 
 
@@ -278,6 +278,7 @@ unknown symbolif an unknown symbol becomes referenced after it was defined, then
 linker won’t be able to resolve the symbol!
 
 Thus, order on the command line is important - put libraries last!
+% http://stackoverflow.com/questions/45135/linker-order-gcc
 
 
 
@@ -310,3 +311,8 @@ symbol links \textit{are missing} and must be resolved at loadtime.
 For example, a dynamic linker might postpone resolving the definition of printf until loadtime.
 This, in general, gives \textit{smaller} executable ﬁles. 
 \end{itemize}
+
+\section{Booting}
+
+%http://www.moses.uklinux.net/patches/lki-1.html#ss1.8
+
