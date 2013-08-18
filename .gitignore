@@ -36,12 +36,12 @@ Desktop.ini
 .DS_Store
 
 # Windows batch files
-.bat
-.cmd
+*.bat
+*.cmd
 
 # Misc
-.txt
-.jnt
-.doc
-.ppt
-.xsl
+*.txt
+*.jnt
+*.doc
+*.ppt
+*.xsl
