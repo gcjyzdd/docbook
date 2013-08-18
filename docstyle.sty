@@ -5,17 +5,19 @@
 % Import American Society maths
 \usepackage[fleqn]{amsmath}
 \usepackage{amssymb}
+\usepackage{bm}
+
+% PFG/TikZ and tikz libraries
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest}
-\usepackage{tikz} % Import PFG/TikZ
-% Import tikz libraries
+\usepackage{tikz} 
 \usetikzlibrary{trees, positioning, arrows, shadows, calc, fit, 
 shapes.multipart, shapes.geometric, decorations.pathreplacing, 
 decorations.markings, chains, snakes, backgrounds} 
 
 \usepackage{mathptmx} % Import times lookalike font (New Century Schoolbook)
 \usepackage{calc}
-\usepackage[mathcal]{euscript}
+\usepackage[mathcal]{euscript} % Curly maths font
 \usepackage{semantic}
 \usepackage{bussproofs}
 \usepackage{rotating}
@@ -38,20 +40,35 @@ decorations.markings, chains, snakes, backgrounds}
 % =============================================================================
 \tikzstyle{node_sty}=[rectangle, draw=black, thick, fill=black!5,
 text width=8em, text centered, drop shadow, anchor=north]
-
 \tikzstyle{node_sty2}=[rectangle, draw=black, thick, fill=black!5,
 text centered, drop shadow, anchor=north]
-
+% =============================================================================
 \tikzstyle{block_shadow_sty}=[draw=black, thick, fill=black!5, drop shadow]
-
 % =============================================================================
 \tikzstyle{edge_sty}=[very thick, draw=black=!70]
 % =============================================================================
 \tikzstyle{fra_ans_sty}=[rectangle, draw=black, thick, fill=white, 
 align=center, minimum width=8em, text centered, anchor=north]
 % =============================================================================
+\pgfdeclarelayer{background5}
+\pgfdeclarelayer{background4}
+\pgfdeclarelayer{background3}
+\pgfdeclarelayer{background2}
+\pgfdeclarelayer{background1}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfdeclarelayer{foreground1}
+\pgfdeclarelayer{foreground2}
+\pgfdeclarelayer{foreground3}
+\pgfdeclarelayer{foreground4}
+\pgfdeclarelayer{foreground5}
+\pgfsetlayers{background5,background4,background3,background2,background1,background,main,foreground,foreground1,foreground2,foreground3,foreground4,foreground5}
+% =============================================================================
 
 
+
+% CHAPTER HEADINGS
+% =============================================================================
 \titleformat{\chapter}
 {\gdef\chapterlabel{}\normalfont\Huge\bfseries}
 {\gdef\chapterlabel{\thechapter\ }}{0pt}
@@ -62,8 +79,8 @@ align=center, minimum width=8em, text centered, anchor=north]
     \node[anchor=west,xshift=.167\paperwidth,yshift=-4cm,rectangle,inner sep=14pt,fill=black!15] (l) 
     {\chapterlabel};
     \node[anchor=west,right=0.1cm of l,inner sep=11pt,yshift=-0.1cm, text=black!85] {#1};
-    \draw[draw=black!85] (3.5cm,-2.6cm) -- (\paperwidth,-2.6cm);
-    \draw[draw=black!85] (3.5cm,-5.4cm) -- (\paperwidth,-5.4cm);
+    \draw[draw=black!85, ultra thick] (3.5cm,-2.6cm) -- (\paperwidth,-2.6cm);
+    \draw[draw=black!85, ultra thick] (3.5cm,-5.4cm) -- (\paperwidth,-5.4cm);
     \end{tikzpicture}
     };
 \end{tikzpicture}
