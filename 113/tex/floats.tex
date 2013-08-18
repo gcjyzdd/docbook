@@ -23,6 +23,41 @@
 \end{tikzpicture}
 \end{figure}
 
+\frmrule
+
+\begin{example}
+Show that 0.1 is \textit{not} a dyadic rational number.
+\[ 
+\begin{array}{ll}
+0.1 & = \frac{0.1}{1} = ... = \frac{1.6}{16} \\
+    & = \left(\frac{1}{16}\right) + \frac{0.6}{16} = \left(\frac{1}{16}\right) + \frac{1.2}{32} \\
+    & = \left(\frac{1}{16} + \frac{1}{32}\right) + \frac{0.2}{32} = ... = 
+    \left(\frac{1}{16} + \frac{1}{32}\right) + \frac{1.6}{256} = 
+    \left(\frac{1}{16} + \frac{1}{32}\right) + \frac{1}{16} \times \frac{\text{\textbf{1.6}}}{\textbf{16}}
+\end{array}
+\] 
+
+
+\end{example}
+
+\begin{example}
+\textbf{(a)} Show that 42.6875 is a \textit{dyadic rational number} \\
+\textbf{(b)} Hence write 42.6875 in binary
+
+$42.6875 = 32 + 10.6875 = 32 + 8 + 2.6875 = 32 + 8 + 2 + 0.6875 = 32 + 8 + 2 + ....$
+\end{example}
+
+
+\frmrule
+
+\begin{example}
+What is the the binary: 0.11111111111111111111... (recurring ones) equal to?
+\end{example}
+
+We can obtain $x'$ by either \textit{rounding} or \textit{truncation}.
+
+
+\frmrule
 
 \section{Introducing IEEE Standard}
 
@@ -68,10 +103,19 @@ certain few edge cases) and rules for \textit{error conditions}
 
 
 
+\section{Operations}
 
-\highlightdef{Floating-point arithmetic is \textit{not associative}}
-% http://stackoverflow.com/questions/6430448/why-doesnt-gcc-optimize-aaaaaa-to-aaaaaa?rq=1
-But it is \textit{commutative}. 
+\begin{example}
+Which is larger, -0 or +0?
+\end{example}
+
+
+
+
+\highlightdef{Addition/subtraction requires two exponents to be compared. 
+\textsc{ieee} uses excess-n because exponents can be compared easily. }
+
+Checking whether $a < b$ is simpler in excess-n compared to two's complement. 
 
 
 \highlightdef{\textbf{Loss of Precision} can occur when an integer is converted to a float}
@@ -82,6 +126,8 @@ This is a common warning message for beginner \textsc{c} programmers.
 
 \section{Special Values}
 
+
+\highlightdef{\textbf{Special Values}: +0, -0,  +\textsc{inf}, -\textsc{inf}, \textsc{nan} }
 
 
 \begin{lstlisting}
@@ -97,11 +143,25 @@ int main (int argc, char **argv)
 \end{lstlisting}
 
 
+\section{Floating Point Systems}
+
+We now look at floating point systems in general.
 
 
 
 \section{Error Analysis}
 
+
+\highlightdef{\textbf{Relative Error}: }
+
+
+\highlightdef{\textbf{Absolute Error}: }
+
+
+
+\highlightdef{Floating-point arithmetic is \textit{not associative}}
+% http://stackoverflow.com/questions/6430448/why-doesnt-gcc-optimize-aaaaaa-to-aaaaaa?rq=1
+But it is \textit{commutative}. 
 
 
 \highlightdef{The \textbf{Machine Epsilon} measures the \textit{accuracy} 

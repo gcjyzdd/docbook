@@ -15,8 +15,8 @@ Suppose we have a binary digits \textsf{x} and the unsigned we associate is $x$.
 We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{n} = x$
 where the $n$ denotes a \textit{natural} interpretation of the binary. 
 
-\highlightdef{\textbf{Number Table Series}: 
-$\llbracket \text{\textsf{x}} \rrbracket_{n} = \sum^{N-1}_{t=0} 2^{t} \textsf{x}_t$}
+\highlightdef{\textbf{Number Table Series Expansion}: 
+$\llbracket \text{\textsf{x}} \rrbracket_{n} = \sum^{T-1}_{t=0} 2^{t} \textsf{x}_t$}
 
 This is the most natural way to assign an 
 arithmetical value to this sequence of digits. 
@@ -37,7 +37,8 @@ The definition of excess-n works backwards from the definition
 of $\llbracket \text{\textsf{x}} \rrbracket_{n}$. 
 If we compare $\llbracket \text{\textsf{x}} \rrbracket_{n}$ 
 to $\llbracket \text{\textsf{x}} \rrbracket_{ex(n)}$,
-then $\llbracket \text{\textsf{x}} \rrbracket_{n}$ is \textit{in excess} of $n$ 
+then $\llbracket \text{\textsf{x}} \rrbracket_{n}$, from the point of view 
+of our new representation, is \textit{in excess} of $n$ 
 (has an extra of $n$). Written as an equation, the definition is as follows.
 
 \highlightdef{\textbf{Excess-n}: 
@@ -101,5 +102,5 @@ We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{10c} = x$
 
 \section{General Base-n}
 
-\highlightdef{\textbf{Number Table Series}: 
+\highlightdef{\textbf{Number Table Series Expansion}: 
 $\llbracket \text{\textsf{x}} \rrbracket_{r} = \sum^{N-1}_{t=0} r^{t} \textsf{x}_t$}
