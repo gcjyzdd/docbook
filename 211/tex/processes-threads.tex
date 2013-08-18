@@ -378,7 +378,28 @@ variable. This value can be converted to a millisecond value using
 \highlightdef{The execution-schedule is \textbf{non-deterministic} 
 because of the use of a \textit{timer interrupt}}
 
+\frmrule
 
+If we have five processes that use the processor twenty percent of the time (spending eighty percent 
+doing \textsc{io}) then we should be able to achieve one hundred percent CPU utilisation. Of course, in 
+reality, this will not happen as there may be times when all five processes are waiting for \textsc{io}. 
+However, it seems reasonable that we will achieve better than twenty percent utilisation than we 
+would achieve with monoprogramming. 
+ 
+We can build a model from a probabilistic viewpoint. Assume that that a process spends 
+$p$ percent of its time waiting for \textsc{io}. With $n$ processes in memory 
+the probability that all n processes are waiting for \textsc{io} (meaning the CPU is idle) is $p^n$
+
+
+\highlightdef{$P[\text{cpu free}] = p^n$} 
+
+
+\highlightdef{As we introduce more processes, the \textsc{cpu} utilisation increases} 
+
+The model is a little contrived as it assumes that all the processes are independent in that processes 
+could be running at the same time. This (on a single processor machine) is obviously not possible. 
+More complex models could be built using queuing theory but we can still use this simplistic model 
+to make approximate predictions. 
 
 
 
@@ -413,6 +434,8 @@ which is an out array for two file descriptors.
 The system call creates the pipe and two descriptors, 
 one for writing to the pipe (\lstinline{pipefds[1]}) 
 and one for reading from the pipe (\lstinline{pipefds[0]}). 
+
+\frmrule
 
 \begin{example}
 Below shows an example of how to create a pipe 

@@ -62,11 +62,16 @@ The time spend transferring data from the track to the disk controller
 is called the \textit{transfer time}.
 \end{itemize}
 
-We also assume that the \textit{spinup time} 
+We also assume that there is no \textit{spinup time} 
 (time for platters to start to accelerate to constant angular velocity from rest).
-For this three-step model, the average time is given by:
+This is indeed a very simple model but it turns out that this gives a good
+approximation to how a real disk behaves. 
 
-\highlightdef{The \textbf{Average Turnaround Time} is
+For this three-step model, we find the tournaround time by adding up 
+the time for each step. That is, the time for seeking, the time for waiting 
+and the transfer time. This gives the following formula.
+
+\highlightdef{\textbf{Average Turnaround Time}:
 $T = t_{\text{seek}} + \frac{1}{2}  \frac{1}{r} + \frac{b}{N} \frac{1}{r}$
 }
 
@@ -188,7 +193,7 @@ This is called \textit{continuous} \textsc{scan}.
 We \textit{continuously maintain a fixed direction} while processing requests.
 When there are no requests left in our fixed direction,
 we change direction \textit{once} to go to the request that's furthest away, 
-but then resume processing requests in our fixed direction. 
+but then resume processing requests in our original fixed direction. 
 \item \textbf{NSCAN}
 This is called \textit{n-step} \textsc{scan}. This is a modification to \textsc{scan}.
 When we begin/change direction we remember these requests at this point in time and only
@@ -493,7 +498,20 @@ Hence the octal notation is: 143.
 Give the symbolic representation that corresponds to octal notation 777.
 \end{example}
 
+\frmrule
 
+\begin{example}
+Give the symbolic representation that corresponds to octal notation 777.
+\end{example}
+
+\frmrule
+
+\begin{example}
+What file permissions are changed by the \textit{change (file) mode} command: \lstinline{chmod 666}? 
+Show your working.
+\end{example}
+
+\frmrule
 
 
 \section{File System Recovery}

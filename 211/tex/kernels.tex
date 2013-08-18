@@ -143,27 +143,29 @@ uses system calls.
 
 \frmrule
 
-On an x86, there are six registers that are used for the arguments that
-the system call takes. The first argument goes in \textsc{ebx}, the
-second in \textsc{ecx}, then \textsc{edx}, \textsc{esi}, \textsc{edi}, and 
-finally \textsc{ebp}. If
-more then 6 arguments needed (not likely), the \textsc{ebx}
+
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Parameters} Parameters 1,2,3,4 and 5 are passed to the system call 
+via registers \textsc{ebx}, \textsc{ecx}, \textsc{edx}, \textsc{esi} and \textsc{edi}
+respectively. 
+\item \textbf{Interrupt} An interrupt call is made (linux: 0x80, dos: 0x21h). 
+The \textit{system call handler} is run. The system call handler 
+then calls the system call interrupt service routine (\textsc{isr}).
+\item \textbf{Return Value} Result is passed back in \textsc{eax} or via reference 
+parameters. 
+\end{itemize}
+
+
+If more then 5 arguments needed (not likely), the \textsc{ebx}
 register must contain the memory location where the list of arguments is stored.
 
-The interrupt call ‘0x80’ call to a \textit{system call handler} (sometimes
-called the \textit{call gate}).
-• The system call handler in turns calls the system call interrupt
-service routine (\textsc{isr}).
-• To perform Linux system calls we have to do following:
-– Put the system call numberin \textsc{eax} register.
-– Set up the argumentsto the system call in \textsc{ebx}, \textsc{ecx}, etc.
-– call the relevant interrupt (for \textsc{dos}, 21h; for Linux,
-80h).
-– The result is usually returned in \textsc{eax}.
+
 
 
 \highlightdef{System calls have multiple levels of indirection, 
-and are \textit{more expensive} than a function call}
+and are \textbf{more expensive} than a function call}
 
 System calls switching back and forth from user mode and kernel mode. 
 
@@ -175,7 +177,21 @@ printf()
 \end{lstlisting}
 \end{example}
 
+\frmrule
 
+\begin{example}
+Below shows an example of writing a string to standard output using 
+a Linux system call. 
+\begin{lstlisting}
+mov eax, 4              ; 4 = Write system call on Linux  
+mov ebx, 1              ; Parameter 1: 1=fd for std output
+mov ecx, [str]          ; Parameter 2: address of string
+mov edx, [len]          ; Parameter 3: length of string
+int 80H                 ; Perform interrupt
+\end{lstlisting}
+\end{example}
+
+\frmrule
 
 
 
@@ -232,7 +248,7 @@ execute or by creating scripts that will be interpreted.
 The \textsc{unix} shell is an example of a command-line interpreter 
 that provides the most traditional user interface for the \textit{unix} systems. 
 
-
+% interactive mode
 
 
 \section{UNIX Special Files}
