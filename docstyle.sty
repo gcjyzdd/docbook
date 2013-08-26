@@ -6,6 +6,8 @@
 \usepackage[fleqn]{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 
 % PFG/TikZ and tikz libraries
 \usepackage{pgfplots}
@@ -13,13 +15,19 @@
 \usepackage{tikz} 
 \usetikzlibrary{trees, positioning, arrows, shadows, calc, fit, 
 shapes.multipart, shapes.geometric, decorations.pathreplacing, 
-decorations.markings, chains, snakes, backgrounds} 
+decorations.markings, chains, snakes, backgrounds, intersections} 
 
-\usepackage{mathptmx} % Import times lookalike font (New Century Schoolbook)
+
+% Import times lookalike font
+%\usepackage{newtxtext}
+%\usepackage{newtxmath}
+\usepackage{mathptmx} %ptm doesn't have bold math font
+
 \usepackage{calc}
 \usepackage[mathcal]{euscript} % Curly maths font
 \usepackage{semantic}
 \usepackage{bussproofs}
+\usepackage{array}
 \usepackage{rotating}
 \usepackage{multirow} 
 \usepackage{stmaryrd}
