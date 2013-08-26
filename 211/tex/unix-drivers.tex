@@ -12,6 +12,15 @@ of processing is done by the \textit{bottom half}. This is wrong. In fact,
 the very purpose for having a top half/bottom half divide is to allow the halves to differ 
 greatly in the amount of processing they do. 
 
+A given driver can spend $L$ amount of time in a top half. If it spends any longer then 
+it is putting a bottleneck in the system. Interrupts are turned off in the top 
+half and the top half has to be \textit{quick}. If not everything can be done in the top 
+half, we resort to having to schedule that work to be done later in a thread called 
+the \textit{bottom half}.
+We require that the time for the top half work to be completed does not take too long 
+$0 \leq \text{time}(w_T) < L$.
+The bottom half has no bound on how long it takes: $0 \leq \text{time}(w_B)$. 
+
 
 \begin{figure}[h]
 \begin{tikzpicture}[
@@ -262,7 +271,7 @@ the kernel calls a function in \lstinline{docdrv} called the
 the driver closes safely.
 \end{itemize}
 
-\frumrule
+\frmrule
 
 Io modules can be loaded and removed using \textit{insmod} and \textit{rmmod}.
 

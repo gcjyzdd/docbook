@@ -24,3 +24,15 @@ $T \rightarrow F (\times T | \epsilon)$;
 $F \rightarrow D | \text{(} E \text{)}$;
 $D \rightarrow \text{0} | \text{1} | \dotsm | \text{9}$;
 
+
+
+%URI            = absoluteURI [ "#" fragment ]
+%absoluteURI    = scheme ":" *( uchar | reserved )
+%uchar          = unreserved | escape
+%unreserved     = ALPHA | DIGIT | safe | extra | national
+%escape         = "%" HEX HEX
+%reserved       = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+"
+%extra          = "!" | "*" | "'" | "(" | ")" | ","
+%safe           = "$" | "-" | "_" | "."
+%unsafe         = CTL | SP | <"> | "#" | "%" | "<" | ">"
+%national       = RFC 1945                        HTTP/1.0     
