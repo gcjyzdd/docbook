@@ -5,10 +5,7 @@
 \section{Parallel Hadamard Gates}
 
 
-\highlightdef{$H\ket{x} = \frac{1}{\sqrt{2}} \left[(-1)^{x \wedge 0} \ket{0} + (-1)^{x \wedge 1} \ket{1} \right]$  }
 
-This may seem like a useless way to write the Hadamard operation but it was done in preparation 
-for understanding how \textit{parallel} Hadamard gates operate. 
 
 
 
@@ -40,28 +37,17 @@ Determine $[\textsf{0011}, \; \textsf{0101}]$
 
 \frmrule
 
+This may seem like a useless way to write the Hadamard operation but it was done in preparation 
+for understanding how \textit{parallel} Hadamard gates operate. 
 
-\begin{example}
-Let's take the inner product of two strings with the same number of ones.  \\
-Determine $[\textsf{1011}, \; \textsf{1101}]$ 
-\end{example}
-
-
-\[ 
-\begin{array}{ll}
-[\textsf{x}, \; \textsf{y}] &= (x_1 \wedge y_1) \oplus (x_2 \wedge y_2) \oplus \dotsm \oplus (x_n \wedge y_n)  \\
-         &= (x_1 \oplus x_2 \oplus ... \oplus x_n) \wedge (y_1 \oplus y_2 \oplus ... \oplus y_n)
-\end{array}
-\] 
-
-If \textsf{x} and \textsf{y} have the same number of ones 
+\highlightdef{$H\ket{x} = \frac{1}{\sqrt{2}} [(-1)^{[x,0]} \ket{0} + (-1)^{[x,1]} \ket{1}]$  }
 
 
 
 \frmrule
 
 \begin{example}
-Show that $(-1)^{u \wedge v}\ket{i} \otimes (-1)^{x \wedge y}\ket{j} = (-1)^{[ux,vy]}\ket{ij}$ 
+Show that $(-1)^{[u,v]}\ket{i} \otimes (-1)^{[x,y]}\ket{j} = (-1)^{[ux,vy]}\ket{ij}$ 
 where $u,v,x,y,i,j$ are bits.
 \end{example}
 
@@ -77,7 +63,7 @@ $(-1)^{[ux, vy]} \ket{ij} $
 \frmrule
 
 \begin{example}
-Show that $(-1)^{[ux,vy]}\ket{ij} \otimes (-1)^{s \wedge t}\ket{k} = (-1)^{[uxs,vyt]}\ket{ijk}$ 
+Show that $(-1)^{[ux,vy]}\ket{ij} \otimes (-1)^{[s, t]}\ket{k} = (-1)^{[uxs,vyt]}\ket{ijk}$ 
 \end{example}
 
 \frmrule
@@ -156,6 +142,32 @@ This is known as \textit{Fourier Samping}.
 
 \frmrule
 
+\highlightdef{ $h_{(i,j)} = \frac{1}{\sqrt{N}}(-1)^{[i,j]}$ }
+
+where $h_{(i,j)}$ denotes the element of $H^{\otimes n}$ at row $i$ and column $j$, 
+where we number row/columns from 0 to $N-1$. 
+
+
+\frmrule
+
+\begin{example}
+Write out explicitly $H^{\otimes 3}$ 
+\end{example}
+
+\frmrule
+
+\begin{example}
+Write out explicitly the 7th column of $H^{\otimes 4}$ 
+\end{example}
+
+\frmrule
+
+\begin{example}
+Prove by induction over $N$ that $h_{(i,j)} = \frac{1}{\sqrt{N}}(-1)^{[i,j]}$
+\end{example}
+
+\frmrule
+
 \begin{example}
 Using the previous result, what is $H^{\otimes n}\ket{\textsf{00..0}}$?
 \end{example}
@@ -173,7 +185,7 @@ using a general $\ket{\textsf{x}}$, we are using $\textsf{x} = \textsf{00..0}$.
 Notice how this gives a superposition of all $2^n$ computational basis vectors 
 for an $n$ qubit system.
 
-\highlightdef{An \textbf{$n$-Qubit Superposition}
+\highlightdef{An $n$-qubit \textbf{Uniform Superposition}
 is given by $H^{\otimes n}\ket{\textsf{00..0}}$
 }
 In other words, by connecting $n$ Hadamards in parallel each with input $\ket{0}$. 
@@ -503,10 +515,12 @@ is \textit{balanced or not} using $U_f$ only once in a quantum circuit
 
 In turns out that the Deutsch-Jorza Algorithm uses the \textit{same circuit} as the 
 Bernstein-Vazirani Algorithm. But notice that now, we don't have $f(x) = [u, \; x]$ 
-but are assuming that $f(x)$ is either \textit{balanced} or \textit{constant}.
-It's not necessarily being a parity function as it was the case in the parity problem. 
-There is no longer a $u$ to output, so the last part of the Bernstein-Vazirani Algorithm 
-will be slightly different. We will adjust the derivation to solve the Balanced Problem.
+We instead assuming that $f(x)$ is either \textit{balanced} or \textit{constant}.
+We no longer assume it's a parity function as was the case in the parity problem. 
+There is no longer a $u$ to output, so the \textit{last part} of the Bernstein-Vazirani Algorithm 
+will be slightly different. 
+We will deviate from the last part of Bernstein-Vazirani Algorithm derivation to, instead,
+create a circuit that solves the Balanced Problem.
 
 \begin{tikzpicture}[thick]
     %
@@ -667,19 +681,19 @@ half the outputs are 0, half the outputs are 1 (by def. of \textit{balanced}).
 So half the summation terms are -1, half the terms are +1. 
 They cancel out in the sum to give zero. Hence the amplitude of $\ket{0^n}$ is $\frac{1}{2^n}(0) = 0$.
 So the probability of seeing $\ket{0^n}$ after measurement is $0^2 = 0$.
-\item \textbf{Constant Zero} 
-If $f$ outputs constantly zero, then the summation simplifies to
+\item \textbf{Constant with Zero} 
+If $f$ outputs constantly zero, $f(x) = 0$ for all $x$, and so the summation simplifies to
 $\sum_{\textsf{x} \in \{0,1\}^n} (-1)^{f(x)} = \sum_{\textsf{x} \in \{0,1\}^n} 1 = 2^n$. 
 Hence the amplitude of $\ket{0^n}$ is $\frac{1}{2^n}(2^n) = 1$.
 So the probability of seeing $\ket{0^n}$ after measurement is $1^2 = 1$.
-\item \textbf{Constant One}
-If $f$ is constantly one, then the summation 
+\item \textbf{Constant with One}
+If $f$ is constantly one, $f(x) = 1$ for all $x$, and so the summation 
 $\sum_{\textsf{x} \in \{0,1\}^n} (-1)^{f(x)} = \sum_{\textsf{x} \in \{0,1\}^n} (-1) = -2^n$.
 Hence the amplitude of $\ket{0^n}$ is $\frac{1}{2^n}(-2^n) = -1$.
 So the probability of seeing $\ket{0^n}$ after measurement is $(-1)^2 = 1$.
 \end{itemize}
 
-\highlightdef{After measuring the first $n$ quibits, i f we observe $\ket{0^n}$, $f$ is \textit{definitely} constant, 
+\highlightdef{After measuring the first $n$ quibits, if we observe $\ket{0^n}$, $f$ is \textit{definitely} constant, 
 if we don't observe $\ket{0^n}$, $f$ is \textit{definitely} balanced}
 
 
@@ -697,3 +711,31 @@ constant or balanced. This gives an exponential reduction in
 the complexity of the classical algorithm.
 
 \section{Simon's Algorithm}
+
+
+\section{Grover's Algorithm}
+
+
+\highlightdef{\textbf{Averaging Operator}: finds the mean amplitude of $phi$}
+
+
+\begin{example}
+Show that the averaging operator is \textit{unitary}.
+\end{example}
+
+
+
+\highlightdef{\textbf{About-the-Mean Inversion}: $v_i'= \frac{2}{N}\sum_j v_j - v_i$}
+
+
+
+\begin{example}
+Prove that \textit{about-the-mean inversion} does not change the mean.
+\end{example}
+
+
+
+
+
+\highlightdef{\textbf{Increase Amplitude}: combine \textit{phase inversion} with 
+\textit{about-the-mean inversion}}
