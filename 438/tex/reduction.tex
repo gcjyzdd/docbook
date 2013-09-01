@@ -737,6 +737,87 @@ graph is concerned.
 
 \frmrule
 
+\begin{example}
+Draw the following graph in full, expanding the mutex gadget. 
+
+\frmrule
+
+\begin{tikzpicture}
+    \tikzstyle{w} = [draw,fill=white,shape=circle,minimum size=5pt,inner sep=0pt]
+    \tikzstyle{b} = [fill,shape=circle,minimum size=5pt,inner sep=0pt]
+    \matrix[row sep=0.6cm, column sep=0.6cm](tgadget) {
+    \node(At)[b]{};  & \node[w](1t){};  & \node[w](2t){}; & \node[w](3t){}; & \node[w](4t){}; & \node[b](Bt){}; \\
+                    & \node[w](5t){};  & \node[w](6t){}; & \node[w](7t){}; & \node[w](8t){}; &             \\
+    \node(Ct)[b]{};  & \node[w](9t){};  & \node[w](10t){}; & \node[w](11t){}; & \node[w](12t){}; & \node[b](Dt){}; \\
+    };
+    \matrix[row sep=0.6cm, column sep=0.6cm, below=1cm of tgadget](fgadget) {
+    \node(Af)[b]{};  & \node[w](1f){};  & \node[w](2f){}; & \node[w](3f){}; & \node[w](4f){}; & \node[b](Bf){}; \\
+                    & \node[w](5f){};  & \node[w](6f){}; & \node[w](7f){}; & \node[w](8f){}; &             \\
+    \node(Cf)[b]{};  & \node[w](9f){};  & \node[w](10f){}; & \node[w](11f){}; & \node[w](12f){}; & \node[b](Df){}; \\
+    };
+    \node(x)[b, below left=0.5cm and 0.5cm of tgadget]{};
+    \node(y)[b, below right=0.5cm and 0.5cm of tgadget]{};
+    \begin{pgfonlayer}{background}
+    % edges
+    \draw[draw=black!50] (At) -- (Bt)  (Ct) -- (Dt) (1t) -- (9t) (2t) -- (10t) (3t) -- (11t) (4t) -- (12t);
+    \draw[draw=black!50] (Af) -- (Bf)  (Cf) -- (Df) (1f) -- (9f) (2f) -- (10f) (3f) -- (11f) (4f) -- (12f);
+    \draw[draw=black!50] (x) -- (Ct) (x) -- (Af);
+    \draw[draw=black!50] (y) -- (Dt) (y) -- (Bf); 
+    \end{pgfonlayer}
+    
+\end{tikzpicture}
+
+
+\end{example}
+
+
+\frmrule
+
+
+\begin{example}
+For the following graph with a mutex gadget \\
+\textbf{(a)} Expand the graph full to show all the nodes \\
+\textbf{(b)} Explain why this graph \textit{doesn't} contain parallel edges?
+
+\frmrule
+
+
+\begin{tikzpicture}
+    \tikzstyle{w} = [draw,fill=white,shape=circle,minimum size=5pt,inner sep=0pt]
+    \tikzstyle{b} = [fill,shape=circle,minimum size=5pt,inner sep=0pt]
+    \matrix[row sep=0.6cm, column sep=0.6cm](tgadget) {
+    \node(At)[b]{};  & \node[w](1t){};  & \node[w](2t){}; & \node[w](3t){}; & \node[w](4t){}; & \node[b](Bt){}; \\
+                     & \node[w](5t){};  & \node[w](6t){}; & \node[w](7t){}; & \node[w](8t){}; &             \\
+                     & \node[w](9t){};  & \node[w](10t){}; & \node[w](11t){}; & \node[w](12t){}; &  \\
+    };
+    \matrix[row sep=0.6cm, column sep=0.6cm, below=1cm of tgadget](fgadget) {
+                     & \node[w](1f){};  & \node[w](2f){}; & \node[w](3f){}; & \node[w](4f){}; & \\
+                     & \node[w](5f){};  & \node[w](6f){}; & \node[w](7f){}; & \node[w](8f){}; &             \\
+    \node(Cf)[b]{};  & \node[w](9f){};  & \node[w](10f){}; & \node[w](11f){}; & \node[w](12f){}; & \node[b](Df){}; \\
+    };
+    \node(x)[b, below left=0.5cm and -0.5cm of tgadget]{};
+    \node(y)[b, below right=0.5cm and -0.5cm of tgadget]{};
+    \begin{pgfonlayer}{background}
+    % edges
+    \draw[draw=black!50] (At) -- (Bt)  (9t) -- (12t) (1t) -- (9t) (2t) -- (10t) (3t) -- (11t) (4t) -- (12t);
+    \draw[draw=black!50] (1f) -- (4f)  (Cf) -- (Df) (1f) -- (9f) (2f) -- (10f) (3f) -- (11f) (4f) -- (12f);
+    \draw[draw=black!50] (x) -- (9t) (x) -- (1f);
+    \draw[draw=black!50] (y) -- (12t) (y) -- (4f); 
+    \end{pgfonlayer}
+    
+\end{tikzpicture}
+
+Although the graph when drawn with the gadget seems to have parallel edges, 
+when we draw it out explicitly, we see that there are no parallel edges. 
+
+
+\end{example}
+
+
+
+
+\frmrule
+
 The next gadget is a 
 
 \begin{tikzpicture}
@@ -757,12 +838,15 @@ The next gadget is a
     \draw[draw=black!50] (At) -- (Bt)  (Ct) -- (Dt) (1t) -- (9t) (2t) -- (10t) (3t) -- (11t) (4t) -- (12t);
     \draw[draw=black!50] (Af) -- (Bf)  (Cf) -- (Df) (1f) -- (9f) (2f) -- (10f) (3f) -- (11f) (4f) -- (12f);
     % ham. path
-    \draw[thick] (At) -- (1t) -- (5t) -- (9t) -- (10t) -- (6t) -- (2t) -- (3t) -- (7t) -- (11t) -- (12t) -- (8t) -- (4t) -- (Bt);
-    \draw[thick] (Cf) -- (9f) -- (5f) -- (1f) -- (2f) -- (6f) -- (10f) -- (11f) -- (7f) -- (3f) -- (4f) -- (8f) -- (12f) -- (Df); 
+    \draw[very thick] (At) -- (1t) -- (5t) -- (9t) -- (10t) -- (6t) -- (2t) -- (3t) -- (7t) -- (11t) -- (12t) -- (8t) -- (4t) -- (Bt);
+    \draw[very thick] (Cf) -- (9f) -- (5f) -- (1f) -- (2f) -- (6f) -- (10f) -- (11f) -- (7f) -- (3f) -- (4f) -- (8f) -- (12f) -- (Df); 
     \end{pgfonlayer}
     \node[below=0.1cm of tgadget]{true};
     \node[below=0.1cm of fgadget]{false};
 \end{tikzpicture}
+
+
+
 
 
 
@@ -778,5 +862,34 @@ Recall Cook's Theorem.
 \highlightdef{\textbf{Cook's Theorem}: \textsc{sat} is \textsc{np}-complete}
 
 
+\frmrule
 
+\begin{example}
+Assume that \textsc{3sat} $\leqslant$ \textsc{tri}. 
+Show that \textsc{tri} is NP-complete.
+\end{example}
 
+\frmrule
+
+It turns out there is a reduction from 
+\textsc{3sat} to \textsc{tri}. So we indeed know that 
+\textsc{tri} is \textsc{np}-complete.
+
+\frmrule
+
+\begin{example}
+Assume that \textsc{tri} $\leqslant$ \textsc{bin}. 
+Show that \textsc{bin} is NP-complete.
+\end{example}
+
+\frmrule
+
+\begin{example}
+Assume that \textsc{tri} $\leqslant$ \textsc{knapsack}. 
+Show that \textsc{knapsack} is NP-complete.
+\end{example}
+
+\frmrule
+
+\highlightdef{\textbf{Strongly NPC}: NPC even if restrict
+instances of polynomial length digits}
