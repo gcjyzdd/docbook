@@ -96,10 +96,12 @@ for a longer time and may make the system less responsive.
 \begin{example}
 Why not put all the work in the bottom half?
 
-Interrupts have to response to some event in a timely fasion. Work that is done in the bottom 
-half is delayed by putting it in a schedulable kernel thread. Any time critical processing put 
-in the bottom half will be preempted by processing of other threads. 
-This will make the system appear less responsive.
+Interrupts often have to respond to an interrupt event in a timely fasion. 
+Yet, work that is done in the bottom 
+half is delayed by putting it in a schedulable kernel thread. 
+Any time critical processing mistakenly put 
+in the bottom half will be preempted by the processing of other threads. 
+This will make the device appear less responsive to the user.
 \end{example}
 
 \frmrule
