@@ -8,15 +8,17 @@
 \usepackage{bm}
 \usepackage{mathtools}
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+
 
 % PFG/TikZ and tikz libraries
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest}
 \usepackage{tikz} 
-\usetikzlibrary{trees, positioning, arrows, shadows, calc, fit, 
+\usetikzlibrary{trees, positioning, arrows, automata, shadows, calc, fit, 
 shapes.multipart, shapes.geometric, decorations.pathreplacing, 
 decorations.markings, chains, snakes, backgrounds, intersections} 
-
+\usepackage{xifthen}
 
 % Import times lookalike font
 %\usepackage{newtxtext}
