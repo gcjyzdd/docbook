@@ -632,8 +632,25 @@ Mach Ports and Messages
 
 \section{Introducing Threads}
 
+
+
+
+
+\highlightdef{\textbf{User-Level Threads}: } 
+
+
+\highlightdef{\textbf{Kernel-Level Threads}: } 
+
+How do user and kernel threads map into each other?
+
+Many-to-One
+One-to-One
+Many-to-Many
+
+
+
 \highlightdef{\textbf{POSIX} was developed to 
-\textit{standardise} threads and thread management 
+\textit{standardise} user-level threads and thread management 
 }
 as well as to standardise \textsc{ipc} mechanisms and commands 
 in \textsc{unix} operating systems.
@@ -654,5 +671,10 @@ Threads that follow the standard are called
 What does the \textsc{p} in \textsc{posix} stand for? \\
 For what reason was it seen neccessary to standardise threads.
 \end{example}
+
+
+User-level threads: 
+POSIX \textit{P-threads}, Mach \textit{C-threads}, Solaris \textit{threads}
+
 
 
