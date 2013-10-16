@@ -67,6 +67,9 @@ we will find the $\llbracket \text{\textsf{x}} \rrbracket_{ex(8)}$
 \section{One's Complement}
 
 
+Prove that $x$ is a power of two iff $x \& (x-1) = 0$.
+
+
 \section{Two's Complement}
 
 We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{2c} = x$
@@ -75,7 +78,10 @@ We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{2c} = x$
 
 
 % TODO: fix render
-\highlightdef{\textbf{Two's Complement}: 
+\highlightdef{
+\parbox[c][3.5em][c]{0.98\textwidth}{
+\centering
+\textbf{Two's Complement}: 
 $ \llbracket \text{\textsf{x}} \rrbracket_{2c} = \left\{ 
   \begin{array}{ll}
     \llbracket \text{\textsf{x}} \rrbracket_{n} & 
@@ -84,6 +90,8 @@ $ \llbracket \text{\textsf{x}} \rrbracket_{2c} = \left\{
     \quad \text{for} \quad 2^{n-1} \leqslant \llbracket \text{\textsf{x}} \rrbracket_{n} < 2^{n}
   \end{array} \right.$
 }
+}
+
 
 \highlightdef{\textbf{Two's Complement Operation}: 
 $\llbracket 2C(\text{\textsf{x}}) \rrbracket_{2c}  = 
@@ -104,3 +112,55 @@ We write this as: $\llbracket \text{\textsf{x}} \rrbracket_{10c} = x$
 
 \highlightdef{\textbf{Number Table Series Expansion}: 
 $\llbracket \text{\textsf{x}} \rrbracket_{r} = \sum^{N-1}_{t=0} r^{t} \textsf{x}_t$}
+
+
+\frmrule 
+
+\begin{example}
+Data can be presented in Base-64. The digits used in base 64 consist of lowercase letters, 
+uppercase letters and digits. Unfortunately, these along are not enough.
+$26 + 26 + 10 = 62$, so we are short by two digits. Base64 chooses plus (+), 
+and forward-slash (/) for the remaining two digits, although similar systems 
+exist that choose different characters for the digits.
+\end{example}
+
+
+\frmrule 
+
+\begin{example}
+An IP address (to be precise, an IP\textit{v4} address) can be seen as a 
+base 256 number with four digits. It's difficult to find 
+255 different looking symbols, so we use (000,...,255) as our 256 digits, 
+and separate them using dots. This is known 
+as the \textit{dotted-decimal system}.
+\end{example}
+
+
+% div and mod
+
+\highlightdef{\textbf{Left} $n$ \textbf{Digits Extraction}: $x/R^{(M-n)}$ }
+
+where $M$ is the maximum power using for the number table of $x$.
+
+\highlightdef{\textbf{Right} $n$ \textbf{Digits Extraction}: $x\%R^n$ }
+
+
+
+\highlightdef{$n$\textbf{th Digit Extraction}: $(x/R^n)\% R$ }
+
+
+
+\begin{example}
+Write an algorithm to verify if an integer is a palindrome using div and mod.
+\end{example}
+
+\begin{example}
+Write an algorithm to reverse an integer using div and mod.
+\end{example}
+
+
+\section{Base-n Groups}
+
+% Apply to Unicode (same left digit extraction = same plane)
+% Apply IP addresses subnetting (same right digit extraction = same subnet)
+% Apply to direct mapped caches (same left digit extraction = same cache line)
