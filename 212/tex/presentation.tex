@@ -2,10 +2,17 @@
 \chapter{Character Coding}
 
 
-\section{Character Encoding}
+\section{Introducing Character Coding}
+
+
+Terminology is a real problem in the area of Character Coding.
+
+
+\section{Characters vs Glyphs}
 
 There are several entities that need to be formally defined.
 First we will define the difference between a \textit{character} and a \textit{glyph}.
+Note that these a formal definitions used in Character Coding. 
 
 \begin{itemize}   
 \renewcommand{\labelitemi}{$\Box$}
@@ -13,16 +20,13 @@ First we will define the difference between a \textit{character} and a \textit{g
 encoding. Here, a \textit{character} is defined is an abstract name or description for a shape or form. A character has \textit{no concrete shape}. You cannot write a character down on paper.
 A character cannot be printed on a computer screen. It's independent of any specific rendered image or font.
 \item \textbf{Glyph} A \textit{glyph} is a concrete visual representation that we can assign
-to a character. 
-\item \textbf{Code Point} Each glyph is assign a unique natural number 
-called a \textit{code point} or or \textit{code position}. 
-\item \textbf{Binary Encoding} Each glyph has a unique binary sequence or digits 
-assigned. This does not necessarily have to be the binary representation of the 
-code point. The binary encoding must also determine  the number of leading zeros.
-Some glyphs may be given different length binary encodings. 
+to a character. The glyph is any visual medium (handwritten on paper, displayed on a computer screen).
 \end{itemize}
 
+
 A single character can have many glyphs associated.
+
+\frmrule
 
 \begin{example}
 We define the character: \textit{the letter a}. 
@@ -31,6 +35,9 @@ that can be assigned to \textit{the letter a}.
 \end{example}
 
 A single glyph can have many characters associated. 
+
+\frmrule
+
 
 \begin{example}
 We define two characters: \textit{the latin letter a}, \textit{the german letter a}. 
@@ -42,73 +49,230 @@ We can think of glyphs as being the syntax and characters as being the semantics
 Glyphs are the concrete written symbols whereas charactes are descriptions or names 
 that give a meaning to these symbols. 
 
+\highlightdef{\textbf{Characters vs Glyphs}: We distinguish an abstract element of writing (character) from a particular graphical representation (glyph)}
+
+
+\highlightdef{\textbf{Font}: A particular collection of glyphs}
+\highlightdef{\textbf{Character Set}: A particular collection of characters}
+
+
+
+
+
+
+\section{Character Layouts}
+
+
+The mapping share common design features often sharing 
+the same size, weight and general style.
+
+
+\highlightdef{\textbf{Character Layout}: A particular mapping from a character set to the set of natural numbers }
+
+A Character Layout assigns each glyph a unique natural number.
+Each natural number is called a \textit{code point} or a \textit{code position}. 
+This can be thought of, informally as a chart on the wall. 
+
+\highlightdef{\textbf{Codepoint Layout}: The natural number assigned to a character by a character layout}
+
+
+\begin{example}
+ASCII is 
+\end{example}
+
+\frmrule 
+
+\begin{example}
+Codepage-1252 or CP-1252 is a character layout of the Latin alphabet, 
+used by Windows in certain components. Because of it's exclusive use on Windows, 
+it is often called  \textit{Windows-1252}. 
+CP-1252 is similar to Latin 9 (aka ISO 8859-1) except that different characters 
+are mapped to different code points. 
+\end{example}
+
+\frmrule
+
+
+\begin{example}
+Unicode is the largest character layout, containing all the characters for 
+all the major writing systems of the world, both ancient 
+and modern. 
+\end{example}
+
+\frmrule
+
+The Unicode code space is divided into seventeen planes of $2^{16}$. 
+The code points in each plane have the hexadecimal values 0x$p_1 p_2 0000$ to 
+0x$p_1 p_2 0000$, 
+where $p_1 p_2$ are hex digits from ranging from 00 to 10, 
+corresponding to the plane of the codepoints.
+
+\begin{example}
+How many codepoints does Unicode have in total? 
+\end{example}
+
+
+\highlightdef{\textbf{Basic Multilingual Plane}: the first Unicode plane}
+
+\frmrule
+
+
+\section{Character Encodings I}
+
+\highlightdef{\textbf{Character Encoding}: specify the storage for the binary of codepoints}
+
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$} 
+\item \textbf{Binary} Each glyph has a binary representation of the 
+code point.  
+\item \textbf{Serialization} byte stream. 
+Each glyph has a unique binary sequence or digits 
+assigned. This is not just the binary representation of the code point. 
+The binary encoding must also determine the number of leading zeros.
+Some glyphs may be given different length binary encodings. 
+\end{itemize}
+
+
+
 \begin{figure}[h]
 \begin{tikzpicture}[
   title/.style={},
   entity/.style={rectangle, draw, text centered}
 ]
-\node[entity] (ch) {Character};
-\node[entity, right = 1.5cm of ch] (g) {Glyph};
-\node[entity, right = 1cm of g] (cp) {Code Point};
-\node[entity, right = 1cm of cp] (b) {Binary Encoding};
 
-\draw(g) -- (cp);
+\node[entity] (g) {Glyph};
+\node[entity, right = 1.5cm of g] (ch) {Character};
+\node[entity, right = 1cm of ch] (cp) {Code Point};
+\node[entity, right = 1cm of cp] (b) {Binary};
+\node[entity, below = 0.5cm of b] (s) {Serialization};
+
+\draw(g) -- (ch);
+\draw(ch) -- (cp);
 \draw(cp) -- (b);
-\draw(ch) -- (g);
+\draw(b) -- (s);
 
 % draw crowsfeet
-\node[right = 0.2cm of ch] (cf1) {};
-\node[left = 0.2cm of g] (cf2) {};
-\draw(cf1.west) -- (ch.10);
-\draw(cf1.west) -- (ch.0);
-\draw(cf1.west) -- (ch.350);
-\draw(cf2.east) -- (g.170);
-\draw(cf2.east) -- (g.180);
-\draw(cf2.east) -- (g.190);
+\node[right = 0.2cm of g] (cf1) {};
+\draw(cf1.west) -- (g.10);
+\draw(cf1.west) -- (g.0);
+\draw(cf1.west) -- (g.350);
+\node[left = 0.2cm of ch] (cf2) {};
+\draw(cf2.east) -- (ch.170);
+\draw(cf2.east) -- (ch.180);
+\draw(cf2.east) -- (ch.190);
+\node[above = 0.2cm of s] (cf3) {};
+\draw(cf3.south) -- (s.40);
+\draw(cf3.south) -- (s.90);
+\draw(cf3.south) -- (s.140);
 
 \end{tikzpicture}
 \end{figure} 
 
-\frmrule
+\highlightdef{\textbf{Codepoints vs Encoding}: We make a distinction between the numbers assigned to 
+characters (codepoints) and the way those numbers are stored in computers (encoding)}
+
+
+It can be mistakenly interpreted that the term \textit{ASCII} 
+unambiguously identifies a single encoding. ASCII refers to the 
+character layout (codepointers assigned), not a particular encoding (binary storage).
+There are many encodings for the ASCII character layout. 
+
+\begin{example}
+ASCII is commonly encoded as 7 bits in an 8-bit byte with a leading zero. 
+\end{example}
+
+\begin{example}
+Unicode is not an encoding (at least, not following the definition of \textit{encoding} use here).
+There are several encodings of Unicode. 
+You can freely convert between them without losing information
+\end{example}
+
+
+
+There are many character layouts which just so happen to have a single 
+encoding using in industry. It is these layouts that unfortuntely 
+cause a blur between what is a layout and what is an encoding. 
+The same name is often using for the layout and the encoding. 
+
+\begin{example}
+ASCII is commonly encoded as 7 bits in an 8-bit byte with a leading zero. 
+\end{example}
+
+\frmrule 
 
 
 
 
-\section{ASCII}
 
-The use of the term \textit{Extended ASCII} has been criticized. 
-\begin{itemize}   
-\renewcommand{\labelitemi}{$\Box$}
-\item It can be mistakenly interpreted that the term \textit{Extended ASCII} 
-is an update of the ASCII standard to include more than 128 characters. 
-This is wrong. The ASCII standard 
-contains 128 characters no more no less.
-\item It can be mistakenly interpreted that the term \textit{Extended ASCII} 
-unambiguously identifies a single encoding.
-There are many encodings that may be considerd to \textit{extend} ASCII.
-\end{itemize}
- 
-
-\frmrule
+\section{Character Encodings II}
 
 
-\section{CP-1252}
-
-CP-1252 or \textit{Windows-1252} is a character encoding of the Latin alphabet, 
-used by Windows in certain components.
-CP-1252 is similar to ISO 8859-15 (8-bit ASCII) except that different characters 
-are mapped to different code points. 
-
-\frmrule
 
 
-\section{Unicode I}
-
-
+Some code points have not yet been assigned character. 
+Some are reserved for private use.
+Some are permanently reserved to never be assigned to a character. 
 
 
 
 \highlightdef{\textbf{UTF} stands for \textit{Unicode Transfer Format}}
+
+
+For characters in on the planes outside the Basic Multilingual 
+Plane, the encoding uses a pair of 16-bit words. Hence the character 
+encoding is often called a \textit{surrogate pair}. 
+
+\highlightdef{\textbf{Surrogate pair}: UTF-16 encoding for codepoints outside the BMP }
+
+The byte-order mark, if used, appears at the start of the text stream. Not all UTF encodings need a 
+byte order mark. In particular, UTF-16BE, UTF-16LE, UTF-32BE, UTF-32LE do not need 
+a byte-order mark. The endianness is fixed (LE - little endian, BE- big endian).
+All encoded character streams use the same byte ordering. 
+A BOM is only necessary for UTF-8, UTF-16, UTF-32 who do not fix the endianness.
+UTF-8,  UTF-16 and UTF-32 allow character streams of either byte order.  
+They rely on the use of the BOM specify the endianness.
+
+\highlightdef{\textbf{BOM}: used once to specify the endianness for a UTF encoded stream }
+
+When a BOM is used, the encoding of codepoint U+FEFF is used. 
+This the codepoint that Unicode maps \textit{Zero-width Non-breaking Space (ZWNBSP)} 
+character to. 
+
+\frmrule 
+
+
+\highlightdef{\textbf{UTF-16 Code Unit}: one of the two UTF-16 bytes that correspond to a single codepoint }
+
+
+
+\frmrule 
+
+UTF-8 uses a variable-length byte-oriented encoding. 
+
+\highlightdef{\textbf{UTF-8}: Encodes code points using 8,16,24, or 32 bits}
+The pattern is that a codepoint always uses a multiple of 8 bits, hence the 8 in UTF-\textit{8}. 
+It is called a \textit{byte}-oriented encoding because a given UTF-8 encoded 
+stream can be seen as a \textit{stream of bytes} that from groups of 1,2,3 or 4 to give 
+corresponding codepoints.  
+
+\highlightdef{\textbf{UTF-8 Code Unit}: one or more UTF-8 bytes that correspond to a single codepoint }
+
+
+UTF-8 defines straightforward mapping that determines how many bytes a code point 
+needs. In general, the first 128 points require a single byte.
+The next 1,920 characters use two bytes. Then three bytes are used 
+for remainder of most common characters. One trick is to look at the number of 
+1's in the hex representation for the codepoint. 
+
+110XXXXX indicates that 2 code units are used\\
+1110XXXX indicates that 3 code units are used\\
+11110XXX indicates that 3 code units are used\\
+
+
+UTF-8 is popular for web pages, documents because of its effiency in size 
+and its compatibility with ASCII.
+
 
 
 \begin{example}
@@ -120,3 +284,40 @@ For the following UTF-8 binary encoding, what is the corresponding codepoint?
 What is the UTF-8 encoding of the following codepoint?
 % U+20AC
 \end{example}
+
+
+
+\frmrule
+
+\begin{example}
+True or false. \\
+\textbf{(a)} UTF16-BE and UTF16-LE are compatible with ASCII systems. %F
+\end{example}
+
+
+\frmrule
+
+% UTF-7
+
+
+\section{Composed Characters*}
+
+
+
+\highlightdef{\textbf{Composed Character}: }
+
+
+\highlightdef{\textbf{Precomposed Character}: a character that has both a codepoint 
+and a equivalent \textit{decomposed sequences of other codepoints}}
+
+\highlightdef{\textbf{Canonical Equivalence}: decomposion sequences may differ, 
+but they will share a \textit{canonical equivalence}}
+
+
+\section{Encodings in Programming Languages*}
+
+Java represents characters as UTF-16 code units.
+The length function on strings may be misleading. 
+It returns the returns the number of code units. 
+
+
