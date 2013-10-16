@@ -16,7 +16,7 @@ and $\textsc{no}$. Intuitively, these are the nodes of our TM transition diagram
 %
 \item \textbf{Symbol Set} Formally, the set $\Sigma$ is 
 the set of \textit{symbols} of a TM. 
-$\Sigma$ will always include two special symbols, $>$ and $\sqcup$.
+$\Sigma$ will always include two special symbols, $>$ and $\Box$.
 Intuitively, the symbol set are the symbols that can appear on the squares of the TM.
 %
 \item \textbf{Start State} Formally, the start state is one state chosen 
@@ -308,38 +308,66 @@ The tail function.
 
 \section{Turing Machines IV}
 
-\section{Multitape Turing Machines}
+\section{Multitape Turing Machines I}
 
 \highlightdef{\textbf{Multitape TM}: several heads that move independently}
 
 Formally a $k$-tape TM is $M_k = (Q,\Sigma,q_0,\delta)$ 
 where 
 
-Don't confuse a multitrack TM with a multitape TM. 
+Don't confuse a multitrack TM with a multitape TM.
 
-\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm,
-                    semithick]
-  %\tikzstyle{every state}=[draw=none,text=white]
+\frmrule
 
-  \node[initial,state] (A)                    {$q_a$};
-  \node[state]         (B) [above right of=A] {$q_b$};
-  \node[state]         (D) [below right of=A] {$q_d$};
-  \node[state]         (C) [below right of=B] {$q_c$};
-  \node[state]         (E) [below of=D]       {$q_e$};
+Let $\Sigma' = \Sigma \cup \underline{\Sigma} \cup \{\triangleright', \underline{\triangleright'}\} \cup \{\triangleleft\}$
 
-  \path (A) edge              node {0,1,L} (B)
-            edge              node {1,1,R} (C)
-        (B) edge [loop above] node {1,1,L} (B)
-            edge              node {0,1,L} (C)
-        (C) edge              node {0,1,L} (D)
-            edge [bend left]  node {1,0,R} (E)
-        (D) edge [loop below] node {1,1,R} (D)
-            edge              node {0,1,R} (A)
-        (E) edge [bend left]  node {1,0,R} (A);
-\end{tikzpicture}
+\frmrule
+
+\begin{example}
+True or false. Explain your answer.\\
+\textbf{(a)} The symbol $\underline{\Box}$ is in $\Sigma'$.
+\textbf{(b)} The head of $M$ can move left of $\triangleleft$.
+\textbf{(c)} The head of $M$ can move left of $\triangleleft'$.
+\end{example}
+
+\begin{example}
+For the following $k$-tape TM configuration, give the
+corresponding simulation configuration.
+\end{example}
 
 
-\section{Random Access Machines}
+\frmrule
+
+The simulation of $M_k$ by $M$.
+
+The initial configuraiton. 
+Recall that input $x$ will 
+be on the first tape of $M_k$. The corresponding input 
+will be on the tape of $M$. The idea is to
+(i) add tape 1 with input $x$
+then (ii) add $k-1$ blank tapes. Figure x shows the idea.
+
+We first shift input $x$ to the right. Then we precede it 
+with the new start symbol $\triangleright'$ 
+
+\frmrule
+
+\begin{example}
+\textbf{(a)} Write a parameterised flow-chart for a TM that shifts $x$ to the right.\\
+\textbf{(b)} Prove by induction over $|x| \geqslant 0$ that this machine computes $f(x) = \Box x$
+\end{example}
+
+
+
+
+
+
+
+For each step of $M_k$, $M$ will make two passes over its tape. 
+It will scan the tape left-to-right twice. 
+
+
+\section{Random Access Machines I}
 
 These are often called \textsc{ram}s. 
 This is not to be confused with random access \textit{memory}.

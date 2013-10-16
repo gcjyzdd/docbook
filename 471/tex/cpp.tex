@@ -4,400 +4,7 @@
 
 
 
-
-\section{C++ Language Background I}
-
-
-
-
-
-Member functions like those shown are represented by normal functions, 
-with additional hidden parameter, \lstinline{pThis} representing \lstinline{this}. 
-To call a member function of an object, \lstinline{a.f(x,y,z)} we push 
-\textit{four} parameters. We push \lstinline{x}, \lstinline{y}, \lstinline{z}, 
-as usual however, we \textit{also} push the the pointer to \lstinline{a}'s object space. 
-This is what parameter \lstinline{pThis} will be bound to.
-
-Given
-%\lstinline{class S} \lstinline{\{} \lstinline{public} \lstinline{\{}
-%\lstinline{void} \lstinline{f} \lstinline{(..)} \lstinline{\{} 
-%\lstinline{..} \lstinline{\}} \lstinline{\}},
-
-\highlightdef{To call member function \lstinline{f},
-we have an \textit{hidden parameter} to \\
-bind \lstinline{this} to the receiver object.}
-
-We can have several objects of one class, but only one copy of the instructions exist.
-
-\begin{figure}[h]
-\begin{tikzpicture}[
-  title/.style={},
-  object/.style={rectangle split, rectangle split draw splits=false,
-  draw, text width=2cm}
-]
-
-  \node[rectangle split, rectangle split horizontal, rectangle split parts=3, 
-  draw, text width=1cm, anchor=center, text centered]
-  (t){ 
-  \lstinline{S_f} 
-  \nodepart{two} 
-  \lstinline{S_g} 
-  \nodepart{three} 
-  \lstinline{T_f}
-  };
-
-\end{tikzpicture}
-\end{figure} 
-
-
-Noticed how we combined the class name and the member function name together 
-to create unique identifiers for instance method bodies. 
-If two classes have the same member function name, the identifier 
-$\langle \text{classid} \rangle \_ \langle \text{memfuncid} \rangle$
-will uniquely identiy the instance method. 
-
-This idea of creating unique identifers by combining names is 
-called \textit{name mangling}. It's a common technique used by compilers. 
-
-\highlightdef{\textbf{Name mangling} allows distinction between
-member functions of different classes}
-
-We didn't have to choose 
-$\langle \text{classid} \rangle \_ \langle \text{memfuncid} \rangle$
-for our name mangling. Instead, we could've used 
-$\langle \text{memfuncid} \rangle \_ \langle \text{classid} \rangle$.
-Name mangling is also used to distinguish overloaded member functions 
-for a given classes. The parameter names and types would be used in the 
-name mangling process.
-
-\frmrule
-
-
-
-The \textit{behaviour} of \lstinline{a} is statically-bound to the member functions in the $A$ table. 
-The assignment \lstinline{a1 = b1;} changed only the \textit{state} of $a1$ (values of field variables), 
-but the \textit{behaviour} (member functions associated) is unchanged. However this is only the case 
-for object assignment. Pointers with pointer assignment behave differently. 
-
-\frmrule
-
-\begin{example}
-The example below highlights the difference between static binding and dynamic binding.
-
-\begin{figure}[h]
-\begin{tikzpicture}
-  \node [fill=black!5, inner sep=4pt] (class) { 
-  
-\begin{lstlisting}
-class A { public:
- virtual int f() { return 10; };
-         int g() { return 15; };
-};
-class B : public A  { public:
- virtual int f() { return 20; };
-         int g() { return 25; };
-};
-\end{lstlisting} 
-  };
-
-  \node [fill=black!5, inner sep=4pt, right=0.05cm of class] (static) { 
-\begin{lstlisting}
-void main()
-{
- A a1; B b1;
-
- a1.f(); //10
- a1.g(); //15
-
- b1.f(); //20
- b1.g(); //25
-
- a1 = b1;
- a1.f(); //10
- a1.g(); //15
-};
-\end{lstlisting} 
-  };
-
-  \node [fill=black!5, inner sep=4pt, right=0.05cm of static] { 
-\begin{lstlisting}
-void main() 
-{
- A* ap1; B* bp1;
-
- ap1->f(); //10
- ap1->g(); //15
-
- bp1->f(); //20
- bp1->g(); //25
-
- ap1 = bp1;
- ap1->f(); //20
- ap1->g(); //15
-};
-\end{lstlisting} 
-  };
-
-\end{tikzpicture}
-\end{figure} 
-
-
-
-\end{example}
-
-
-C++ has two binding modes, static-binding and dynamic binding. 
-Static binding is used for object instances and dynamic binding is 
-used for object pointers.
-\highlightdef {
-  \textbf{Static binding}: always used for object values \\
-  \textbf{Dynamic binding}: only possbile for object pointers 
-}
-
-Virtual functions may be bound dynamically. When a 
-virtual function is called for pointer, then the function 
-is bound according to the class of the object pointed at 
-by pointer, and not according to the type of pointer. 
-
-In other OO languages, e.g. Smalltalk, Java, there is \textit{only dynamic binding}. 
-Which mode is more important for OO? Why are there two modes of 
-binding in C++? How many modes of binding for C\#? 
-
-\frmrule
-
-
-\begin{example}
-This example shows how dynamic binding is continued throughout nested calls
-
-
-\begin{figure}[h]
-\begin{tikzpicture}
-  \node [fill=black!5, inner sep=4pt] (class) { 
-  
-\begin{lstlisting}
-class A { public:
- virtual int f() { return 10;  };
-         int g() { return 15;  };
-};
-class B : public A { public:
- virtual int f() { return g(); };
-         int g() { return 20;  };
-};
-class C : public B { public:
-         int g() { return 25;  };
-};
-\end{lstlisting} 
-  };
-
-  \node [fill=black!5, inner sep=4pt, right=0.05cm of class] (static) { 
-\begin{lstlisting}
-void main()
-{
- A a1; 
- C c1;
-
- a1.f(); //
- a1.g(); //
-
- c1.f(); //
- c1.g(); //
-};
-\end{lstlisting} 
-  };
-
-  \node [fill=black!5, inner sep=4pt, right=0.05cm of static] { 
-\begin{lstlisting}
-void main() 
-{
- A* ap1=new A(); 
- C* cp1=new C(); 
-
- ap1->f(); //
- ap1->g(); //
-
- cp1->f(); //
- cp1->g(); //
-};
-\end{lstlisting} 
-  };
-
-\end{tikzpicture}
-\end{figure} 
-
-\end{example}
-
-\frmrule
-
-\begin{example}
-This example shows dynamic binding related errors.
-
-
-\begin{figure}[h]
-\begin{tikzpicture}
-  \node [fill=black!5, inner sep=4pt] (class) { 
-  
-\begin{lstlisting}
-class A { public:
- virtual int f() { return 10;  };
-};
-class B : public A { public:
- int i;
- virtual int f() { return g()+i; };
-         int g() { return 20;  };
-};
-\end{lstlisting} 
-  };
-
-  \node [fill=black!5, inner sep=4pt, right=0.05cm of class] (static) { 
-\begin{lstlisting}
-void main()
-{
- A a1; 
- C c1;
-
- a1.f(); //
- a1.g(); //
-
- c1.f(); //
- c1.g(); //
-};
-\end{lstlisting} 
-  };
-
-  \node [fill=black!5, inner sep=4pt, right=0.05cm of static] { 
-\begin{lstlisting}
-void main() 
-{
- A* ap1=new A(); 
- B* bp1=new C(); 
- bp1->i = 100;
-
- ap1->f(); //10
- bp1->f(); //120
- bp1->g(); //20
-
- ap1= bp1;
- ap1->f(); //10
- ap1->g(); //!
- ap1->g(); //!
-};
-\end{lstlisting} 
-  };
-
-\end{tikzpicture}
-\end{figure} 
-
-\end{example}
-
-
-
-
-\section{C++ Language Background II}
-
-
-
-
-
-\begin{lstlisting}
-class S {
-	void u() {}; void v() {}; void w() {};
-}
-class T : public S {
-	void u() {};
-}
-\end{lstlisting}
-
-
-\begin{figure}[h]
-\begin{tikzpicture}[
-  title/.style={},
-  object/.style={rectangle split, rectangle split draw splits=false,
-  draw, text width=2cm}
-]
-
-  \node[rectangle split, rectangle split horizontal, rectangle split parts=4, 
-  draw, text width=1cm, anchor=center, text centered]
-  (t){ 
-  \lstinline{S_u} 
-  \nodepart{two} 
-  \lstinline{S_v} 
-  \nodepart{three} 
-  \lstinline{S_w}
-  \nodepart{four} 
-  \lstinline{T_u}
-  };
-
-\end{tikzpicture}
-\end{figure} 
-
-
-Below shows how fields are inherited.
-
-\begin{lstlisting}
-class S {
-	int a; int b; int c;
-}
-class T : public S {
-	int x;
-}
-\end{lstlisting}
-
-
-\begin{figure}[h]
-\begin{tikzpicture}[
-  title/.style={},
-  object/.style={rectangle split, rectangle split draw splits=false,
-  draw, text width=2cm}
-]
-
-  \node[rectangle split, rectangle split horizontal, rectangle split parts=3, 
-  draw, text width=1cm, text centered]
-  (t1){ 
-  \lstinline{s1_a} 
-  \nodepart{two} 
-  \lstinline{s1_b} 
-  \nodepart{three} 
-  \lstinline{s1_c}
-  };
-
-  \node[rectangle split, rectangle split horizontal, rectangle split parts=4, 
-  draw, text width=1cm, text centered, below=1cm of t1]
-  (t2){ 
-  \lstinline{t1_a} 
-  \nodepart{two} 
-  \lstinline{t1_b} 
-  \nodepart{three} 
-  \lstinline{t1_c}
-  \nodepart{four} 
-  \lstinline{t1_x}
-  };
-
-
-\end{tikzpicture}
-\end{figure} 
-
-
-
-
-
-The table used for accessing virtual member functions is called 
-the \textit{virtual table}, and a pointer to it is represented by a 
-field vtab. 
-
-\highlightdef{Only virtual member functions are put in virtual tables.}
-
-Normal (non-virtual) member functions will not be found in the method table 
-for a class. 
-
-We'll use a double letter convention 
-\lstinline{ff}, \lstinline{gg}, \lstinline{hh} ... for virtual member functions.
-
-\highlightdef{If $C < D$, then $\text{vtab}_C$ is a prefix of $\text{vtab}_D$}
-
-
-
-
-\section{High Level Target Language I}
+\section{Introducing High Level Target Language}
 
 We can get a high level view of the changes a compiler makes.
 We can abstract compilation features we are not interested in
@@ -580,9 +187,11 @@ $
 \end{prooftree}
 
 
-When we call a method, the idea is to create a new scope. 
-We need to find a way to binds the parameters identifiers $par_1 \cdots, par_n$
-to our argument identifiers $loc_1 \cdots, loc_n$.  
+When we call a method, the idea is to create a new lexical scope, $pi'$, similar 
+to how function calls have their own scope. 
+This scope will bind the parameters identifiers $par_1 \cdots, par_n$
+to our argument identifiers $loc_1 \cdots, loc_n$. 
+
 Suppose that the arguments $loc_1 \cdots, loc_n$ location-evaluate to $i_1, \cdots i_n$ , 
 then it is these memory locations that hold the argument values. 
 In essence, $i_1, \cdots i_n$ are integer constants that are 
@@ -766,9 +375,11 @@ For the initial memory contents shown below, show the resulting memory \\
 
 
 
-\section{High Level Target Language II}
 
-We now extend the HLTL to suppose classes and objects. 
+
+\section{HLTL I: Single Inheritance}
+
+We now extend the HLTL to suppose classes and objects.  
 
 \begin{itemize}   
 \renewcommand{\labelitemi}{$\Box$}
@@ -917,11 +528,958 @@ void main()
 \frmrule
 
 
+Stroustrup’s aim was to make member function calls as 
+fast as normal (global) function call. 
+
+Member functions represented by “normal” functions, 
+with additional pThis parameter, representing this. 
+
+Through name mangling distinguish between member 
+functions from different classes (and also between 
+overloaded functions). 
+
 \begin{itemize}   
 \renewcommand{\labelitemi}{$\Box$}
-\item \textbf{Functions} 
-\item \textbf{Function Calls} 
+\item \textbf{Functions} A member function \lstinline{void g(int p1,...,int pn)} \{ \}
+in class A is represented by $\kappa(\textsf{g\_A}) = \textsf{pThis p1} \cdots \textsf{pn}  \{ \}$
+\item \textbf{Function Calls} Calls of non-virtual member functions can be resolved 
+(bound) statically.
+\begin{itemize} 
+\item The call \lstinline{a.g();} will be represented as $\textsf{g\_A}(\alpha(\textsf{a}))$
+\item The call \lstinline{ap->g();} will be represented as $\textsf{g\_A}(\star(\alpha(\textsf{ap})))$
 \end{itemize} 
 
+\end{itemize} 
 
-\section{High Level Target Language III}
+\frmrule
+
+\begin{example}
+\end{example}
+
+\section{Revision: Dynamic Binding}
+
+
+%Member functions like those shown are represented by normal functions, 
+%with additional hidden parameter, \lstinline{pThis} representing \lstinline{this}. 
+%To call a member function of an object, \lstinline{a.f(x,y,z)} we push 
+%\textit{four} parameters. We push \lstinline{x}, \lstinline{y}, \lstinline{z}, 
+%as usual however, we \textit{also} push the the pointer to \lstinline{a}'s object space. 
+%This is what parameter \lstinline{pThis} will be bound to.
+
+%Given
+%\lstinline{class S} \lstinline{\{} \lstinline{public} \lstinline{\{}
+%\lstinline{void} \lstinline{f} \lstinline{(..)} \lstinline{\{} 
+%\lstinline{..} \lstinline{\}} \lstinline{\}},
+
+%\highlightdef{To call member function \lstinline{f},
+%we have an \textit{hidden parameter} to \\
+%bind \lstinline{this} to the receiver object.}
+
+%We can have several objects of one class, but only one copy of the instructions exist.
+
+%\begin{figure}[h]
+%\begin{tikzpicture}[
+%  title/.style={},
+%  object/.style={rectangle split, rectangle split draw splits=false,
+%  draw, text width=2cm}
+%]
+%
+%  \node[rectangle split, rectangle split horizontal, rectangle split parts=3, 
+%  draw, text width=1cm, anchor=center, text centered]
+%  (t){ 
+%  \lstinline{S_f} 
+%  \nodepart{two} 
+%  \lstinline{S_g} 
+%  \nodepart{three} 
+%  \lstinline{T_f}
+%  };
+
+%\end{tikzpicture}
+%\end{figure} 
+
+
+% Noticed how we combined the class name and the member function name together 
+% to create unique identifiers for instance method bodies. 
+% If two classes have the same member function name, the identifier 
+% $\langle \text{classid} \rangle \_ \langle \text{memfuncid} \rangle$
+% will uniquely identiy the instance method. 
+
+% This idea of creating unique identifers by combining names is 
+% called \textit{name mangling}. It's a common technique used by compilers. 
+
+% \highlightdef{\textbf{Name mangling} allows distinction between
+% member functions of different classes}
+
+% We didn't have to choose 
+% $\langle \text{classid} \rangle \_ \langle \text{memfuncid} \rangle$
+% for our name mangling. Instead, we could've used 
+% $\langle \text{memfuncid} \rangle \_ \langle \text{classid} \rangle$.
+% Name mangling is also used to distinguish overloaded member functions 
+% for a given classes. The parameter names and types would be used in the 
+% name mangling process.
+
+
+% The \textit{behaviour} of \lstinline{a} is statically-bound to the member functions in the $A$ table. 
+% The assignment \lstinline{a1 = b1;} changed only the \textit{state} of $a1$ (values of field variables), 
+% but the \textit{behaviour} (member functions associated) is unchanged. However this is only the case 
+% for object assignment. Pointers with pointer assignment behave differently. 
+
+C++ has two binding modes, static-binding and dynamic binding. 
+Static binding is used for object instances and dynamic binding is 
+used for object pointers.
+\highlightdef {
+  \textbf{Static binding}: resolution used for object values \\
+  \textbf{Dynamic binding}: resolution used for object values and object pointers 
+}
+
+Virtual functions are resolved \textit{dynamically}. That is, they take 
+into consideration, at \textit{runtime type} of the object the message is 
+being send to. In C++ a pointer's \textit{runtime type} can change 
+from an assignment. On a pointer assignment, the \textit{dynamic type} may change to a 
+subclass type. 
+
+\highlightdef {
+  \textbf{Downcast}: change the \textit{dynamic type} to a subclass type
+}
+
+In other OO languages, e.g. Smalltalk, Java, there is \textit{only dynamic binding}. 
+\highlightdef{Java \textit{always} uses Dynamic Binding}. 
+When you see the virtual keyword for a C++ member function, it behaves exactly 
+like a Java method. 
+
+\highlightdef {static\_type(p) $:>$ dynamic\_type(p) }
+
+
+\frmrule
+
+\begin{example}
+The example below highlights the difference between static binding and dynamic binding.
+
+\begin{figure}[h]
+\begin{tikzpicture}
+  \node [fill=black!5, inner sep=4pt] (class) { 
+  
+\begin{lstlisting}
+class A { public:
+ virtual int f() { return 10; };
+         int g() { return 15; };
+};
+class B : public A  { public:
+ virtual int f() { return 20; };
+         int g() { return 25; };
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, right=0.05cm of class] (static) { 
+\begin{lstlisting}
+void main()
+{
+ A a1; B b1;
+
+ a1.f(); //10
+ a1.g(); //15
+
+ b1.f(); //20
+ b1.g(); //25
+
+ a1 = b1;
+ a1.f(); //10
+ a1.g(); //15
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, right=0.05cm of static] { 
+\begin{lstlisting}
+void main() 
+{
+ A* ap1; B* bp1;
+
+ ap1->f(); //10
+ ap1->g(); //15
+
+ bp1->f(); //20
+ bp1->g(); //25
+
+ ap1 = bp1;
+ ap1->f(); //20
+ ap1->g(); //15
+};
+\end{lstlisting} 
+  };
+
+\end{tikzpicture}
+\end{figure} 
+
+
+
+\end{example}
+
+
+
+\frmrule
+
+%http://en.wikipedia.org/wiki/Dynamic_dispatch
+
+
+\highlightdef{\textbf{Subsumption Rule}: A variable of type A* can hold a value of type B* iff $B <: A$ }
+
+The subsumption rule is similar to what designers call the 
+\textit{Liskov Substitution Principle}.
+
+\highlightdef{\textbf{Dynamic Dispatch}: virtual keyword }
+
+
+\frmrule
+
+
+\begin{tikzpicture} 
+  \begin{scope}[start chain=1 going below, node distance=0.1cm, 
+  every node/.style={on chain=1, font=\small, draw, align=center, 
+  inner sep = 0cm, minimum height = 14pt, text width=1.5cm}]
+  {
+    %\node[dotted,color=black!40, draw=black] (a0) {$\textsf{A}_0$};
+    %\node[draw=none] (dots2) {$\cdots$};
+    \node (ast-p) {$\textsf{A'}$};
+    \node[draw=none] (dots1) {$\cdots$};
+    \node (ast-1) { };
+    \node (ast) {$\textsf{A}_{s}$};
+
+    \node[draw=none] (dots4) {$\cdots$};
+    \node (ady-q) {$\textsf{A''}$};
+    \node[draw=none] (dots3) {$\cdots$};
+    \node (ady-1) { };
+    \node (ady) {$\textsf{A}_{d}$};
+  }
+  \end{scope}
+  \path[->,every node/.style={font=\scriptsize}] 
+  (ast.east) edge [bend right=70] node[anchor=west] {not def.} (ast-1.east)
+  (ast-1.east) edge [bend right=70] node[anchor=west] {not def.} (dots1.east)
+  (dots1.east) edge [bend right=70] node[anchor=west] {not def.} (ast-p.east)
+  (ady.east) edge [bend right=70] node[anchor=west] {not def.} (ady-1.east)
+  (ady-1.east) edge [bend right=70] node[anchor=west] {not def.} (dots3.east)
+  (dots3.east) edge [bend right=70] node[anchor=west] {not def.} (ady-q.east);
+
+  \draw[->] (ast-p.west) -- ([xshift=-0.25 cm]ast-p.west) |- ([xshift=-0.25 cm]ady.west) -- (ady.west);
+  \node[font=\scriptsize, left=0.5cm of dots4] {virtual};
+
+  \node[font=\scriptsize,right] at ([xshift=1.45cm]ast.east) (st) {start};
+  \draw[->] (st) -- (ast.east);
+\end{tikzpicture}
+
+
+
+\textit{To summarise:} \\
+We now consider C++ dynamic binding, that occurs when member functions use the virtual keyword.
+The algorithm to bind a function call, \lstinline{x->f()} in main(), is \textit{now}, as follows:
+\begin{enumerate} [nosep]
+  \item $\textsf{curr} := \textsf{A}_{s}$
+  \item while ($\textsf{curr::f}$ is not def.) $\textsf{curr} := parent(\textsf{curr})$
+  \item if ($\textsf{curr::f}$ has the \lstinline{virtual} keyword)
+  \begin{enumerate} [nosep] 
+    \item $\textsf{curr} := \textsf{A}_{d}$.
+    \item while ($\textsf{curr::f}$ is not def.) $\textsf{curr} := parent(\textsf{curr})$
+  \end{enumerate}
+  \item return $\textsf{curr}$.
+\end{enumerate}
+where $\textsf{A}_{s} = \text{statictype}$(\lstinline{x}) and 
+$\textsf{A}_{d} = \text{dynamictype}$(\lstinline{x}).
+Here, $parent(\textsf{curr})$ denotes the parent class of $\textsf{curr}$, assuming single 
+inheritance. If the parent doesn't exist, then the entire algorithm should stop with an error. 
+This error would be found at compile time.
+
+Step 1 is to start at the static type, the type that is worked with at compile time. 
+Next, on Step 2, we search up the inheritance path (going up zero or more times) 
+until we find the first class that has an implementation of \lstinline{f} explicitly defined. 
+Once we have found the first such \lstinline{f}, we check if it has the \lstinline{virtual} keyword. If it doesn't,
+we are done. It is the \lstinline{f} of this class that \lstinline{x->f()} is bound to.
+But, if the \lstinline{f} of this class \textit{does} has the \lstinline{virtual} keyword. We are not done.
+
+For such virtual member functions, we now need to jump to the dynamic type. 
+We start again, but instead, consider, the runtime type of the receiver, $\textsf{A}_{d }$.
+That is, the possibly downcasted type that is a result of 
+executing code. We then search up the inheritance path \textit{again}.
+We go up zero or more times until we find the first class that has \lstinline{f}  defined. 
+It is \lstinline{f} of this class that \lstinline{x->f()} is bound to.
+The class returned from this algorithm, $curr$ is the class who contains the 
+implementation of $f$ that \lstinline{x->f()} is bound to.
+Notice that only steps 3-4 are new. This is where dynamic binding occurs. 
+
+\frmrule
+
+\textit{To summarise:} \\
+To bind a function call to \lstinline{y}, \lstinline{y->f()}, inside some member function body, 
+peform the same algorithm, but replacing \lstinline{x} with \lstinline{y}.
+
+
+\frmrule
+
+\textit{To summarise:}\\
+To bind a function call to \lstinline{this}, \lstinline{f()}, inside a member function body, 
+peform the same algorithm, but replacing \lstinline{x} with \lstinline{this}, (the 
+receiver object), treating dynamic binding as \textit{continued throughout calls}. 
+
+
+
+
+
+
+
+%Several languages are more flexible with their binding by using \textit{Multiple Dispatch}.  
+
+\frmrule
+
+\begin{example}
+Which mode is more important for OO? 
+
+Dynamic binding is more important. Without it, we wouldn't be able 
+to apply the Liskov substitution principle. Writing methods 
+that accept objects as parameters would be incredible restrictive 
+as only the static type would be able to be bound to the parameter. 
+
+Not having static binding is less important for OO. Languages 
+such as Java do not have static binding and have proven to be popular 
+for applying OO design principles and design patterns. 
+\end{example} 
+
+\frmrule
+
+\begin{example}
+Why are there two modes of binding in C++? 
+
+Static binding has greater performance.
+C++ is often used for programs written for performance.
+\end{example}
+
+\frmrule
+
+
+
+
+\begin{example}
+This example shows how dynamic binding is continued throughout nested calls
+
+
+\begin{figure}[h]
+\begin{tikzpicture}
+  \node [fill=black!5, inner sep=4pt] (class) { 
+  
+\begin{lstlisting}
+class A { public:
+ virtual int f() { return 10;  };
+         int g() { return 15;  };
+};
+class B : public A { public:
+ virtual int f() { return g(); };
+         int g() { return 20;  };
+};
+class C : public B { public:
+         int g() { return 25;  };
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, right=0.05cm of class] (static) { 
+\begin{lstlisting}
+void main()
+{
+ A a1; 
+ C c1;
+
+ a1.f(); //
+ a1.g(); //
+
+ c1.f(); //
+ c1.g(); //
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, right=0.05cm of static] { 
+\begin{lstlisting}
+void main() 
+{
+ A* ap1=new A(); 
+ C* cp1=new C(); 
+
+ ap1->f(); //
+ ap1->g(); //
+
+ cp1->f(); //
+ cp1->g(); //
+};
+\end{lstlisting} 
+  };
+
+\end{tikzpicture}
+\end{figure} 
+
+\end{example}
+
+\frmrule
+
+\begin{example}
+This example shows dynamic binding related errors.
+
+
+\begin{figure}[h]
+\begin{tikzpicture}
+  \node [fill=black!5, inner sep=4pt] (class) { 
+  
+\begin{lstlisting}
+class A { public:
+ virtual int f() { return 10;  };
+};
+class B : public A { public:
+ int i;
+ virtual int f() { return g()+i; };
+         int g() { return 20;  };
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, right=0.05cm of class] (static) { 
+\begin{lstlisting}
+void main()
+{
+ A a1; 
+ C c1;
+
+ a1.f(); //
+ a1.g(); //
+
+ c1.f(); //
+ c1.g(); //
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, right=0.05cm of static] { 
+\begin{lstlisting}
+void main() 
+{
+ A* ap1=new A(); 
+ B* bp1=new C(); 
+ bp1->i = 100;
+
+ ap1->f(); //10
+ bp1->f(); //120
+ bp1->g(); //20
+
+ ap1= bp1;
+ ap1->f(); //10
+ ap1->g(); //!
+ ap1->g(); //!
+};
+\end{lstlisting} 
+  };
+
+\end{tikzpicture}
+\end{figure} 
+
+\end{example}
+
+
+
+
+
+
+
+\begin{lstlisting}
+class S {
+  void u() {}; void v() {}; void w() {};
+}
+class T : public S {
+  void u() {};
+}
+\end{lstlisting}
+
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  \node[rectangle split, rectangle split horizontal, rectangle split parts=4, 
+  draw, text width=1cm, anchor=center, text centered]
+  (t){ 
+  \lstinline{S_u} 
+  \nodepart{two} 
+  \lstinline{S_v} 
+  \nodepart{three} 
+  \lstinline{S_w}
+  \nodepart{four} 
+  \lstinline{T_u}
+  };
+
+\end{tikzpicture}
+\end{figure} 
+
+
+Below shows how fields are inherited.
+
+\begin{lstlisting}
+class S {
+  int a; int b; int c;
+}
+class T : public S {
+  int x;
+}
+\end{lstlisting}
+
+
+\begin{figure}[h]
+\begin{tikzpicture}[
+  title/.style={},
+  object/.style={rectangle split, rectangle split draw splits=false,
+  draw, text width=2cm}
+]
+
+  \node[rectangle split, rectangle split horizontal, rectangle split parts=3, 
+  draw, text width=1cm, text centered]
+  (t1){ 
+  \lstinline{s1_a} 
+  \nodepart{two} 
+  \lstinline{s1_b} 
+  \nodepart{three} 
+  \lstinline{s1_c}
+  };
+
+  \node[rectangle split, rectangle split horizontal, rectangle split parts=4, 
+  draw, text width=1cm, text centered, below=1cm of t1]
+  (t2){ 
+  \lstinline{t1_a} 
+  \nodepart{two} 
+  \lstinline{t1_b} 
+  \nodepart{three} 
+  \lstinline{t1_c}
+  \nodepart{four} 
+  \lstinline{t1_x}
+  };
+
+
+\end{tikzpicture}
+\end{figure} 
+
+
+\frmrule
+
+
+
+% The table used for accessing virtual member functions is called 
+% the \textit{virtual table}, and a pointer to it is represented by a 
+% field vtab. 
+
+% \highlightdef{Only virtual member functions are put in virtual tables.}
+
+% Normal (non-virtual) member functions will not be found in the method table 
+% for a class. 
+
+%We'll use a double letter convention 
+%\lstinline{ff}, \lstinline{gg}, \lstinline{hh} ... for virtual member functions.
+
+%\highlightdef{If $D :> C$, then $\text{vtab}_D$ is a prefix of $\text{vtab}_C$}
+
+\textit{The following frames on dynamic-binding in C\# is for optional reading.}
+
+\begin{example}
+How many modes of binding for C\#? 
+
+For C\# 2.0 and 3.0, has two modes of binding. 
+The default is a static-binding done in the same way that we have seen in C++. 
+The second uses keywords \lstinline{virtual} and \lstinline{override} 
+to give a \textit{new dynamic binding scheme} that relies on a concept called 
+\textit{virtual-override chains}. 
+
+A \textit{virtual-override chain} sits on a normal class inheritance chain.
+The entire chain pertains to a single method, say \textsf{f}. 
+A chain always begins with at a class where \textsf{f} is virtual. 
+The chain always ends with lowest subclass, where \textsf{f} has override,
+that can be found without having any intermediate virtual \textsf{f}s,
+and without adding any intermediate keyword-less \textsf{f}s 
+(definitions of \textsf{f} that 
+have neither the virtual keyword nor the override keyword).
+
+To be precise, the chain starts at some class $\textsf{A}_V$  
+where $\textsf{A}_V\textsf{::f}$ is virtual, and 
+goes up to some subclass $\textsf{A}_O$, $\textsf{A}_V :> \textsf{A}_O$ where:
+\begin{itemize}[nosep]
+\item $\textsf{A}_O\textsf{::f}$ has the override keyword
+\item there is no class $\textsf{A'}$, such that 
+$\textsf{A}_V > \textsf{A'} > \textsf{A}_O$ where $\textsf{A'::f}$ has the virtual keyword
+\item there is no class $\textsf{A'}$, 
+such that $\textsf{A}_V > \textsf{A'} > \textsf{A}_O$ 
+where $\textsf{A'::f}$ is keyword-less. 
+\end{itemize} 
+
+and there does not exist some other class $\textsf{A}_O > \textsf{A'}_O$, where:
+\begin{itemize}[nosep]
+\item $\textsf{A'}_O\textsf{::f}$ has the override keyword
+\item there is no class $\textsf{A'}$, such that 
+$\textsf{A}_O > \textsf{A'} > \textsf{A'}_O$ where $\textsf{A'::f}$ has the virtual keyword
+\item there is no class $\textsf{A'}$, 
+such that $\textsf{A}_O > \textsf{A'} > \textsf{A'}_O$ 
+where $\textsf{A'::f}$ is keyword-less. 
+\end{itemize}
+
+If no such class $\textsf{A}_O$ exists, then the chain consists of just $\textsf{A}_V$ alone.
+
+\frmrule
+
+
+% dynamic programming q: find longest virtual-override chain (?)
+%C\# 4.0 add another binding mode using a new keyword, \lstinline{dynamic}.
+
+\highlightdef{\textit{Compile-Time Invariant}: Every method marked with either 
+\lstinline{virtual} or \lstinline{override} is on 
+a unique well-defined virtual-override chain}
+
+
+\end{example}
+
+\highlightdef{\textbf{Most-derived}: The last override in a virtual-overriden chain}
+If the chain has no overrides, then the most-derived is defined to be the initial virtual.
+
+
+Now suppose that $X >: X' >: Y' >: Y$ and that $\textsf{X'::f}$ is defined. Then:
+\highlightdef{\textbf{Most-derived of f from $X'$ wrt type $Y'$}, $MD(X',Y')$,\\ 
+is the rightmost override on the subchain $[X',Y']$}
+If there is no rightmost override, then $MD(X',Y')$ is defined to be $\textsf{X'}$.
+
+
+\frmrule
+
+\textit{To summarise:} \\
+We have a brief look at dynamic binding in C\#.
+The diagram shown in Figure X shows how C\# performs its binding. 
+The algorithm for dynamic binding in C\# is as follows.
+
+\begin{enumerate} [nosep]
+  \item $\textsf{curr} := \textsf{A}_{s}$
+  \item while ($\textsf{curr::f}$ is not def.) $\textsf{curr} := parent(\textsf{curr})$
+  \item if ($\textsf{curr::f}$ has the \lstinline{virtual} keyword or the \lstinline{override} keyword)
+  \begin{enumerate} [nosep] 
+    \item $\textsf{curr} := MD(\textsf{curr}, \textsf{A}_{d})$.
+  \end{enumerate}
+  \item return $\textsf{curr}$.
+\end{enumerate}
+
+We first look at the static-type and search up the inheritance tree for \lstinline{f}.
+Once we have found the first \lstinline{f}, we look to see if it has 
+either the \lstinline{virtual} keyword, or the \lstinline{overrride} keyword.
+If it does not have either, then we are done. Otherwise we need 
+to consider the dynamic type of \lstinline{x}, $\textsf{A}_{d}$, 
+and find the \textit{most derived implementation} of \textsf{f} 
+from \textsf{curr} with respect to $\textsf{A}_{d}$, is bound to the call \lstinline{x.f()}.
+
+\frmrule
+
+
+\section{HLTL II: Single Inheritance with Virtuals}
+
+We have now added virtual member functions.
+In other words, we have added the possibility of dynamic 
+method binding. 
+
+Stroustrup’s aim was to make virtual function call as fast as 
+normal member function calls + a small constant. 
+Stroustrup’s idea is, basically, an application of the 
+treatment of fields, to the treatment of functions. 
+
+
+
+\begin{itemize}   
+\renewcommand{\labelitemi}{$\Box$}
+\item \textbf{Dynamic Binding} Each class has a function look-up table. 
+The function look-up table is often called 
+the virtual table, and a pointer to it is represented by a 
+field vtab. Function selection is represented through an index into 
+the look-up table of the class of the receiver. 
+
+\item \textbf{Lookup Table Invariant} Method look-up table of any 
+class is a prefix of method look-up table of any 
+subclass. 
+\end{itemize} 
+
+\frmrule
+
+\begin{example}
+The example below adds virtual member functions. 
+
+\begin{tikzpicture}
+  \node [fill=black!5, inner sep=4pt] (class) { 
+  
+\begin{lstlisting}
+class A { 
+ public:
+  int fa1, fa2;
+  void g() {fa1++;}
+  void h() {g();}
+};
+class B : public A { 
+ public:
+  int fb1;
+  void g() {fb1++;}
+};
+class C: public B { 
+ public:
+  int fc1
+  virtual void hh() {gg();}
+  virtual void gg() {fa1+=fc;}
+};
+class D : public C { 
+ public:
+  int fd1;
+  virtual void gg() {g();}
+  virtual void kk() {fc1+=fd1;}
+  void k() {gg();}
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, right=0.1cm of class] { 
+\begin{lstlisting}
+void main()
+{
+ C c1; D d1;
+ c1.fa1 = 4;  d1.fa1 = 5; 
+ c1.fa2 = 6;  d1.fa2 = 7;
+ c1.fb1 = 8;  d1.fb1 = 9;
+ c1.fc1 = 10; d1.fc1 = 11;
+              d1.fd1 = 13;
+};
+\end{lstlisting} 
+  };
+
+\end{tikzpicture}
+\end{example}
+
+
+\begin{tikzpicture}
+  %
+  \tikzstyle{m} = [draw=black!50, minimum width=1.5cm, minimum height=0.4cm, inner sep=0.1pt, font=\small]
+  \tikzstyle{m2} = [m, minimum width=2.2cm]
+  \tikzstyle{b} = [fill=black!10]
+
+  \matrix[row sep=-0.01cm, column sep=-0.01cm] (mema) 
+  {
+    \node[m]{$\cdots$}; & \node[m]{$\cdots$}; \\
+    \node[m,b](fa1){$\pi(\textsf{c1})$}; & \node[m,b]{4}; \\
+    \node[m,b](fa2){$\pi(\textsf{c1})+1$}; & \node[m,b]{6}; \\
+    \node[m,b](fb1){$\pi(\textsf{c1})+2$}; & \node[m,b]{8}; \\
+    \node[m,b](fc1){$\pi(\textsf{c1})+3$}; & \node[m,b]{10}; \\
+    \node[m,b](vtab){$\pi(\textsf{c1})+4$}; & \node[m,b]{$vt$}; \\
+    \node[m]{$\cdots$}; & \node[m]{$\cdots$}; \\
+    \node[m]{$\cdots$}; & \node[m]{$\cdots$}; \\
+    \node[m,b]{$vt$}; & \node[m,b]{\textsf{hh\_C}}; \\
+    \node[m,b]{$vt + 1$}; & \node[m,b]{\textsf{gg\_C}}; \\
+    \node[m]{$\cdots$}; & \node[m]{$\cdots$}; \\
+  };
+  \matrix[row sep=-0.01cm, column sep=-0.01cm, above right=0.0cm and 0.1cm of mema.north east, anchor=north west] (memb) 
+  {
+    \node[m]{$\cdots$}; & \node[m]{$\cdots$}; \\
+    \node[m,b]{$\pi(\textsf{d1})$}; & \node[m,b](fa1end){5}; \\
+    \node[m,b]{$\pi(\textsf{d1})+1$}; & \node[m,b](fa2end){7}; \\
+    \node[m,b]{$\pi(\textsf{d1})+2$}; & \node[m,b](fb1end){9}; \\
+    \node[m,b]{$\pi(\textsf{d1})+3$}; & \node[m,b](fc1end){11}; \\
+    \node[m,b]{$\pi(\textsf{d1})+4$}; & \node[m,b](vtabend){$vt'$}; \\
+    \node[m,b](fd1){$\pi(\textsf{d1})+5$}; & \node[m,b](fd1end){13}; \\
+    \node[m]{$\cdots$}; & \node[m]{$\cdots$}; \\
+    \node[m,b]{$vt'$}; & \node[m,b]{\textsf{hh\_C}}; \\
+    \node[m,b]{$vt' + 1$}; & \node[m,b]{\textsf{gg\_C}}; \\
+    \node[m,b]{$vt' + 2$}; & \node[m,b]{\textsf{kk\_D}}; \\
+    \node[m]{$\cdots$}; & \node[m]{$\cdots$}; \\
+  };
+  \begin{pgfonlayer}{background} 
+      \node (l1) at ($(fa1end.east)+(1.2cm,0.0cm)$) {\textsf{fa1}}; \draw[thick] (fa1) -- (l1); 
+      \node (l2) at ($(fa2end.east)+(1.2cm,0.0cm)$) {\textsf{fa2}}; \draw[thick] (fa2) -- (l2); 
+      \node (l3) at ($(fb1end.east)+(1.2cm,0.0cm)$) {\textsf{fb1}}; \draw[thick] (fb1) -- (l3); 
+      \node (l4) at ($(fc1end.east)+(1.2cm,0.0cm)$) {\textsf{fc1}}; \draw[thick] (fc1) -- (l4); 
+      \node (l5) at ($(vtabend.east)+(1.2cm,0.0cm)$) {\textsf{vtab}}; \draw[thick] (vtab) -- (l5); 
+      \node (l6) at ($(fd1end.east)+(1.2cm,0.0cm)$) {\textsf{fd1}}; \draw[thick] (fd1) -- (l6); 
+  \end{pgfonlayer}  
+
+\end{tikzpicture}
+
+
+For virtual member functions and pointers the function calls 
+can only be resolved (bound) dynamically. Otherwise, 
+function call can be resolved statically. 
+ 
+Because of INVARIANT2, lookup can be performed 
+through an index into the virtual table. 
+
+
+\begin{itemize}  
+\item The calls: 
+\renewcommand{\labelitemi}{$\Box$}
+\begin{itemize} 
+\item \lstinline{d1.hh();} will be represented as $\textsf{hh\_C}(\alpha(\textsf{d1}))$
+\item \lstinline{dp1->g();} will be represented as $\textsf{g\_B}(\star(\alpha(\textsf{dp1})))$
+\item \lstinline{dp1->k();} will be represented as $\textsf{k\_D}(\star(\alpha(\textsf{dp1})))$
+\item \lstinline{cp1->hh();} will be represented as 
+$\star(\star(\star(\alpha(\textsf{cp1}))+4))(\star(\alpha(\textsf{cp1})))$
+\item  \lstinline{cp1->gg();} will be represented as 
+$\star(\star(\star(\alpha(\textsf{cp1}))+4)+1)(\star(\alpha(\textsf{cp})))$
+\end{itemize} 
+
+\end{itemize} 
+
+\frmrule
+
+\begin{example}
+The example has virtual member functions.
+\begin{enumerate}[noitemsep,topsep=0pt]
+\renewcommand{\labelenumi}{\textbf{(\alph{enumi})}}
+\renewcommand{\labelenumii}{\textbf{(\roman{enumii})}}
+\item Give the object layout diagram.
+\item What is the result of executing the following?
+\begin{enumerate}[nosep,topsep=0pt]
+\item \lstinline{f = e; f->uu();}
+\end{enumerate}
+\end{enumerate}
+
+
+\begin{tikzpicture}
+  \node [fill=black!5, inner sep=4pt] (class) { 
+  
+\begin{lstlisting}
+class E { 
+ public:
+  int x, y;
+  virtual void tt() {x++;}
+  virtual void uu() {x++;}
+};
+class F : public E { 
+ public:
+  int x, y;
+  virtual void tt() {x++;}
+          void uu() {x++;}
+};
+\end{lstlisting} 
+  };
+
+\end{tikzpicture}
+
+
+\end{example}
+
+
+
+\section{Revision: Multiple Inheritance}
+
+Multiple inheritance allows more than one direct superclass 
+for a given class. 
+
+\highlightdef{\textbf{MI Subsumption}: Subsumption still applies for Multiple Inheritance }
+
+\highlightdef{A \textbf{virtual base class} is inherited only once}  
+
+
+\begin{example}
+The example below adds vritual member functions. 
+
+\begin{tikzpicture}
+  \node [fill=black!5, inner sep=4pt] (class) { 
+  
+\begin{lstlisting}
+class A { 
+ public:
+  int fa1;
+};
+class B : public virtual A { 
+ public:
+  void g() {fa++;}
+  void init() {fa1=0;}
+};
+class C: public virtual A { 
+ public:
+  void h() {fa*=10;}
+  void void init() {fa1=0;}
+};
+class D: public B, virtual C { };
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, anchor=north west, right=0.1cm of class.north east] { 
+\begin{lstlisting}
+void main()
+{
+  D d; 
+  d.B::init();
+  d.C::init();
+  d.g();
+  d.h();
+};
+\end{lstlisting} 
+  };
+ 
+\end{tikzpicture}
+\end{example}
+
+
+The example above outputs ...........
+
+\frameans{}{1}
+
+
+
+\section{HLTL III: Multiple Inheritance}
+
+
+
+
+
+
+
+\highlightdef{Multiple inheritence prevents using prefix idea for layout}  
+
+
+
+
+\section{HLTL IV: Multiple Inheritance with Virtuals}
+
+
+
+\begin{example}
+The example below adds vritual member functions. 
+
+\begin{tikzpicture}
+  \node [fill=black!5, inner sep=4pt] (class) { 
+  
+\begin{lstlisting}
+class A { 
+ public:
+  int fa1;
+  virtual void gg() {fa1++;}
+  virtual void jj() {g();}
+};
+class B { 
+ public:
+  int fb1;
+  virtual void ff() {h();}
+  virtual void hh() {fb1++;}
+};
+class C: public A, public B { 
+ public:
+  int fc1
+  virtual void gg() {fb1 = fa1;}
+  virtual void hh() {fa1 = fb1+fc1;}
+  virtual void kk() {fa1 = fb1;}
+};
+\end{lstlisting} 
+  };
+
+  \node [fill=black!5, inner sep=4pt, anchor=north west, right=0.1cm of class.north east] { 
+\begin{lstlisting}
+void main()
+{
+};
+\end{lstlisting} 
+  };
+
+\end{tikzpicture}
+\end{example}

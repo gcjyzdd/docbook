@@ -35,13 +35,13 @@ The \textit{structure} of an $\mathcal{L}_1$ program is defined by the function
 where $meth$ and $type$ have a syntax defined by:
 \begin{flalign*}
 meth &::= type\, m (type\, x) \{ x \} &\\
-type &::= \text{bool} | m \\
+type &::= \text{bool} | c \\
 e    &::= \text{if}\, e \text{then}\, e\, \text{else}\, e | e.f | e.f := e 
                | e.m(e) | \text{new}\, c | x | \text{this} | \text{true} 
                | \text{false} | \text{null}
 \end{flalign*}
 with the identiﬁer conventions: $c \in ClassId$  for class identifiers,
-$f \in FieldId$ for field identifiers and $m \in MethId$  for class 
+$f \in FieldId$ for field identifiers and $m \in MethId$  for method 
 identifiers.
 
 \frmrule

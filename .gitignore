@@ -26,6 +26,9 @@
 *.out
 *.synctex.gz
 
+# Notes folders
+notes
+
 # Windows image file caches
 Thumbs.db
 
