@@ -1083,7 +1083,7 @@ class T : public S {
 
 %\highlightdef{If $D :> C$, then $\text{vtab}_D$ is a prefix of $\text{vtab}_C$}
 
-\textit{The following frames on dynamic-binding in C\# is for optional reading.}
+\textit{The following frames on dynamic-binding in C\# are for optional reading.}
 
 \begin{example}
 How many modes of binding for C\#? 
@@ -1105,7 +1105,7 @@ have neither the virtual keyword nor the override keyword).
 
 To be precise, the chain starts at some class $\textsf{A}_V$  
 where $\textsf{A}_V\textsf{::f}$ is virtual, and 
-goes up to some subclass $\textsf{A}_O$, $\textsf{A}_V :> \textsf{A}_O$ where:
+goes up to some subclass $\textsf{A}_O$ where $\textsf{A}_O < \textsf{A}_V$ such that:
 \begin{itemize}[nosep]
 \item $\textsf{A}_O\textsf{::f}$ has the override keyword
 \item there is no class $\textsf{A'}$, such that 
@@ -1140,11 +1140,11 @@ a unique well-defined virtual-override chain}
 
 \end{example}
 
-\highlightdef{\textbf{Most-derived}: The last override in a virtual-overriden chain}
-If the chain has no overrides, then the most-derived is defined to be the initial virtual.
+\highlightdef{\textbf{Most-derived}: The last implementation in a virtual-overriden chain}
+If the chain has no overrides, then the most-derived implementation is defined to be the initial virtual.
+If the chain has one or more overrides, the most-derived implementation is the last override. 
 
-
-Now suppose that $X >: X' >: Y' >: Y$ and that $\textsf{X'::f}$ is defined. Then:
+Now suppose that $X \geqslant X' > Y' \geqslant Y$ and that $\textsf{X'::f}$ is defined. Then:
 \highlightdef{\textbf{Most-derived of f from $X'$ wrt type $Y'$}, $MD(X',Y')$,\\ 
 is the rightmost override on the subchain $[X',Y']$}
 If there is no rightmost override, then $MD(X',Y')$ is defined to be $\textsf{X'}$.
@@ -1372,11 +1372,54 @@ class F : public E {
 \section{Revision: Multiple Inheritance}
 
 Multiple inheritance allows more than one direct superclass 
-for a given class. 
+for a given class. However we still require there to be no cycles 
+in the inheritance. The result is that we have, a \textit{directed acyclic graph}
+instead of a tree. 
 
-\highlightdef{\textbf{MI Subsumption}: Subsumption still applies for Multiple Inheritance }
+\highlightdef{\textbf{MI Subsumption}: Subsumption \textit{still applies} for multiple inheritance }
+
+
 
 \highlightdef{A \textbf{virtual base class} is inherited only once}  
+
+
+\highlightdef{The \textbf{most derived implementation} for \textsf{f} is a \textit{topological sort} over a \textsc{dag}}  
+
+
+$$ A \leadsto B,\; A \leadsto B',\; B \neq B',\; B::\textsf{f} \text{ def},\; B'::\textsf{f} \text{ def},\; B \leadsto B' \rightarrow MD(A, \textsf{f}) = B $$
+
+
+\highlightdef{\textbf{Ambiguity}: $ A\leadsto B,\; A \leadsto B',\; B \neq B',\; B::\textsf{f} \text{ def},\; B'::\textsf{f} \text{ def},\; \rightarrow B \not\leadsto B' \text{ and } B' \not\leadsto B$}  
+
+\highlightdef{\textbf{Unambiguous}: $ A\leadsto B,\; A \leadsto B',\; B \neq B',\; B::\textsf{f} \text{ def},\; B'::\textsf{f} \text{ def},\; \rightarrow B \leadsto B' \text{ or } B' \leadsto B$}  
+
+\frmrule
+
+\highlightdef{\textbf{Domination}: The most derived implementation \textit{dominates} other implementations}  
+That is any path from $A \leadsto B'$ must go through $B$ where $B$ is a dominating node.
+
+\frmrule
+
+
+\begin{example}
+Consider the inheritance \textsc{dag} shown below. \\
+\textbf{(a)} Explain whether $MD(A, \textsf{f})$ ambiguous\\
+\textbf{(b)} Give C++ code that generates this graph
+\end{example}
+
+\frmrule
+
+
+\begin{enumerate} [nosep]
+  \item $\textsf{curr} := MD(\textsf{A}_{s},\textsf{f})$
+  \item if ($\textsf{curr::f}$ has the \lstinline{virtual} keyword)
+  \begin{enumerate} [nosep] 
+    \item $\textsf{curr} := MD(\textsf{A}_{d}, \textsf{f})$.
+  \end{enumerate}
+  \item return $\textsf{curr}$.
+\end{enumerate}
+
+\frmrule
 
 
 \begin{example}
@@ -1392,19 +1435,19 @@ class A {
 };
 class B : public virtual A { 
  public:
-  void g() {fa++;}
+  void g() {fa1++;}
   void init() {fa1=0;}
 };
 class C: public virtual A { 
  public:
-  void h() {fa*=10;}
+  void h() {fa1*=10;}
   void void init() {fa1=0;}
 };
 class D: public B, virtual C { };
 \end{lstlisting} 
   };
 
-  \node [fill=black!5, inner sep=4pt, anchor=north west, right=0.1cm of class.north east] { 
+  \node [fill=black!5, inner sep=4pt, right=0.1cm of class.north east, anchor=north west] { 
 \begin{lstlisting}
 void main()
 {
@@ -1413,6 +1456,7 @@ void main()
   d.C::init();
   d.g();
   d.h();
+  cout << d.fa1;
 };
 \end{lstlisting} 
   };
