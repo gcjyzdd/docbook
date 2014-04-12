@@ -54,6 +54,9 @@ $42.6875 = 32 + 10.6875 = 32 + 8 + 2.6875 = 32 + 8 + 2 + 0.6875 = 32 + 8 + 2 + .
 What is the the binary: 0.11111111111111111111... (recurring ones) equal to?
 \end{example}
 
+
+\frmrule
+
 We can obtain $x'$ by either \textit{rounding} or \textit{truncation}.
 
 
@@ -163,6 +166,36 @@ We now look at floating point systems in general.
 % http://stackoverflow.com/questions/6430448/why-doesnt-gcc-optimize-aaaaaa-to-aaaaaa?rq=1
 But it is \textit{commutative}. 
 
+\begin{example}
+The example below demonstrates that floating-point arithmetic is not associative.
+
+\begin{lstlisting}
+int main(int intc, char **argv) 
+{
+    int x = 1;
+    for (int i = 1; i < 10000000; i++) {
+       x += 1/i;
+    }
+    int y = 1;
+    for (int i = 10000000; i >= 0; i--) {
+       y += 1/i;
+    }
+    printf("x: %d\n", x);
+    printf("y: %d\n", y);
+    printf("abs(x-y): %d\n", abs(x-y));
+}
+\end{lstlisting}
+\end{example}
+
+\frmrule 
+
+% Real-world: most machines have a floating point unit
+% why? what does a floating point unit do?
+% relate to the work done
+
+\frmrule 
+
+
 
 \highlightdef{The \textbf{Machine Epsilon} measures the \textit{accuracy} 
 of a floating-point system}
@@ -189,3 +222,7 @@ int main(int intc, char **argv)
     return 0;
 }
 \end{lstlisting}
+
+
+
+
