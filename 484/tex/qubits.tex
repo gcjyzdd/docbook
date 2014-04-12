@@ -46,6 +46,40 @@ which only occurs when $\frac{\theta}{2} = 45$. Hence $\theta = 90$.
 And solving  $e^{i\phi} = -i$ gives $\phi = 270$.
 \end{example}
 
+\section{Density Matrices}
+
+Previously, in order to find a point on the Bloch sphere, 
+we had to solve simulatenous equations to find angles $\theta$ and 
+$\phi$. We look at a new way to find points on a Bloch sphere 
+by introducing the \textit{Density Matrix} of a state, 
+and the concept of a \textit{Bloch vector}. 
+
+
+\frmrule 
+
+\highlightdef{$\rho = \frac{1}{2}(I + r_xX + r_yY + r_zZ)$}
+where $X,Y,Z$ are the Pauli matrices. 
+
+The vector $(r_x,r_y,r_z)$ is called the Bloch vector. 
+The elements are real numbers and locate a qubit on the Bloch sphere. 
+They can be determined from the density matrix of a state using:
+$r_x = 2Re[\rho_{10}]$
+$r_y = 2Im[\rho_{10}]$
+$r_z = \rho_{00} - \rho_{11}$
+
+\frmrule 
+
+\begin{example}
+Locate on the Bloch sphere, the location 
+of the qubit $\frac{1}{2}(1+i, 1-i)$ by determining its density matrix.
+\end{example}
+
+Rather than finding  $\rho$, we can just directly use 
+the following equations 
+
+$r_x = 2Re[\alpha^{*}\beta]$
+$r_y = 2Im[\alpha^{*}\beta]$
+$r_z = |\alpha|^2 - |\beta|^2$	
 
 \section{Measurement}
 

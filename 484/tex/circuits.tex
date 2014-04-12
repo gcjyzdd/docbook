@@ -104,14 +104,14 @@ entangled state: $\ket{\psi}$ \textit{cannot} written as such
 }
 
 Asking ourselves whether a state is entangled is as simple as algebraic 
-exericise of proving whether or not the factorisation exists. 
+exercise of proving whether or not the factorisation exists. 
+
+\highlightdef{\textbf{Entangled State} cannot be written as a product state}
+
 However entanglement has a much richer meaning when we take this 
 the definition and apply it at the atomic level to discover important physical consequences. 
 In particular the discussion of \textit{Principle of Locality} and \textit{Local Realism}.
-
-
-In Quantum Computing
-\highlightdef{entanglement is not 
+In Quantum Computing \highlightdef{entanglement is not 
 seen as a \textit{problem} but rather as a useful \textit{resource}}
 
 Later we will look at \textit{Quantum Encryption} where one can find out if somebody is 
@@ -139,50 +139,6 @@ entangled state: \ket{\psi} \textit{cannot} written as such
 
 
 
-\section{Super-dense Coding}
-
-Super dense coding is the less popular sibling of teleportation. It can actually be viewed as the
-process in reverse. The idea is to send two classical bits of information by only sending one
-quantum bit. The process starts out with an EPR pair that is shared between the receiver and
-sender (the sender has one half and the receiver has the other).
-
-
-\section{Bell States}
-
-
-Bell states are \textit{rotationally invariant}.
-Given $\ket{\psi} = \frac{1}{\sqrt{2}} [\ket{uu} + \ket{u^{\perp}u^{\perp}}]$ 
-and a rotation of the bit basis:
-$\ket{u} = a\ket{0} + b\ket{1}$ with $\ket{u^{\perp}} = -b\ket{0} + a\ket{1}$
-
-
-
-
-\[ \begin{array}{ll}
-\ket{\psi}
-& =
-\frac{1}{\sqrt{2}} [\ket{uu} + \ket{u^{\perp}u^{\perp}}] \\
-& =
-\frac{1}{\sqrt{2}} [(a\ket{0} + b\ket{1})(a\ket{0} + b\ket{1}) 
-+ (-b\ket{0} + a\ket{1})(-b\ket{0} + a\ket{1})]  \\ 
-& =
-\frac{1}{\sqrt{2}} [(a^2 + b^2)\ket{00} + (a^2 + b^2)\ket{11} \\ 
-& =
-\frac{1}{\sqrt{2}} [\ket{00} + \ket{11} \\ 
-\end{array}\] 
-
-\frmrule
-
-The previous bell state is only rotationlly invariant for real valued rotations. 
-It is not invariant for complex rotations. However the bell state, 
-psi-minus, $\ket{\psi^{-}} = \frac{1}{\sqrt{2}} [\ket{01} - \ket{10}]$
-is invariant under all complex rotations.
-
-\begin{example}
-Prove that the bell state $\ket{\psi^{-}}$ is invariant under all complex rotations.
-\end{example}
-
-\highlightdef{All four Bell States are \textit{entangled}}
 
 
 
@@ -257,6 +213,23 @@ This is how many elements are in upper triangle plus the diagonal.
 So the idea is to decompose the matrix into the product of 
 $C(n,2)$ matrices where each degree of freedom turns into the multiplication of rank one matrix. 
 
+\frmrule 
+
+\begin{example}
+Find a quantum circuit that uses single qubit transforms and CNOTs to implement the transform on three qubits.
+$$
+M = \begin{bmatrix}
+       1 & 0 & 0 & 0 & 0 & 0 & 0 & 0  \\
+       0 & 1 & 0 & 0 & 0 & 0 & 0 & 0  \\
+       0 & 0 & a & 0 & 0 & 0 & 0 & c  \\
+       0 & 0 & 0 & 1 & 0 & 0 & 0 & 0  \\
+       0 & 0 & 0 & 0 & 1 & 0 & 0 & 0  \\
+       0 & 0 & 0 & 0 & 0 & 1 & 0 & 0  \\
+       0 & 0 & 0 & 0 & 0 & 0 & 1 & 0  \\
+       0 & 0 & b & 0 & 0 & 0 & 0 & d  \\
+     \end{bmatrix}
+$$
+\end{example}
 
 
 \section{Reversible Computation}
