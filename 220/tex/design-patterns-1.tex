@@ -16,118 +16,69 @@ structure while abstracting away assumptions about that
 data structure.
 
 
+\section{Strategy Pattern}
 
-\section{Visitor Pattern I}
-
-
-
-\highlightdef{\textbf{Method Resolution}: method to be executed within the calling context}
-
-
-\highlightdef{\textbf{Overloading}: resolution at compile time }
-
-
-\highlightdef{\textbf{Dynamic Dispatch}: resolution at runtime }
-
-
-\highlightdef{\textbf{Overriding}:  resolution at runtime  }
-It's called \textit{single} dispatch because only \textit{one} argument to the function is used
-for resolution, implicit \textit{this} parameter in curly bracket languages.
-
-
-
-For example, methods can be dispatched based on the run time type its arguments. 
-Instead of using  \textit{one} parameter, we are using \textit{multiple} parameters.
-This is known as \textit{Multiple dispatching}.
-
-\highlightdef{\textbf{Multiple Dispatch}: Dynamic Dispatching based on the runtime (dynamic) types}
-
-In pseudocode, the code \lstinline{manager.handle(y)} could call different 
-implementations of \lstinline{handle} depending on current runtime 
-\textit{types} of \lstinline{manager} and \lstinline{y}. 
-
-Often we care about just two object types. A multiple dispatch that 
-uses two types to do dynamic dispatching is called a \textit{double dispatch}. 
-
-
-
-
-
-
-C++ and Java are examples of single dispatch languages. 
-
-Python, Ruby, Smalltalk and Objective-C are examples of a Dynamic dispatch language.
-
-\frmrule
-
-In Lisp, you have multiple dispatch, so you can do something like this
+Strategy pattern enables different algorithms get selected at run-time. 
+In this case, by passing different Comparator, different algorithms can get selected. 
+Based on the example above and now assuming you have another 
+Comparator which compares Dogs by weight instead of by size, 
+you can simply create a new Comparator like the following.
 
 \begin{lstlisting}
-(defgeneric write (generator instrument))
-
-(defmethod write ((g portfolio-generator) (s share))
-(format t "portfolio-generator: a share"))
-
-(defmethod write((g portfolio-generator) (p preference-share))
-(format t "portfolio-generator: a preference share"))
+class Dog{
+	int size;
+	int weight;
+ 
+	public Dog(int s, int w){
+		size = s;
+		weight = w; 
+	}
+}
+ 
+class DogSizeComparator implements Comparator<Dog>{
+ 
+	@Override
+	public int compare(Dog o1, Dog o2) {
+		return o1.size - o2.size;
+	}
+}
+ 
+class DogWeightComparator implements Comparator<Dog>{
+ 
+	@Override
+	public int compare(Dog o1, Dog o2) {
+		return o1.weight - o2.weight;
+	}
+}
+ 
+public class ArraySort {
+ 
+	public static void main(String[] args) {
+		Dog d1 = new Dog(2, 50);
+		Dog d2 = new Dog(1, 30);
+		Dog d3 = new Dog(3, 40);
+ 
+		Dog[] dogArray = {d1, d2, d3};
+		printDogs(dogArray);
+ 
+		Arrays.sort(dogArray, new DogSizeComparator());	
+		printDogs(dogArray);
+ 
+		Arrays.sort(dogArray, new DogWeightComparator());	
+		printDogs(dogArray);
+	}
+ 
+	public static void printDogs(Dog[] dogs){
+		for(Dog d: dogs)
+			System.out.print("size="+d.size + " weight=" + d.weight + " ");
+ 
+		System.out.println();
+	}
+}
 \end{lstlisting}
-
-And when you call \lstinline{(write ...)} with a report-generator 
-instance and either a share or preference-share instance, you will get the expected result!
-
-In fact, in Lisp, if you have two (or more) type hierarchies you can 
-choose to specialize the method at \textit{any} point in the hierarchy of \textit{any} 
-of the parameters. 
-
-Haskell supports multiple dispatch 
-via Multi-parameter type classes.
-
-
-
-\frmrule
-
-\highlightdef{\textbf{Inline Caching}: optimization technique used in multiple dispatch}
-Careful design of the method dispatch caching allows even prototype based languages 
-such as Javascript to have high performance method dispatch.
-
-
-
-
-\section{Visitor Pattern II}
-
-\highlightdef{\textbf{Visitor Pattern}: implement \textit{double dispatch} in single dispatch languages}
-
-Used to perform operations specific to the dynamic type of nodes in a data structure without 
-having to change the definition of the nodes.
-
-
-
-\section{Visitor Pattern III}
-
-
-\highlightdef{The Visitor Pattern eliminates enums from the Observer Pattern}
-
-
-
-
 
 
 
 \section{State Pattern}
 
-
-
-
-
-\section{Closures}
-
-
-\highlightdef{\textbf{Lexical Scope:} an execution context}
-
-
-\highlightdef{\textbf{Closure:} }
-
-
-\highlightdef{Closures depend on the lexical context where the closure 
-is \textit{defined}, not where it is \textit{called}}
 
