@@ -1,0 +1,367 @@
+\chapter{Git Internals I}
+
+
+
+
+\section{Introducing Git}
+
+
+\frmrule
+
+\textit{What does git stand for?}
+
+\highlightdef{Git has \textit{no particular abbreviation}}
+
+\frmrule
+
+\textit{Git vs GIT vs git}
+
+At the command line we must, by default, type \lstinline{git} (all lowercase), but 
+otherwise, \textit{all three} ways to 
+write Git (Git, GIT, git) are popular and acceptable.
+In this book, we will stick to using Git (and not use GIT or git).
+
+\frmrule 
+
+
+\section{Hashing I}
+
+
+\frmrule 
+
+\textit{Git objects}
+
+In Git, an \textit{object} has particular concrete definition.
+
+\highlightdef{\textbf{Object}: An \textit{object} is a hash of  }
+
+A git object is either a \textit{blob object}, 
+a \textit{tree object}, or a \textit{commit object}. 
+
+
+\begin{figure}[h]
+\begin{tikzpicture} [
+  every node/.style={node_sty},
+  edge from parent/.style={edge_sty},
+  edge from parent path={(\tikzparentnode.south) -- ++(0, -0.2cm) -| (\tikzchildnode.north)},
+  level/.style = {level distance = 0.6cm},
+  level 1/.style={sibling distance=3.5cm, text width=1.5cm}
+]
+  \node (root) {Object}
+    child{node (b) {Blob}}
+    child{node (t) {Tree}}
+    child{node (c) {Commit}};
+\end{tikzpicture}
+\end{figure}
+
+Blob objects are often called \textit{blobs}. 
+Likewise, tree objects are often called \text{trees} 
+
+
+\frmrule 
+
+\textit{Git as a content-addressable system}
+
+\highlightdef{Git is a \textit{content-addressable system}}
+
+
+Git hashes the \textit{contents} of objects. 
+And so, when Git
+places a file into a data structure called the \textit{object store}. 
+It does this hashing based on the \textit{hash of the data} and not,
+for example, on the hash of the filename. 
+
+The files are not stored according to their filename, 
+but rather by the hash of the data they contain. 
+We call these files, \textit{blob objects}
+
+
+and commit objects are often called \text{commits}. 
+
+\begin{sidenote}{SHA1}
+SHA1 (or SHA-1, with the dash between SHA and 1) is a \textit{cryptographic hash function}. 
+\end{sidenote}
+
+
+
+
+
+
+\frmrule 
+
+\textit{Filepath of Objects - Overview}
+
+Inside the \lstinline{.git} folder is a 
+subfolder called \lstinline{objects}
+
+\highlightdef{Each object's content address is 160 bits $=$ 40 hex digits }
+
+
+\highlightdef{\textbf{Filepath}: Objects are stored in the path \lstinline{.git}$/$\lstinline{objects}$/h_0h_1/h_2,...,h_{39}$  }
+where $h_0...h_{39}$ are the fourty hexidecimal digits 
+that are the result of hashing the object's contents. 
+
+Git uses the first 2 hex digits of the hash as a directory name, then the remaining 38 as a filename. 
+This is so that we don't end up with too many files in a single directory. 
+By inserting a / after the first two digits, we improve the efficiency for a lot of filesystems
+that slow when many files in the same directory. 
+
+The exact preimage of the hash is determined by whether 
+the object is a blob object, tree object or commit object as the 
+Depending on the type of object, we 
+have a different structure of plaintext to hash.
+The next examples demonstrate.  
+
+\frmrule 
+
+\begin{example}
+Show that a \textit{blob object} with contents \lstinline{sweet} has a file path of:\\
+\lstinline{.git/objects/aa/823728ea7d592acc69b36875a482cdf3fd5c8d}
+
+\begin{itemize}
+\item
+If we take the SHA1 hash of:
+$$[blob,\textsc{sp},6,\textsc{nul}] + [sweet,\textsc{lf}]$$
+then we find the hash is:
+$$h = aa823728ea7d592acc69b36875a482cdf3fd5c8d$$
+
+
+So the path is \lstinline{.git}$/$\lstinline{objects}$/h_0h_1/h_2,...,h_{39}$
+which is equal to \lstinline{.git/objects/aa/823728ea7d592acc69b36875a482cdf3fd5c8d}.
+
+Here, \textsc{sp},\textsc{nul} and \textsc{lf} denote 
+the space, zero-byte and linefeed characters respectively. We 
+can find the hash using for example,\\ \lstinline{printf "blob 6\000sweet\n" | sha1sum}
+\end{itemize}
+
+\end{example}
+
+
+
+\frmrule 
+
+\begin{example}
+Show that a \textit{tree object} with a tuple:
+$(rose,\textsc{normal\textunderscore file},h_0)$
+has path:\\
+\lstinline{.git/objects/05/b217bb859794d08bb9e4f7f04cbda4b207fbe9}\\
+where $h_0 = aa823728ea7d592acc69b36875a482cdf3fd5c8d$.\\
+You may assume $\textsc{blob}$ is a constant equal to 100644.
+
+\begin{itemize}
+\item
+If we take the SHA1 hash of:
+$$[tree,\textsc{sp},32,\textsc{nul}] + 
+[\textsc{blob},myfile,\textsc{nul},h_0]$$
+then we get:
+$$h = aa823728ea7d592acc69b36875a482cdf3fd5c8d$$
+
+
+So the path is \lstinline{.git}$/$\lstinline{objects}$/h_0h_1/h_2,...,h_{39}$
+which is equal to \lstinline{.git/objects/aa/823728ea7d592acc69b36875a482cdf3fd5c8d}.
+
+\end{itemize}
+\end{example}
+
+\frmrule 
+
+\textit{Tree objects as a list of tuples}
+
+The previous example was for a tree object with \textit{one} tuple.
+But, in general, tree objects have many tuples. They can be seen a \textit{list} of tuples.
+
+\highlightdef{\textbf{Tree Object}: a \textit{tree object} is a list of tuples: $[($filetype, filename, hash$)]$}
+
+The filetype of the tuple can vary. But we consider two cases:
+\begin{itemize}
+\item
+$(n,\textsc{blob},h_0)$  where $n$ 
+is the name of the file, $h_0$ is the hash of the blob object.
+\item
+$(n,\textsc{tree},h_0)$ where $n$ 
+is the name of the directory, $h_0$ is the hash of the tree object.
+\end{itemize}
+
+In both cases $(n,t,h_0) \rightarrow [tree,\textsc{sp},32,\textsc{nul}] + [t,n,\textsc{nul},h_0]$
+where $t$ is the filetype ($t \in \{\textsc{normal\textunderscore file}$, $\textsc{directory}\}$). 
+Using these two types of tuple, we can build up a \textit{hierarchy} of tree objects. 
+
+One tuples: $[tree,\textsc{sp},s,\textsc{nul}] + [t,n,\textsc{nul},h_0]$\\
+Two tuples: $[tree,\textsc{sp},s,\textsc{nul}] + [t_0,n_0,\textsc{nul},h_0] + [t_1,n_1,\textsc{nul},h_1]$\\
+Three tuples: $[tree,\textsc{sp},s,\textsc{nul}] + [t_0,n_0,\textsc{nul},h_0] + [t_1,n_1,\textsc{nul},h_1] + [t_2,n_2,\textsc{nul},h_2]$\\
+$n$ tuples: $[tree,\textsc{sp},s,\textsc{nul}] +  [t_0,n_0,\textsc{nul},h_0] + ... + [t_{n-1},n_{n-1},\textsc{nul},h_{n-1}]$
+
+That is, tree, with a space, followed by null, 
+then followed by $n$ lots of $[t,n,\textsc{nul},h]$, 
+one for each tuple where $n \geqslant 0$. 
+
+\frmrule 
+
+\begin{example}
+Show that a \textit{tree object} with a tuples:\\
+$[(house,\textsc{tree},h_0),(car,\textsc{blob},h_0),(dog,\textsc{blob},h_0)]$\\
+has path:
+\lstinline{.git/objects/05/b217bb859794d08bb9e4f7f04cbda4b207fbe9}
+where \\$h_0 = aa823728ea7d592acc69b36875a482cdf3fd5c8d$,\\
+$h_1 = aa823728ea7d592acc69b36875a482cdf3fd5c8d$,\\
+$h_2 = aa823728ea7d592acc69b36875a482cdf3fd5c8d$.\\
+You may assume $\textsc{blob}$ and $\textsc{tree}$ are constants equal to 100644
+and , respectiely.
+\end{example}
+
+\frmrule 
+
+\textit{Computing the hash of an empty list}
+
+
+
+\frmrule 
+
+\textit{Showing Hierarchies using Object Store Diagrams}
+
+
+\highlightdef{\textbf{Tree Hierarchies}: each tree object's list of tuples: $[($filetype, filename, hash$)]$
+represents the \textit{immediate children} }
+
+That is, each one tuple for each direct child of the tree object. 
+Each child may be either a tree object (recursive case) or a 
+blob object (base case).
+
+
+
+\frmrule 
+
+
+\begin{sidenote}{Hash Chains}
+Notice that to build our Hierarchies, we are using a hash $h_0$ to find a new hash $h$. 
+This is an example of a \textit{hash chain}. Let $h(x)$ be a 
+hash function, then a \textit{hash chain}
+is $h(g(x))$ where $g(x)$ has $h(x')$ inside. 
+Note that this definition is \textit{recursive} for $g(x)$ may itself, 
+be a hash chain. 
+
+For us, our $h(x)$ is \\
+and our $g(x)$ is\\
+\end{sidenote}
+
+
+
+
+\frmrule 
+
+
+
+\begin{example}
+
+
+\end{example}
+
+
+\frmrule 
+
+
+\highlightdef{File and directory names are \textit{only stored in tree objects}.  }
+
+A common mistake is to think that a filename is 
+hashed to address a blob object. It is only the \textit{content} of the 
+file that is used to form the address. This is why we call the addresses 
+\textit{content} addresses.
+
+
+
+\begin{sidenote}{git ls-tree}
+For any git project, you can 
+see the tuples of a tree object using \lstinline{ls-tree} (list tree). 
+Two useful flags are:\\
+(i) \lstinline{-r}: recursively show all subtrees (not just 
+the immediate children). \\
+(ii) \lstinline{-t}: output the trees while recursing 
+\end{sidenote}
+
+
+\frmrule 
+
+\begin{example}
+For the following blob-tree hierarchy, give an expression for 
+the hash values $h_1$, $h_2$, $h_3$ of tree objects $T_1$, $T_2$, 
+$T_3$ respectively. 
+\end{example}
+
+
+
+\section{Hashing II}
+
+
+
+% "commit 158" NUL
+% "tree 05b217bb859794d08bb9e4f7f04cbda4b207fbe9" LF
+% "author Alice <alice@example.com> 1234567890 -0800" LF
+% "committer Bob <bob@example.com> 1234567890 -0800" LF
+% LF
+% "Shakespeare" LF
+
+\frmrule 
+
+This is the first commit, so there are no parent commits, 
+but later commits will always contain at least one line identifying a parent commit.
+
+\frmrule 
+
+
+\begin{sidenote}{DEFLATE}
+Objects in git are 
+compressed using $\textsc{deflate}$. The $\textsc{deflate}$ algorithm is a 
+variation of the popular compression algorithm LZ77 
+(The \textit{Lempel-Ziv 1977 Algorithm}).  $\textsc{deflate}$ is also used 
+for compression in $\textsc{png}$ images.
+\end{sidenote}
+
+
+
+
+\frmrule 
+
+
+\textit{Identical files have no effect on the Object Store}
+
+
+
+
+
+\frmrule 
+
+\textit{SHA1 hash collisions, will in practice, never happen }
+
+The probability is so small. 
+
+\begin{sidenote}{Birthday Paradox and Hash Collisions}
+
+\end{sidenote}
+
+
+\frmrule
+
+\begin{example}
+What is the maximum number of folders that can be inside 
+\lstinline{.git/objects}?
+\\
+\textit{Note: by folders, we mean direct child folders.}\\
+\textit{Hint: recall that we use hex digits $h_0h_1$ of 
+hash $h_0...h_{39}$ of a git object's contents for the 
+folder name. The remaining digits are used for the filename.}
+
+There are 16 choices for $h_0$ and 16 choices 
+for $h_1$. So by the multiplication principle 
+of counting, we have 256 choices for $h_0h_1$. 
+So there at most 256 possible folders. 
+\end{example}
+
+\frmrule
+
+\begin{example}
+The constant $\textsc{blob}$ $=$ 100644 is actually a Unix file permission flag.\\
+Show that this flag corresponds to owner: read/write, group+other read.
+
+100644 = 0b11000100100100100\\
+So splitting gives: 011|000|100|100|100|100. \\
+\end{example}
