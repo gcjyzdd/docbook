@@ -1,0 +1,44 @@
+\chapter{TCP/IP: Advanced}
+
+
+
+\section{Token Rings}
+
+
+\section{Binary Exponential Backoffs}
+
+
+\section{WiFi}
+
+
+
+\section{NAT}
+
+
+
+\frmrule 
+
+\textit{Summary}
+
+NAT violates the IP model, which states that every IP address uniquely 
+identifies a single machine worldwide. 
+
+NAT changes the internet from connectionless to connection-oritened 
+because end-to-end connections depend on the state of NAT gateways. 
+
+NAT violates protocol layering. The network layer makes 
+assumptions about the transport layer by knowing about port 
+numbers and remapping them for outgoing connections. 
+
+NAT retricts the transport layer to TCP and UDP. 
+Other transport layers like RTP are not necessarily supported. 
+
+NAT fails with protocols that include internal IP addresses in the payload
+
+NAT only supports $< 65536$ machines living behind a NAT router with a 
+single externally visible IP address. 
+
+
+
+\section{Errors III }
+

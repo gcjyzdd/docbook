@@ -1,0 +1,408 @@
+\chapter{TCP/IP: Basics}
+
+
+\section{Reliable Communication I}
+
+\frmrule 
+
+\textit{Reliable and Unreliable Channels}
+
+
+We can \textit{informally} discuss the notion of what it means 
+for a channel to be reliable and unreliable. 
+
+Examples:\\
+Talking in a quiet room - reliable
+Talking in a nightclub - unreliable
+Sending a message in a bottle - unreliable \\
+
+If we assume there is only one channel to communicate on, 
+then there is no way to achieve mutual belief. 
+
+\frmrule 
+
+\textit{Acknowledgements Messages}
+
+Adding acknowledgement messages doesn't help the problem. 
+The problem occurs again. We can try an acknowledgement 
+of the acknowledgement but that also won't help. 
+Adding acknowledgements only adds recursion to no end. 
+
+\frmrule 
+
+\textit{Bit Transmission Problem}
+
+\highlightdef{\textbf{Bit Transmission Problem}: it is impossible to 
+achieve mutual belief that a bit has been sent correctly over an 
+unreliable channel.}
+
+
+
+\highlightdef{\textbf{BER}: }
+
+From this definition of BER, we can formally define what it means 
+for a channel to be reliable. 
+
+
+\highlightdef{
+\textbf{Reliable}: $BER = 0$\\
+\textbf{Unreliable}: $BER > 0$
+}
+
+A channel with a $BER = 1$ is completely useless. 
+A channel that is unreliable is also called a \textit{noisy channel} 
+or a \textit{best-effort channel}. 
+
+\frmrule 
+
+\textit{Providing a reliable layer of abstraction on top of unreliable layer}
+
+Idea:\\
+Provide a reliable logical medium on top of an unreliable medium. \\
+We attempt to hide or abstract away the unreliable medium. 
+At the same time, we are delegating the responsibility to the 
+unreliable layer. 
+
+Consider the service elements:\\
+\textsf{RSEND} reliable send \\
+\textsf{USEND} unreliable send \\
+\textsf{RRECEIVE} reliable receive \\
+\textsf{URECEIVE} unreliable receive 
+
+
+\textsf{LINK}.\textsf{RSEND} $\rightarrow$ \textsf{PHYSICAL}.\textsf{USEND}\\
+\textsf{LINK}.\textsf{RRECEIVE} $\leftarrow$ \textsf{PHYSICAL}.\textsf{URECEIVE}\\
+
+
+\section{Reliable Communication II}
+
+
+
+\frmrule 
+
+
+\highlightdef{
+\textbf{Send States}: $S_i$: about to send $i$th message, received $< i$ messages\\
+\textbf{Ack States}: $A_i$: sent $i$th message, waiting for $i$th ack\\
+\textbf{Receive States}: $R_i$: about to receive $i$th message, received $< i$ messages
+}
+
+\frmrule 
+
+
+\begin{example}
+Below shows the state machine diagram. \\
+(a) If the channel never drops acks, which edges are never used\\
+(b) If the channel always drop acks, which edges are never used
+\end{example}
+
+
+\frmrule 
+
+\begin{example}
+If the channel never drops acks, but drops data messages with probability $0.4$, 
+determine the expected number of data messages sent to send three messages.
+\\ \textit{Hint: consider sending a data message as a Bernoulli trail}
+\end{example}
+
+
+\frmrule 
+
+\begin{example}
+If the channel drops any message with probability $q$, 
+determine the expected number of messages sent to send the 1 message.
+\end{example}
+
+\frmrule 
+
+Let $p = 1-q$ denote success of sending. \\
+We want to find $E[X+Y]$ where r.v. $X$ is the no of messages 
+needed to send to get $R_0 \rightarrow R_1$, 
+and r.v. $Y$ is the no of messages needed to send to get $A_0 \rightarrow S_1$. 
+Both $X$ and $Y$ are geometric random variables 
+(first-success rvs of Bernoulli trails with success prob. $p$). 
+Hence $E[X] = E[Y] = 1/p$. 
+
+$E[X+Y] = E[X] + E[Y] = 1/p + 1/p = 2/p = 2/(1-q)$.
+
+
+\frmrule 
+
+\textit{Average number of messages}
+
+In general, the total number of messages (data or acknowledge) 
+sent on the network to reach $S_n$.
+
+\highlightdef{ \textbf{No. Messages}: $E[N] = \frac{2n}{1-q}$}
+
+Notice that as $q \rightarrow 0$, we have $E[N] \rightarrow 2n$. 
+That is, when we have a reliable channel, every message gets through 
+and so we send a total of $n$ messages and $n$ acknowledgements 
+to get to $S_n$. So $E[N] \rightarrow 2n$ is reasonable. 
+And when $q \rightarrow 1$, we have $E[N] \rightarrow \infty$. 
+That is, when our channel is useless, every message suffers 
+from noise, there won't be a finite numbr of messages sent for 
+we will never achieve communication and never reach state $S_n$. 
+
+
+\frmrule 
+
+\textit{Expressing message-drop probabilty q, in terms of BER}
+
+$q = 1-(1-BER)^{c+s}$
+where $c$ is the number of bits in the control information in the PDU 
+and $s$ is the number of bits in the payload of the PDU. 
+
+\highlightdef{ \textbf{No. Messages}: $E[N] = \frac{2n}{(1-BER)^{c+s}}$}
+
+
+\frmrule 
+
+\textit{Utilisation}
+
+
+
+\highlightdef{ \textbf{Utilisation}: $U = T_I/T_R$}
+
+where $T_I$ is the time an $I$-frame spends in transit 
+and $T_R$ is the round trip time.  
+
+Assuming no processor delays:
+\highlightdef{ $U = T_I/(T_I + 2T_P + T_A)$}
+
+Notice that if we multiply the top and bottom by the bandwidth $B$ 
+we have a second formula: $U = s/(s + 2\eta + c)$, where 
+$\eta = BT_P$ can be interpreted as the number of bits that fill the channel.
+We sometimes call $\eta$ the \textit{bandwidth, propagation-delay product}. 
+Using this formula, we see that to improve $U$ by decreasing the terms on the denominator. 
+
+Decreasing $\eta$ means decreasing bit rate having a smaller distance. 
+Decreasing the bit rate is not ideal as we are essentially slowing the channel 
+down. Having a smaller distance is usually not possible due to physical constaints. 
+Normally a well-designed protocol will have $c$ as small possible already. 
+
+So it seems like the only way to improve $U$ is to increasing $s$. 
+However by increasing $s$, we increase $E[N] = \frac{2n}{(1-BER)^{c+s}}$. 
+That is, we increase the chances of messages suffering errors and 
+having to retransmit more acknowledgements. 
+
+\frmrule
+
+\begin{sidenote}{Idle RQ Algorithms}
+Here we show how we can implement the state machine as 
+two algorithms, one to be implemented on the sender, 
+the other, implemented on the receiver.  
+
+\end{sidenote}
+
+\frmrule 
+
+\textit{Reducing states of the state machine to use parity of message index}
+
+
+\highlightdef{
+\textbf{Send States}: About to send $n$th packet\\
+$n-1$ arrived or $n$ is first packet\\
+$S_0$: $n \text{ mod} 2 = 0$, $S_1$: $n \text{ mod} 2 = 1$ 
+}
+
+\highlightdef{
+\textbf{Receive States}: About to receive $n$th packet\\
+$n-1$ already arrived or $n$ is first packet\\
+$R_0$: $n \text{ mod} 2 = 0$, $R_1$: $n \text{ mod} 2 = 1$ 
+}
+
+\section{Reliable Communication III}
+
+\frmrule 
+
+\textit{Introducing Loss}
+
+We have previously dealt with noisy channels, 
+but we now deal with \textit{noisy and lossy} channels. 
+That is, channels that introduce bit errors (noisy), but can 
+also \textit{loose packets}.
+
+
+\frmrule 
+
+\textit{Using timers to handle loss}
+
+
+\highlightdef{
+\textbf{Acks}: acknowledgements handle \textit{noise}\\
+\textbf{Timers}: timers handle \textit{loss}
+}
+
+\frmrule 
+
+\textit{How can we have the notion of a timer in a state diagram?}
+
+Time itself is stateful. If we model time as \textit{discrete} set of points: 
+$T= 0,1,2...$, then do we need to have several states, one for each value of time?
+Our state diagram could become quite complicated. Perhaps, needlessly complicated.
+
+\frmrule 
+
+\textit{Reducing states of the state machine to use parity of message index}
+
+
+This protocol (that uses the parity of the message index) 
+is known as the \textit{alternating bit protocol}.
+
+
+\section{Reliable Communication IV}
+
+
+
+\section{Bijection: IP and MAC Addresses}
+
+ARP and Ping
+
+\frmrule 
+
+\textit{The format of a ARP protocol data unit}
+
+The address resolution protocol, when used for 
+MAC-to-IP address resolution has PDUs of the following high-level format: 
+\highlightdef{\textbf{ARP}: $[c | op | M | N]$}
+
+Where:
+\begin{itemize}
+\item $c$ is a constant fixed for MAC-to-IP address resolution
+\item $op \in \{\textsf{Request}, \textsf{Reply} \}$ denotes 
+the operation.
+\item $sN$ is the source IP address 
+\item $dN$ is the destination IP address
+\end{itemize}
+
+\frmrule 
+
+\textit{Encapsulation of a ARP protocol data unit}
+
+
+$D = [c | op | sN | dN]$ in ethernal pdu: $[p|sM|dM|t|e|D]$
+
+
+Network Layer: ARP, IP
+Datalink layer: Ethernet 
+
+\frmrule 
+
+\textit{ARP Request and ARP Reply}
+
+
+
+$k(i,j)$ - machine $i$ knows machine $j$'s MAC address
+This relation is reflexive, we assume that machine every machine knows its own MAC address.
+
+if($v_B$ outside network) \\
+$\mu_{R.0}$ = localAsk($\mathcal{R}.0$) \\
+send ($\mu_{A}$, $\mu_{R.0}$, $\nu_{A}$, $\nu_{B}$, \textsf{request})\\
+($\mu_{A}$, $\mu_{R.0}$, $\nu_{A}$, $\nu_{B}$, \textsf{request}) = \\
+return $\mu_{B}$\\
+else \\
+$\mu_{B}$ = localAsk($\mathcal{B}$) \\
+return $\mu_{B}$\\
+
+\frmrule 
+
+\begin{example}
+Suppose we have two subnets $\mathcal{N}_1$: 146.0.4.x and $\mathcal{N}_2$: 146.0.1.x. 
+We have a host on $\mathcal{N}_1$ who wants to find the MAC address of a host 
+on $\mathcal{N}_2$. 
+
+Complete the table.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ll|llllll}
+    & &    & $\textsf{sM}$ & $\textsf{dM}$  & $\textsf{sN}$ & $\textsf{dN}$ & $\textsf{op}$ \\ \hline
+    A. Find $\mu_B$& A.1 Ask $\mu_{R.1}$ & $\mathcal{A} \rightarrow \mathcal{R}.1$  & $\mu_{A}$ & $ \mu_{*} $ & $\nu_{A}$ & $\nu_{R.1}$ & \textsf{request}  \\
+    & & $\mathcal{A} \leftarrow \mathcal{R}.1$   & $\mu_{R.1}$ & $\mu_{A}$ & $\nu_{R.1}$ & $\nu_{A}$ & \textsf{reply} \\ 
+    & A.2 Ask $\mu_B$ & $\mathcal{A} \rightarrow \mathcal{B}$   & $\mu_{A}$ & $\mu_{R.1}$ & $\nu_{A}$ & $\nu_{B}$ & \textsf{request}  \\ \hline
+    R. Find $\mu_B$ & R.1 Ask $\mu_B$ & $\mathcal{R}.2 \rightarrow \mathcal{B}$   & $\mu_{R.2}$ & $\mu_{*}$ & $\nu_{R.2}$ & $\nu_{B}$ & \textsf{request}  \\
+    & & $\mathcal{R}.2 \leftarrow \mathcal{B}$   & $\mu_{B}$ & $\mu_{R.2}$ & $\nu_{B}$ & $\nu_{R.2}$ & \textsf{reply}  \\ \hline
+    &  & $\mathcal{A} \rightarrow \mathcal{B}$   & $\mu_{R.2}$ & $\mu_{B}$ & $\nu_{A}$ & $\nu_{B}$ & \textsf{request}  \\ 
+    &  & $\mathcal{A} \leftarrow \mathcal{B}$   & $\mu_{B}$ & $\mu_{R.2}$ & $\nu_{B}$ & $\nu_{A}$ & \textsf{reply}  \\
+    &  & $\mathcal{A} \leftarrow \mathcal{B}$   & $\mu_{R.1}$ & $\mu_{A}$ & $\nu_{B}$ & $\nu_{A}$ & \textsf{reply}  \\
+    \end{tabular}
+\end{table}
+
+
+
+\end{example}
+
+
+
+
+\frmrule 
+
+\textit{ARP Caches}
+
+
+\begin{sidenote}{ARP Cache}
+/sbin/arp -n lists the contents of the ARP cache\\
+\end{sidenote}
+
+
+\frmrule 
+
+\textit{ARP Format}
+
+\begin{sidenote}{ARP Format}
+ARP has the following format.
+\end{sidenote}
+
+
+
+\section{IP Addresses and Subnets}
+
+\frmrule 
+
+
+\begin{example}
+You have one class C network 194.16.3.0 but want 5 subsets. \\
+(a) How many bits are needed to identify the subset?\\
+(b) How many uniquely identifiable hosts are there per subset?\\
+(c) What is the subnet mask?
+
+(a) Subnets must be a power of 2. So we need 8 subsets. We need 3 bits.\\
+(b) We are left with 5 bits. So $2^{5} = 32$ unique addresses. 
+We subtract two for network and broadcast. Giving 30 hosts per subnet. 
+(c) Subnet mark is given with 1s over the network number. 
+Most significant 3 bits gives: 128 + 64 + 32 = 224. 
+So subnet mask of 255.255.255.224
+
+
+\frmrule 
+
+\textit{Statically vs Dynamically Assigned IP Addresses}
+
+
+\textit{Statically Assigned}:
+good for machines that are on all the time, \\
+provide services that don't move \\
+require another level of access control 
+
+\textit{Dynamically Assigned}:
+connect intermittently\\
+connect at different times to each other \\
+connect to different networks
+
+
+
+\section{Transport}
+
+
+\hightlightdef{\textbf{Flow}: A \textit{flow} is a four-tuple: $(srcN,srcP,dstN,dstP)$}
+
+
+
+\section{Application to Application}
+
+
+
+Full picture
+
+\highlightdef{\textbf{Socket}: }
+

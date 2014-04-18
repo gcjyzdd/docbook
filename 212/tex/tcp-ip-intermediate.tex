@@ -1,0 +1,72 @@
+\chapter{TCP/IP: Intermediate}
+
+
+
+
+\section{Collision Detection}
+
+
+CSMA/CD
+
+
+\frmrule
+
+\textit{The difference between a hub and a switch}
+
+
+
+
+
+\section{Errors I}
+
+
+\frmrule
+
+
+\section{Transport Fields}
+
+\begin{example}
+Which fields of an IP header would a router change as it forwards it? 
+Explain how they change and the reason for their change.
+
+TTL: decremented at each router to stop packets circulating forever in network\\
+Total length/Flags/Fragment Offset: changed to reflect the fragment of packet 
+if traveling over network with smaller MTU\\
+checksum: needs to be recomputed, fields change cause checksum to change
+\end{example}
+
+\frmrule
+
+\begin{example}
+Why does an IP packet perform a checksum on its \textit{header} but not its body?
+
+Error control of the encapsulated body is the responsibility of the higher level protocol, 
+not the responsibility of IP. \\
+Even if IP did perform a checksum on the body, it wouldn't be able to do anything 
+if it found an error. \\
+Lower level protocols provide error control, 
+so IP providing error control provides no services that doesn't already exist.
+\end{example}
+
+
+
+\section{TCP State Machine}
+
+
+\section{TCP Congestion}
+
+
+\frmrule 
+
+\textit{Flow control vs. congestion control}
+
+\highlightdef{
+\textbf{Congestion Control}: aims not to overflow the \textit{network}\\
+\textbf{Flow Control}: aims not to overflow the \textit{receiver}
+}
+
+
+
+\section{Discovering New Hosts}
+
+DHCP
