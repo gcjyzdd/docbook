@@ -481,13 +481,11 @@ $g \in G$, $g' \in G'$ \\ that uniquely identify codepoints outside the BMP }
 \frmrule 
 
 \begin{example}
+How many surrogate codepoints are there?
 
-\end{example}
-
-\frmrule 
-
-\begin{example}
-
+There are $2^10 + 2^10 = 2^11 = 2048$. \\
+\textit{Remark}: Out of all the $2^{16}$ codepoints in the basic multilingual plane, 
+$(2048/2^{16}) \times 100 = 3\%$ are surrogate codepoints.
 \end{example}
 
 \frmrule 
@@ -606,52 +604,73 @@ character to.
 
 \frmrule 
 
-
-\highlightdef{\textbf{UTF-16 Code Unit}: one of the two UTF-16 bytes that correspond to a single codepoint }
-
-
-
-\frmrule 
-
 \textit{Introducing UFT8}
 
-UTF-8 uses a variable-length byte-oriented encoding. 
+UTF-8 is a encoding that uses a \textit{variable number of bytes}, it depends 
+on the value of the codepoint, $c$. UTF-8 defines straightforward mapping.
 
-\highlightdef{\textbf{UTF-8}: Encodes code points using 8,16,24, or 32 bits}
+$0 \leqslant c < 2^7$:    $c_1 ... c_7 \rightarrow  [[0 c_1 ... c_7]]$\\
+$2^7 \leqslant c < 2^{11}$: $c_1 ... c_{11} \rightarrow  [[110 c_1 ... c_5], [10, c_6 ... c_{11}]]$\\
+$2^{11} \leqslant c < 2^{16}$: $c_1 ... c_{16} \rightarrow  [[1110 c_1 ... c_4], [10, c_5 ... c_{10}], [10, c_{11} ... c_{16}]]$\\
+$2^{16} \leqslant c < 2^{20}$: $c_1 ... c_{21} \rightarrow  
+[[11110 c_1 ... c_3], [10, c_4 ... c_9], [10, c_{10} ... c_{15}], [10, c_{16} ... c_{21}]]$
+
+As we can see, depending on how large the codepoint is, 
+the encoding chooses (i) many bytes to use and the (ii) layout. 
+Recall that Unicode codepoints lie in the range $0$ to $6 \times 2^{16}$, and 
+that $6 \times 2^{16} < 2^{19}$ - every Unicode codepoint can be represented with 19 bits. 
+So the very last Unicode codepoint falls into the last case. 
+
+\highlightdef{\textbf{UTF-8}: Encodes codepoints using up to 4 bytes}
+
 The pattern is that a codepoint always uses a multiple of 8 bits, hence the 8 in UTF-\textit{8}. 
 It is called a \textit{byte}-oriented encoding because a given UTF-8 encoded 
 stream can be seen as a \textit{stream of bytes} that from groups of 1,2,3 or 4 to give 
 corresponding codepoints.  
 
-\highlightdef{\textbf{UTF-8 Code Unit}: one or more UTF-8 bytes that correspond to a single codepoint }
+\frmrule 
 
-
-UTF-8 defines straightforward mapping that determines how many bytes a code point 
-needs. In general, the first 128 points require a single byte.
-The next 1,920 characters use two bytes. Then three bytes are used 
-for remainder of most common characters. One trick is to look at the number of 
-1's in the hex representation for the codepoint. 
-
-110XXXXX indicates that 2 code units are used\\
-1110XXXX indicates that 3 code units are used\\
-11110XXX indicates that 3 code units are used\\
-
-
-UTF-8 is popular for web pages, documents because of its effiency in size 
-and its compatibility with ASCII.
-
-
-
-\begin{example}
-For the following UTF-8 binary encoding, what is the corresponding codepoint?
-% F0 A4 AD A2
-\end{example}
 
 \begin{example}
 What is the UTF-8 encoding of the following codepoint?
 % U+20AC
+% F0 A4 AD A2
 \end{example}
 
+\frmrule 
+
+\textit{No surrogate pairs in UFT-8}
+
+Codepoints outside the BMP are not represented with surrogate pairs in UFT-8.
+
+
+\frmrule 
+
+\textit{UFT-8 needs no byte-order mark. There is no endianess.}
+
+Officially, the Unicode Standard neither requires nor recommends 
+the use of the BOM for UTF-8. As a result, some programs add a BOM, 
+and some don't. This has thus caused some interoperability problems between 
+programs.  
+
+
+Unofficially, UTF-8-BOM or UTF-8-NOBOM are sometimes used to 
+refer to streams which contain or lack a BOM respectively. 
+In Japan especially, UTF-8 encoding without BOM is sometimes called "UTF-8N"
+
+
+
+\frmrule 
+
+\textit{UFT-8 uses the upper bits of each byte as control bits to help decoding.}
+
+\frmrule 
+
+\begin{sidenote}{The Popularity of UTF-8}
+UTF-8 is popular for web pages and documents because of its \textit{effiency in size} 
+and its \textit{compatibility with ASCII}.
+UTF-8 is also the default encoding used for xml files. 
+\end{sidenote}
 
 
 \frmrule
@@ -667,7 +686,7 @@ True or false. \\
 % UTF-7
 
 
-\section{Composed Characters*}
+\section{UTF Composed Characters*}
 
 
 
@@ -680,11 +699,12 @@ and a equivalent \textit{decomposed sequences of other codepoints}}
 \highlightdef{\textbf{Canonical Equivalence}: decomposion sequences may differ, 
 but they will share a \textit{canonical equivalence}}
 
-
-\section{Encodings in Programming Languages*}
+\section{Encodings in Programming Languages}
 
 Java represents characters as UTF-16 code units.
 The length function on strings may be misleading. 
-It returns the returns the number of code units. 
+It returns the returns the number of code units.
 
+
+\section{Line Endings} 
 
