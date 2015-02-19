@@ -1,5 +1,9 @@
-docbook
-=======
+# docbook
+*Revision for Imperial College MEng Computing*
+
+Courses at the time:
+
+**First Year**    
 112 Hardware
 113 Architecture
 120.1 Programming I
@@ -11,6 +15,7 @@ docbook
 142 Discrete Mathematics
 145 Mathematical Methods
 
+**Second Year**  
 202 Software Engineering - Algorithms
 211 Operating Systems
 212 Networks and Communications
