@@ -29,6 +29,7 @@ Courses at the time:
 231 Introduction to Artificial Intelligence
 233 Computational Techniques
 
+**Third Year**  
 303 Software Engineering - Systems Verification
 312 Advanced Databases
 317 Graphics
@@ -45,6 +46,7 @@ Courses at the time:
 382 Type Systems for Programming Languages
 395 Machine Learning
 
+**Fourth Year**  
 417 Advanced Graphics and Visualisation
 418 Computer Vision
 421 Computational Neurodynamics
