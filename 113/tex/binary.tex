@@ -138,17 +138,25 @@ as the \textit{dotted-decimal system}.
 
 % div and mod
 
-\highlightdef{\textbf{Left} $n$ \textbf{Digits Extraction}: $x/R^{(M-n)}$ }
+\highlightdef{
+\textbf{Left} $n$ \textbf{Digits Extraction}: $x/R^{(M-n)}$ \\
+\textbf{Right} $n$ \textbf{Digits Extraction}: $x\%R^n$ 
+}
 
-where $M$ is the maximum power using for the number table of $x$.
+where $M = \ceil{\log_R(x)}$ is the maximum power used in the number table of $x$. Think of div as shifting right and 
+mod as cleaning left. 
 
-\highlightdef{\textbf{Right} $n$ \textbf{Digits Extraction}: $x\%R^n$ }
 
 
 
 \highlightdef{$n$\textbf{th Digit Extraction}: $(x/R^n)\% R$ }
+... where $R$ is the radix. 
 
-
+\begin{example}
+Show that $(x \% R^{n}) / R^{n-1}$ also performs nth digit 
+extraction.  
+\end{example}
+So we can either shift-right then clean-left, or clean-left then shift-right. 
 
 \begin{example}
 Write an algorithm to verify if an integer is a palindrome using div and mod.
@@ -156,6 +164,10 @@ Write an algorithm to verify if an integer is a palindrome using div and mod.
 
 \begin{example}
 Write an algorithm to reverse an integer using div and mod.
+\end{example}
+
+\begin{example}
+Write an algorithm to detect neighbours in UVa 10067
 \end{example}
 
 
